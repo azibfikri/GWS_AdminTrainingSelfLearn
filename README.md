@@ -1,84 +1,130 @@
 # GWS Admin Study Desk
 
-Associate Google Workspace Administrator study aid — **browser, Mac, or Windows**.
+[![Live demo](https://img.shields.io/badge/demo-live-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://gws-admin-study-guide.vercel.app/)
+[![Vercel](https://img.shields.io/badge/deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://gws-admin-study-guide.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-## Browser
-- Local: open `index.html`
-- Live: https://gws-admin-study-guide.vercel.app/
+**Associate Google Workspace Administrator** study companion — structured notes, a hands-on admin sandbox, and a **246-question** practice bank. Works in the browser (mobile-friendly), with optional **Mac** and **Windows** desktop builds.
 
-## Mac desktop (share with a friend)
+> Personal portfolio project. Not affiliated with Google or the official certification exam.
 
-**Send this file (~94 MB):**  
-`Downloads/GWS-Admin-Study-Desk-1.1.0-Mac-AppleSilicon.zip`
+---
 
-Friend steps:
-1. Unzip → drag **GWS Admin Study Desk.app** to Applications  
-2. First open: **right-click → Open → Open** (Gatekeeper)  
-3. Apple Silicon only (M1/M2/M3/M4). Intel Mac → use the [browser](https://gws-admin-study-guide.vercel.app/) or ask for an Intel build.
+## Live app
 
-Or from source on their Mac:
+**[https://gws-admin-study-guide.vercel.app/](https://gws-admin-study-guide.vercel.app/)**
+
+| Area | What you get |
+|------|----------------|
+| **Study desk** | Searchable modules, focus mode, 25-minute session timer |
+| **Learning styles** | *Kindergarten* (story-based) or *Adult* (Sandbox + Focus paths) |
+| **Practice** | Mock 10, by domain, timed 50, **full 246-question exam**, answer key |
+| **Sandbox** | Interactive Admin Console simulator + guided walkthrough |
+| **Cloud profile** | Username + password — sync progress across devices |
+
+---
+
+## Highlights (portfolio)
+
+- **Single-page study app** — vanilla HTML/CSS/JS, no framework lock-in; fast to host as static files.
+- **Full mock exam bank** — 246 items parsed into structured JSON for timed and untimed modes.
+- **Dual delivery** — same codebase for **Vercel** (auto-deploy from Git) and **Electron** (Mac `.app` / Windows zip installer).
+- **Auth & sync** — custom username/password API on **Supabase Edge Functions** + Postgres; client never sees service keys.
+- **Mobile UX** — drawer nav, safe areas, touch-friendly controls, account panel on small screens.
+
+---
+
+## Tech stack
+
+| Layer | Tools |
+|-------|--------|
+| Frontend | HTML, CSS, JavaScript (localStorage + profile sync) |
+| Hosting | [Vercel](https://vercel.com) (static + build hook for `config.js`) |
+| Backend | Supabase (Postgres, Edge Function `gws-study-api`) |
+| Desktop | Electron + electron-builder |
+| CI | GitHub Actions — Windows NSIS build workflow |
+
+---
+
+## Project structure
+
+```text
+gws-admin-study-guide/
+├── index.html              # Main Study Desk
+├── gws-admin-console.html  # Admin sandbox simulator
+├── data/
+│   ├── mock-bank.js        # 246-question bank
+│   └── gws-auth.js         # Login + cloud sync client
+├── electron/               # Desktop shell
+├── supabase/
+│   ├── functions/gws-study-api/
+│   └── migrations/
+├── scripts/                # Vercel config + installers
+└── vercel.json
+```
+
+---
+
+## Run locally
+
 ```bash
-cd "gws-admin-study-guide"
+git clone https://github.com/azibfikri/gws-admin-study-guide.git
+cd gws-admin-study-guide
 npm install
-npm start
-```
-Or double-click **Open Study Desk.command**.
-
-Build yourself:
-```bash
-npm run pack:mac    # .app in dist/mac-arm64/
-npm run dist:mac    # DMG
+node scripts/write-config.js   # writes config.js for cloud login
+open index.html                # or: npm start (Electron)
 ```
 
-## Windows (share with a friend)
+Cloud login uses the hosted API by default (`config.example.js`). Progress still works offline on-device without signing in.
 
-**Easiest — send this one file:**
+---
 
-`dist/GWS-Admin-Study-Desk-1.1.0-Windows-Setup.zip`  
-(also copied to your **Downloads** folder when you build)
+## Desktop builds
 
-Friend steps:
-1. Unzip the folder
-2. Double-click **Install.bat**
-3. If SmartScreen appears: **More info → Run anyway**
-4. Desktop + Start Menu shortcuts are created
+| Platform | Command | Output |
+|----------|---------|--------|
+| Mac | `npm run pack:mac` | `dist/mac-arm64/*.app` |
+| Mac DMG | `npm run dist:mac` | DMG installer |
+| Windows (from Mac) | `npm run dist:win:setup` | Zip + `Install.bat` |
+| Windows NSIS | GitHub Action **Build Windows installer** or `npm run dist:win` on Windows |
 
-Rebuild anytime from your Mac:
-```bash
-npm run dist:win:setup
-```
+---
 
-### True NSIS Setup.exe (optional)
-Apple Silicon Macs can’t run NSIS/`makensis` (error -86). To get a classic `Setup.exe`:
-- Push this folder to GitHub and run the **Build Windows installer** Action, **or**
-- On any Windows PC: `npm ci` then `npm run dist:win`
+## Cloud accounts
 
-## Cloud profile (Log in / Sign up)
+1. Open the live site → **Log in** / **Sign up** (sidebar or mobile **Account**).
+2. Username: 3–32 characters (`a–z`, `0–9`, `_`). Password: at least 6 characters.
+3. Checklist, XP, timer, learning style, and sandbox state sync after login (~2s debounce; **Sync now** anytime).
 
-Progress can sync to **your account** with a **username and password** (checklist, practice XP, session timer, learning style, sandbox state). No email confirmation.
+---
 
-The live site at [gws-admin-study-guide.vercel.app](https://gws-admin-study-guide.vercel.app) is already wired to the cloud API — use **Log in** / **Sign up** in the sidebar or mobile **Account**.
+## Deploy (Vercel)
 
-### Local / desktop / fork
+Connected to this Git repo: pushes to `main` trigger production deploy.
 
-`config.js` points at the hosted auth API by default (see `config.example.js`). Override with env vars on Vercel if you fork:
+Build step: `node scripts/write-config.js` (see `vercel.json`).
 
-- `GWS_AUTH_API_BASE` — Edge Function base URL  
-- `GWS_SUPABASE_ANON_KEY` — anon key for the Supabase gateway (optional; default baked in for this project)
+Optional env overrides:
 
-Build: `node scripts/write-config.js` (also runs on Vercel deploy).
+- `GWS_AUTH_API_BASE` — Edge Function URL  
+- `GWS_SUPABASE_ANON_KEY` — Supabase gateway anon key  
 
-### In the app
+---
 
-- Sidebar (desktop) or **Account** (mobile) → **Log in** / **Sign up** (username 3–32 chars, letters/numbers/underscore; password ≥ 6)
-- After login, progress loads from your profile; changes auto-sync (~2s debounce)
-- **Sync now** forces an upload; **Sign out** keeps data on the device
+## Screenshots
 
-Offline or old copies without `config.js` still work — progress stays on this device only.
+_Add screenshots here for your portfolio (Study Desk home, Practice arena, Sandbox)._
 
-## What’s inside
-- Study modules + Admin sandbox simulator
-- Practice arena + **246-question mock bank**
-- Last-minute review cram sheet
+---
 
-Not affiliated with Google or the official exam.
+## Author
+
+**Azib Fikri** — built for certification prep and as a full-stack static + edge + desktop sample.
+
+If this repo helps your studies or your portfolio review, a star is appreciated.
+
+---
+
+## Disclaimer
+
+Educational study aid only. Google, Google Workspace, and related marks are trademarks of Google LLC.
