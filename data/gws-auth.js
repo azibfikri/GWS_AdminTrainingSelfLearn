@@ -71,14 +71,22 @@
   }
 
   function applyPayloadToLocal(payload) {
-    if (!payload || !payload.keys || typeof payload.keys !== "object") return;
+    if (!payload || !payload.keys || typeof payload.keys !== "object") return false;
+    let changed = false;
     Object.keys(payload.keys).forEach((k) => {
       if (SYNC_KEYS.indexOf(k) === -1) return;
       const val = payload.keys[k];
       if (typeof val === "string") {
-        try { localStorage.setItem(k, val); } catch (e) { /* ignore */ }
+        try {
+          const cur = localStorage.getItem(k);
+          if (cur !== val) {
+            localStorage.setItem(k, val);
+            changed = true;
+          }
+        } catch (e) { /* ignore */ }
       }
     });
+    return changed;
   }
 
   async function api(path, options) {
@@ -135,10 +143,12 @@
       const localHas = SYNC_KEYS.some((k) => localStorage.getItem(k));
       const remoteHas = row && row.payload && row.payload.keys && Object.keys(row.payload.keys).length;
       if (remoteHas) {
-        applyPayloadToLocal(row.payload);
+        const changed = applyPayloadToLocal(row.payload);
         setMeta({ lastPull: Date.now(), remoteAt: row.updated_at });
-        window.dispatchEvent(new CustomEvent("gws-profile-loaded"));
-        toast("Loaded progress from your profile.");
+        if (changed) {
+          window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: true } }));
+          toast("Loaded progress from your profile.");
+        }
       } else if (localHas) {
         await pushProgress();
         toast("Uploaded this device's progress to your profile.");

@@ -303,7 +303,10 @@
       setItem(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
       removeItem(k) { try { localStorage.removeItem(k); } catch (e) {} }
     };
-    window.addEventListener("gws-profile-loaded", () => window.location.reload());
+    window.addEventListener("gws-profile-loaded", (e) => {
+      if (e.detail && e.detail.changed === false) return;
+      window.location.reload();
+    });
   (function () {
     const STORAGE_KEY = "gwsAdminSim.v1";
     const MAX_OUS = 50;

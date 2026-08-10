@@ -1837,7 +1837,10 @@
       },
       setJSON(k, d) { try { localStorage.setItem(k, JSON.stringify(d)); } catch (e) {} }
     };
-    window.addEventListener("gws-profile-loaded", () => window.location.reload());
+    window.addEventListener("gws-profile-loaded", (e) => {
+      if (e.detail && e.detail.changed === false) return;
+      window.location.reload();
+    });
 
     (function () {
       const CHECK_KEY = "gws-study-checks-v1";
