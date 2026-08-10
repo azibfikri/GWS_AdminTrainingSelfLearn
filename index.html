@@ -677,17 +677,52 @@
     }
     #fabStyleMenu button:hover { background: var(--accent-soft); }
 
-    .account-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .account-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; justify-content: flex-end; }
     .account-actions .game-btn { font-size: .78rem; padding: .45rem .65rem; min-height: 40px; }
-    .account-row { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; font-size: .8rem; }
-    .account-email { color: #e8f2ed; font-weight: 600; word-break: break-all; }
-    .account-sync { color: #5fd0a5; font-size: .72rem; font-weight: 600; }
-    .account-hint { font-size: .72rem; color: #9bb5aa; margin: 0; line-height: 1.4; }
+    .account-row { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; font-size: .8rem; justify-content: flex-end; }
+    .account-email { color: var(--ink); font-weight: 600; word-break: break-all; text-align: right; }
+    .account-sync { color: var(--accent); font-size: .72rem; font-weight: 600; }
+    .account-hint { font-size: .72rem; color: var(--muted); margin: 0; line-height: 1.4; text-align: right; }
     #accountBar {
-      margin-bottom: .75rem; padding: .75rem; border-radius: 10px;
-      background: #0d1a16; border: 1px solid #2a4a3d;
+      padding: .75rem .85rem; border-radius: 12px;
+      background: var(--paper); border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .account-rail {
+      position: fixed;
+      top: max(1rem, env(safe-area-inset-top));
+      right: max(1rem, env(safe-area-inset-right));
+      width: min(252px, calc(100vw - var(--sidebar-w) - 2.5rem));
+      z-index: 6;
+      max-height: calc(100vh - 2rem);
+      overflow: auto;
+    }
+    .account-rail-label {
+      margin: 0 0 .45rem;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+    }
+    body.style-picking .account-rail,
+    body.style-kinder .account-rail,
+    body.auth-gate .account-rail { display: none !important; }
+    body.is-focus .account-rail { top: max(.65rem, env(safe-area-inset-top)); }
+    @media (min-width: 901px) {
+      .main.desk-shell {
+        padding-right: max(1.75rem, calc(min(252px, 28vw) + 1.5rem));
+      }
     }
     #accountMobile { display: none; }
+    #accountMobile .account-row { justify-content: flex-end; }
+    #accountMobile .account-actions { justify-content: flex-end; margin-top: .35rem; }
+    #accountMobile .account-email { color: #e8f2ed; font-size: .75rem; }
+    #accountMobile .account-sync { color: #5fd0a5; }
+    #accountMobile .account-actions .game-btn {
+      font-size: .7rem; padding: .35rem .5rem; min-height: 36px;
+    }
     .auth-modal {
       position: fixed; inset: 0; z-index: 200; display: none; place-items: center;
       padding: 1rem; padding-top: max(1rem, env(safe-area-inset-top));
@@ -774,9 +809,12 @@
         box-shadow: 8px 0 32px rgba(0,0,0,.28);
       }
       body.nav-open .sidebar { display: block; }
-      #accountBar { display: none; }
+      #accountBar, .account-rail { display: none; }
       #accountMobile {
         display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: right;
       }
       .mobile-topbar .mt-btn-auth { font-size: .72rem; padding: .45rem .55rem; }
       body.is-focus .mobile-topbar { display: flex; }
@@ -942,11 +980,10 @@
   </div>
 
   <button type="button" class="nav-backdrop" id="navBackdrop" aria-label="Close menu"></button>
-  <div id="accountMobile" aria-live="polite"></div>
   <div class="mobile-topbar" id="mobileTopbar">
     <p class="mt-brand">GWS Study Desk<span>Admin exam prep</span></p>
     <div class="mt-actions">
-      <button type="button" class="mt-btn mt-btn-auth" id="btnAuthMobile">Account</button>
+      <div id="accountMobile" aria-live="polite"></div>
       <button type="button" class="mt-btn" id="btnNavToggle" aria-expanded="false" aria-controls="sidebarNav">Menu</button>
     </div>
   </div>
@@ -1024,7 +1061,6 @@
         <a href="#dns">DNS cheat-sheet</a>
       </nav>
       <div class="progress-box">
-        <div id="accountBar" aria-live="polite"></div>
         <div>Study checklist progress</div>
         <div class="progress-bar"><i id="progBar"></i></div>
         <div><span id="progText">0</span> items checked</div>
@@ -1034,6 +1070,10 @@
     </aside>
 
     <main class="main desk-shell" id="content">
+      <aside class="account-rail" id="accountRail" aria-label="Your profile">
+        <p class="account-rail-label">Profile</p>
+        <div id="accountBar" aria-live="polite"></div>
+      </aside>
       <div class="desk-chrome" id="deskChrome">
         <p class="desk-kicker">Study desk</p>
         <h2 class="desk-title" id="deskPageTitle">Home</h2>
