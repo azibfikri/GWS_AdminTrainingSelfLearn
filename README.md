@@ -8,6 +8,13 @@
 
 > Personal portfolio project. Not affiliated with Google or the official certification exam.
 
+<p align="center">
+  <a href="https://gws-admin-study-guide.vercel.app/">
+    <img src="docs/screenshots/01-study-desk.png" alt="GWS Admin Study Desk — modules, session timer, and adult learning paths" width="920" />
+  </a>
+</p>
+<p align="center"><em>Study desk with adult paths, 25-minute session timer, and module navigation.</em></p>
+
 ---
 
 ## Live app
@@ -113,7 +120,14 @@ Optional env overrides:
 
 ## Screenshots
 
-_Add screenshots here for your portfolio (Study Desk home, Practice arena, Sandbox)._
+| | |
+|:---:|:---:|
+| **Learning styles** — Kindergarten stories or adult exam desk | **Practice arena** — mock bank drills with XP |
+| [![Learning style gate](docs/screenshots/04-learning-styles.png)](https://gws-admin-study-guide.vercel.app/) | [![Practice arena quiz](docs/screenshots/02-practice-arena.png)](https://gws-admin-study-guide.vercel.app/#practice) |
+| **Admin sandbox** — OU inheritance & policy inspector | **Study desk** — focus mode & session flow |
+| [![Admin console simulator](docs/screenshots/03-admin-sandbox.png)](https://gws-admin-study-guide.vercel.app/gws-admin-console.html) | [![Study desk overview](docs/screenshots/01-study-desk.png)](https://gws-admin-study-guide.vercel.app/) |
+
+All captures from the [live demo](https://gws-admin-study-guide.vercel.app/). Full-size files live in [`docs/screenshots/`](docs/screenshots/).
 
 ---
 
