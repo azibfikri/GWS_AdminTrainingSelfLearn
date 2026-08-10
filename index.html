@@ -2806,7 +2806,11 @@
       const UI_KEY = "gws-study-ui-v1";
       const SESSION_KEY = "gws-study-session-v1";
       const CHECK_KEY = "gws-study-checks-v1";
+      const contentEl = document.getElementById("content");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function showDesk(page, opts) {
+        return window.gwsDesk?.show(page, opts);
+      }
 
       function loadJSON(key, fallback) {
         return store.getJSON(key, fallback);
@@ -3339,7 +3343,7 @@
         if (!hub) return;
         if (state.style !== "adult") return;
         if (!state.adultPath) {
-          hub.classList.add("hidden-path");
+          hub.classList.remove("hidden-path");
           if (journey) journey.classList.remove("show");
         } else {
           hub.classList.remove("hidden-path");
