@@ -61,6 +61,12 @@
     try { localStorage.setItem(META_KEY, JSON.stringify(next)); } catch (e) { /* ignore */ }
   }
 
+  function clearLocalSyncKeys() {
+    SYNC_KEYS.forEach((k) => {
+      try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
+    });
+  }
+
   function buildPayloadFromLocal() {
     const keys = {};
     SYNC_KEYS.forEach((k) => {
@@ -70,9 +76,19 @@
     return { keys };
   }
 
-  function applyPayloadToLocal(payload) {
+  function applyPayloadToLocal(payload, replaceAll) {
     if (!payload || !payload.keys || typeof payload.keys !== "object") return false;
     let changed = false;
+    if (replaceAll) {
+      SYNC_KEYS.forEach((k) => {
+        try {
+          if (localStorage.getItem(k) != null) {
+            localStorage.removeItem(k);
+            changed = true;
+          }
+        } catch (e) { /* ignore */ }
+      });
+    }
     Object.keys(payload.keys).forEach((k) => {
       if (SYNC_KEYS.indexOf(k) === -1) return;
       const val = payload.keys[k];
@@ -134,27 +150,50 @@
     return { payload: data.payload, updated_at: data.updated_at };
   }
 
-  async function handleSignedIn(user, token) {
+  async function handleSignedIn(user, token, opts) {
+    opts = opts || {};
+    const prevUserId = getMeta().userId || null;
+    const userChanged = prevUserId && prevUserId !== user.id;
+    let clearedLocal = false;
+
+    if (opts.isNewAccount || userChanged) {
+      clearLocalSyncKeys();
+      clearedLocal = true;
+    } else if (opts.freshLogin) {
+      clearLocalSyncKeys();
+      clearedLocal = true;
+    }
+
     if (token) setToken(token);
     session = { user: { id: user.id, username: user.username } };
+    setMeta({ userId: user.id });
     paintAccount();
+    document.body.classList.remove("auth-gate");
+    if (modal) modal.classList.remove("auth-required");
+
+    let pulledChanged = false;
     try {
       const row = await pullProgress(user.id);
-      const localHas = SYNC_KEYS.some((k) => localStorage.getItem(k));
       const remoteHas = row && row.payload && row.payload.keys && Object.keys(row.payload.keys).length;
       if (remoteHas) {
-        const changed = applyPayloadToLocal(row.payload);
+        pulledChanged = applyPayloadToLocal(row.payload, true);
         setMeta({ lastPull: Date.now(), remoteAt: row.updated_at });
-        if (changed) {
-          window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: true } }));
-          toast("Loaded progress from your profile.");
-        }
-      } else if (localHas) {
-        await pushProgress();
-        toast("Uploaded this device's progress to your profile.");
+        if (pulledChanged) toast("Loaded progress from your profile.");
+      } else if (opts.isNewAccount) {
+        toast("Welcome — pick your learning style to begin.");
       }
     } catch (e) {
       toast("Signed in — sync failed; using device storage.");
+    }
+
+    if (opts.reloadAfter) {
+      window.location.reload();
+      return;
+    }
+    if (clearedLocal || pulledChanged) {
+      window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: true } }));
+    } else {
+      window.dispatchEvent(new CustomEvent("gws-auth-signed-in"));
     }
     scheduleSync();
   }
@@ -163,6 +202,8 @@
     session = null;
     setToken(null);
     clearTimeout(syncTimer);
+    clearLocalSyncKeys();
+    setMeta({ userId: null, lastPull: null, lastPush: null, remoteAt: null });
     paintAccount();
   }
 
@@ -213,6 +254,7 @@
     },
     signOut() {
       handleSignedOut();
+      if (configured) window.location.reload();
     },
     uploadDeviceToCloud() {
       return pushProgress();
@@ -232,23 +274,32 @@
     authErr.classList.toggle("hidden", !msg);
   }
 
-  function openModal(tab) {
+  function openModal(tab, opts) {
+    opts = opts || {};
     if (!configured) {
       toast("Cloud profiles are not configured on this copy.");
       return;
     }
     if (!modal) return;
+    modal._required = !!opts.required;
+    modal.classList.toggle("auth-required", !!opts.required);
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
     switchTab(tab || "signin");
     setAuthError("");
+    const closeBtn = document.getElementById("authModalClose");
+    if (closeBtn) closeBtn.hidden = !!opts.required;
   }
 
   function closeModal() {
     if (!modal) return;
-    modal.classList.remove("open");
+    if (modal._required) return;
+    modal.classList.remove("open", "auth-required");
     modal.setAttribute("aria-hidden", "true");
+    modal._required = false;
     setAuthError("");
+    const closeBtn = document.getElementById("authModalClose");
+    if (closeBtn) closeBtn.hidden = false;
   }
 
   function switchTab(tab) {
@@ -345,7 +396,7 @@
         body: JSON.stringify({ username, password })
       });
       closeModal();
-      await handleSignedIn(data.user, data.token);
+      await handleSignedIn(data.user, data.token, { freshLogin: true, reloadAfter: true });
     } catch (err) {
       setAuthError(err.message || "Could not log in.");
     }
@@ -363,12 +414,20 @@
         body: JSON.stringify({ username, password })
       });
       closeModal();
-      await handleSignedIn(data.user, data.token);
-      toast("Account created — welcome!");
+      await handleSignedIn(data.user, data.token, { isNewAccount: true, reloadAfter: true });
     } catch (err) {
       setAuthError(err.message || "Could not sign up.");
     }
   });
+
+  function showLoginGate() {
+    document.body.classList.add("auth-gate");
+    const lede = document.getElementById("authLede");
+    if (lede) {
+      lede.textContent = "Log in or create an account first. Your progress and learning style save to your profile.";
+    }
+    openModal("signin", { required: true });
+  }
 
   async function initAuth() {
     paintAccount();
@@ -383,7 +442,10 @@
         await handleSignedIn(data.user, null);
       } catch (e) {
         setToken(null);
+        showLoginGate();
       }
+    } else {
+      showLoginGate();
     }
     emitReady();
   }

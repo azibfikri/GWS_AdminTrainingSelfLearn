@@ -693,6 +693,18 @@
       padding: 1rem; padding-top: max(1rem, env(safe-area-inset-top));
     }
     .auth-modal.open { display: grid; }
+    body.auth-gate #styleGate,
+    body.auth-gate .layout,
+    body.auth-gate #kinderWorld,
+    body.auth-gate #fabStyle,
+    body.auth-gate .reading-bar,
+    body.auth-gate .focus-exit,
+    body.auth-gate .mobile-topbar,
+    body.auth-gate .nav-backdrop,
+    body.auth-gate #accountMobile { display: none !important; }
+    body.auth-gate .auth-modal { display: grid; }
+    body.auth-gate .auth-modal .auth-backdrop { cursor: default; pointer-events: none; }
+    .auth-modal.auth-required .auth-close { display: none; }
     .auth-backdrop {
       position: absolute; inset: 0; background: rgba(10, 20, 16, .55); border: 0; cursor: pointer;
     }
@@ -945,7 +957,7 @@
     <div class="auth-card">
       <button type="button" class="auth-close" id="authModalClose" aria-label="Close">×</button>
       <h2 id="authModalTitle">Your study profile</h2>
-      <p class="auth-lede">Sign in to sync checklist, practice XP, session timer, and style across devices.</p>
+      <p class="auth-lede" id="authLede">Sign in to sync checklist, practice XP, session timer, and style across devices.</p>
       <div class="auth-tabs" role="tablist">
         <button type="button" class="active" data-auth-tab="signin">Log in</button>
         <button type="button" data-auth-tab="signup">Sign up</button>
@@ -3438,12 +3450,25 @@
         fabMain?.setAttribute("aria-expanded", "false");
       });
 
-      // Boot
-      if (state.style === "kinder" || state.style === "adult") {
-        applyStyle(state.style, { skipScroll: true });
-      } else {
-        applyStyle(null);
+      // Boot (after cloud login gate when configured)
+      function bootStyleFromStorage() {
+        state = loadStyle();
+        if (state.style === "kinder" || state.style === "adult") {
+          applyStyle(state.style, { skipScroll: true });
+        } else {
+          applyStyle(null);
+        }
       }
+      function tryBootStyle() {
+        if (document.body.classList.contains("auth-gate")) return;
+        bootStyleFromStorage();
+      }
+      if (window.gwsStorage && window.gwsStorage.onReady) {
+        window.gwsStorage.onReady(tryBootStyle);
+      } else {
+        tryBootStyle();
+      }
+      window.addEventListener("gws-auth-signed-in", tryBootStyle);
 
       /* Mobile nav drawer */
       function setNavOpen(open) {
