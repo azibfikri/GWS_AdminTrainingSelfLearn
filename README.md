@@ -42,7 +42,7 @@
 | Hosting | [Vercel](https://vercel.com) (static + build hook for `config.js`) |
 | Backend | Supabase (Postgres, Edge Function `gws-study-api`) |
 | Desktop | Electron + electron-builder |
-| CI | GitHub Actions — Windows NSIS build workflow |
+| CI | GitHub Actions workflow template in `scripts/ci/` |
 
 ---
 
@@ -68,8 +68,8 @@ gws-admin-study-guide/
 ## Run locally
 
 ```bash
-git clone https://github.com/azibfikri/gws-admin-study-guide.git
-cd gws-admin-study-guide
+git clone https://github.com/azibfikri/GWS_AdminTrainingSelfLearn.git
+cd GWS_AdminTrainingSelfLearn
 npm install
 node scripts/write-config.js   # writes config.js for cloud login
 open index.html                # or: npm start (Electron)
@@ -86,7 +86,7 @@ Cloud login uses the hosted API by default (`config.example.js`). Progress still
 | Mac | `npm run pack:mac` | `dist/mac-arm64/*.app` |
 | Mac DMG | `npm run dist:mac` | DMG installer |
 | Windows (from Mac) | `npm run dist:win:setup` | Zip + `Install.bat` |
-| Windows NSIS | GitHub Action **Build Windows installer** or `npm run dist:win` on Windows |
+| Windows NSIS | Copy `scripts/ci/build-windows.yml` → `.github/workflows/` on GitHub, or run `npm run dist:win` on Windows |
 
 ---
 
