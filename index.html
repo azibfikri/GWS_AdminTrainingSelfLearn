@@ -3345,7 +3345,7 @@
           hub.classList.remove("hidden-path");
           if (journey) journey.classList.toggle("show", state.adultPath === "sandbox");
         }
-        paintDeskVisibility();
+        window.gwsDesk?.refresh?.();
       }
 
       function applyStyle(style, opts) {
@@ -3367,6 +3367,8 @@
           paintAdultPathUI();
           if (!opts.skipScroll) {
             window.gwsDesk?.show("home", { skipHash: false });
+          } else {
+            window.gwsDesk?.refresh?.();
           }
         }
       }
@@ -3402,12 +3404,13 @@
       document.getElementById("pathFocus")?.addEventListener("click", () => setAdultPath("focus"));
       document.getElementById("btnAdultPaths")?.addEventListener("click", () => {
         hub?.classList.remove("hidden-path");
-        paintDeskVisibility();
-        showDesk("home");
+        window.gwsDesk?.refresh?.();
+        window.gwsDesk?.show("home");
         setTimeout(() => hub?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 20);
       });
-      document.getElementById("btnSandboxExam")?.addEventListener("click", () => {
-        showDesk("practice");
+      document.getElementById("btnSandboxExam")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.gwsDesk?.show("practice");
       });
 
       fabMain?.addEventListener("click", () => {
