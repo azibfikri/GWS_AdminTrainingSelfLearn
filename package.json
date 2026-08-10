@@ -1,0 +1,85 @@
+{
+  "name": "gws-admin-study-desk",
+  "productName": "GWS Admin Study Desk",
+  "version": "1.1.0",
+  "description": "Associate Google Workspace Administrator study desk — browser, Mac, or Windows",
+  "main": "electron/main.js",
+  "author": "Azib",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "pack:mac": "electron-builder --mac dir --publish never",
+    "dist:mac": "electron-builder --mac dmg --publish never",
+    "pack:win": "electron-builder --win zip --x64 --publish never",
+    "dist:win": "electron-builder --win nsis portable zip --x64 --publish never",
+    "dist:win:setup": "zsh scripts/make-windows-setup.sh"
+  },
+  "build": {
+    "appId": "com.azib.gws-admin-study-desk",
+    "productName": "GWS Admin Study Desk",
+    "copyright": "Copyright © Azib",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "index.html",
+      "gws-admin-console.html",
+      "data/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "target": [
+        "dir",
+        "dmg"
+      ],
+      "identity": null
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "GWS Admin Study Desk",
+      "installerLanguages": [
+        "en_US"
+      ],
+      "language": "1033",
+      "deleteAppDataOnUninstall": false
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-Windows-Portable-${arch}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
+    "supabase": "^2.113.0"
+  }
+}

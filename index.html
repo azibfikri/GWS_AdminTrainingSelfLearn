@@ -1,0 +1,3313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#12241e" />
+  <title>GWS Admin Study Guide — Associate Google Workspace Administrator</title>
+  <link rel="icon" href="./favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eef3ef;
+      --bg-2: #e2ebe4;
+      --paper: #fbf8f2;
+      --surface: #fffcf7;
+      --ink: #15241e;
+      --muted: #5a6b63;
+      --line: #c5d2ca;
+      --accent: #0c6550;
+      --accent-2: #1f8f72;
+      --accent-soft: #d4efe6;
+      --warn: #8a5a00;
+      --warn-bg: #fff4d6;
+      --tip: #0b4f8a;
+      --tip-bg: #e6f1fb;
+      --danger: #8b2e2e;
+      --danger-bg: #fdeceb;
+      --ok: #0d6e56;
+      --ok-bg: #e3f5ee;
+      --sidebar-w: 288px;
+      --radius: 14px;
+      --shadow: 0 1px 2px rgba(21,36,30,.05), 0 12px 32px rgba(21,36,30,.07);
+      --font: "IBM Plex Sans", system-ui, sans-serif;
+      --serif: "IBM Plex Serif", Georgia, serif;
+      --kinder-font: "Fredoka", "IBM Plex Sans", sans-serif;
+      --kinder-bg: #fff6e8;
+      --kinder-ink: #3a2a18;
+      --kinder-accent: #e07a3a;
+      --kinder-sky: #5b9fd4;
+      --kinder-grass: #5fa86a;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.58;
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(1100px 640px at 8% -8%, rgba(47, 140, 110, .22) 0%, transparent 58%),
+        radial-gradient(900px 520px at 96% 4%, rgba(90, 140, 170, .16) 0%, transparent 52%),
+        radial-gradient(700px 480px at 70% 90%, rgba(180, 150, 90, .08) 0%, transparent 55%),
+        linear-gradient(180deg, #e8f0ea 0%, var(--bg) 40%, #e6ede8 100%);
+    }
+    body::after {
+      content: "";
+      position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .35;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      mix-blend-mode: soft-light;
+    }
+    a { color: var(--accent); }
+    .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      background: #12241e; color: #e8f2ed; padding: 1.25rem 1rem 2rem;
+      border-right: 1px solid #1e3a30;
+    }
+    .brand { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; margin: 0 0 .25rem; letter-spacing: -.01em; }
+    .brand span { display: block; font-family: var(--font); font-size: .72rem; font-weight: 500; color: #9bb5aa; margin-top: .35rem; }
+    .search {
+      width: 100%; margin: 1rem 0 .75rem; padding: .65rem .75rem;
+      border-radius: 8px; border: 1px solid #2a4a3d; background: #0d1a16; color: #e8f2ed;
+      font: inherit;
+    }
+    .search::placeholder { color: #7f9a8e; }
+    .nav-sec { margin: 1rem 0 .35rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: #7f9a8e; font-weight: 600; }
+    .nav a {
+      display: block; color: #c9ddd4; text-decoration: none; padding: .4rem .55rem; border-radius: 7px;
+      font-size: .88rem; margin-bottom: 2px;
+    }
+    .nav a:hover, .nav a.active { background: #1c3a2f; color: #fff; }
+    .nav a .w { float: right; color: #7f9a8e; font-size: .72rem; }
+    .progress-box {
+      margin-top: 1.25rem; padding: .85rem; border-radius: 10px; background: #0d1a16; border: 1px solid #2a4a3d;
+      font-size: .82rem; color: #b7cec3;
+    }
+    .progress-bar { height: 8px; background: #1e3a30; border-radius: 99px; overflow: hidden; margin: .5rem 0; }
+    .progress-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #2f9e78, #5fd0a5); }
+    .main { padding: 1.5rem 1.75rem 4rem; max-width: 980px; transition: max-width .35s ease; }
+    .hero {
+      position: relative; overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(255,252,247,.96) 0%, rgba(236,246,240,.92) 55%, rgba(255,248,236,.9) 100%);
+      border: 1px solid var(--line); border-radius: calc(var(--radius) + 6px);
+      padding: 2rem 1.85rem 1.55rem; box-shadow: var(--shadow); margin-bottom: 1.25rem;
+    }
+    .hero::before {
+      content: ""; position: absolute; right: -40px; top: -50px; width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(31,143,114,.18), transparent 68%); pointer-events: none;
+    }
+    .hero-kicker {
+      display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: .55rem;
+    }
+    .hero h1 { font-family: var(--serif); font-size: clamp(1.85rem, 3.4vw, 2.45rem); margin: 0 0 .55rem; letter-spacing: -.025em; line-height: 1.15; }
+    .hero .lede { color: var(--muted); margin: 0 0 1.15rem; max-width: 58ch; font-size: 1.02rem; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: .55rem; margin: 0 0 1rem; }
+    .hero-cta .game-btn { min-height: 44px; }
+    .meta { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: .35rem; padding: .35rem .65rem;
+      border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); font-size: .78rem; font-weight: 600;
+    }
+    .module {
+      background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1.5rem 1.5rem 1.25rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
+      scroll-margin-top: 4.5rem;
+    }
+    .module.is-arrived {
+      animation: moduleArrive .45s ease both;
+    }
+    .module h2 {
+      font-family: var(--serif); font-size: 1.45rem; margin: 0 0 .35rem; letter-spacing: -.015em;
+      display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+    }
+    .module h2 .pct {
+      font-family: var(--font); font-size: .75rem; font-weight: 700; color: var(--accent);
+      background: var(--accent-soft); padding: .2rem .5rem; border-radius: 6px;
+    }
+    .goal { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
+    h3 { font-size: 1.05rem; margin: 1.35rem 0 .55rem; }
+    h4 { font-size: .92rem; margin: 1rem 0 .4rem; color: #2a3d36; }
+    p { margin: .45rem 0 .7rem; }
+    ul, ol { margin: .35rem 0 .85rem; padding-left: 1.2rem; }
+    li { margin: .28rem 0; }
+    .plain, .tip, .warn, .exam, .memo {
+      border-radius: 10px; padding: .85rem 1rem; margin: .85rem 0; border: 1px solid transparent;
+    }
+    .plain { background: var(--ok-bg); border-color: #b7e0cf; }
+    .tip { background: var(--tip-bg); border-color: #b7d4f0; }
+    .warn { background: var(--warn-bg); border-color: #efd59a; }
+    .exam { background: #e8f4ef; border-color: #b7d9c8; }
+    .memo { background: #f0f2f4; border-color: var(--line); }
+    .plain strong, .tip strong, .warn strong, .exam strong, .memo strong {
+      display: inline-block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .2rem;
+    }
+    .plain strong { color: var(--ok); }
+    .tip strong { color: var(--tip); }
+    .warn strong { color: var(--warn); }
+    .exam strong { color: #0a4f3d; }
+    .memo strong { color: var(--muted); }
+    table {
+      width: 100%; border-collapse: collapse; font-size: .9rem; margin: .7rem 0 1rem;
+      background: #fafcfb; border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    }
+    th, td { text-align: left; padding: .65rem .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: #eef4f0; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #3d5249; }
+    tr:last-child td { border-bottom: 0; }
+    .steps {
+      counter-reset: step; list-style: none; padding: 0; margin: .6rem 0 1rem;
+    }
+    .steps li {
+      position: relative; padding: .7rem .85rem .7rem 2.7rem; margin: .4rem 0;
+      background: #f7faf8; border: 1px solid var(--line); border-radius: 10px;
+    }
+    .steps li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: .7rem; top: .7rem;
+      width: 1.4rem; height: 1.4rem; border-radius: 50%;
+      background: var(--accent); color: #fff; font-size: .75rem; font-weight: 700;
+      display: grid; place-items: center;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
+    .card {
+      border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; background: #fafcfb;
+    }
+    .card h4 { margin-top: 0; }
+    .heur {
+      display: grid; grid-template-columns: 1.2fr .8fr; gap: 0; border: 1px solid var(--line);
+      border-radius: 10px; overflow: hidden; margin: .5rem 0;
+    }
+    .heur .if { background: #fff; padding: .7rem .85rem; border-right: 1px solid var(--line); }
+    .heur .then { background: var(--accent-soft); padding: .7rem .85rem; font-weight: 600; color: #0a4f3d; }
+    .check-row {
+      display: flex; gap: .6rem; align-items: flex-start; margin: .55rem 0;
+      padding: .55rem .7rem; border-radius: 8px; background: #f7faf8; border: 1px dashed var(--line);
+    }
+    .check-row input { margin-top: .2rem; }
+    .check-row.done { opacity: .65; text-decoration: line-through; }
+    .toc-mini { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 0; }
+    .toc-mini a {
+      text-decoration: none; font-size: .78rem; font-weight: 600; color: var(--ink);
+      background: var(--bg-2); border: 1px solid var(--line); padding: .35rem .6rem; border-radius: 8px;
+    }
+    .hidden { display: none !important; }
+    .mark { background: #ffe8a3; padding: 0 .1em; border-radius: 2px; }
+    footer.note { color: var(--muted); font-size: .82rem; margin-top: 2rem; }
+    /* Practice arena */
+    .game-stats {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: .45rem; margin: .85rem 0 1rem;
+    }
+    .game-stat {
+      background: #f7faf8; border: 1px solid var(--line); border-radius: 10px; padding: .55rem .5rem; text-align: center;
+    }
+    .game-stat b { display: block; font-size: 1.05rem; color: var(--accent); }
+    .game-stat span { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+    .mode-row { display: flex; flex-wrap: wrap; gap: .4rem; margin: .55rem 0 1rem; }
+    .mode-btn, .game-btn {
+      font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid var(--line);
+      background: #f7faf8; color: var(--ink); padding: .55rem .85rem; font-weight: 600; font-size: .88rem;
+    }
+    a.game-btn {
+      display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+      box-sizing: border-box;
+    }
+    .mode-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .mode-btn:disabled, .game-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .answer-key-toolbar {
+      display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 1rem;
+    }
+    .answer-key-toolbar input[type="search"] {
+      flex: 1; min-width: 180px; padding: .55rem .75rem; border-radius: 8px;
+      border: 1px solid var(--line); font: inherit;
+    }
+    .answer-key-item {
+      margin: 0 0 .55rem; border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    }
+    .answer-key-item > summary {
+      cursor: pointer; list-style: none; padding: .75rem 1rem; font-weight: 600; line-height: 1.35;
+    }
+    .answer-key-item > summary::-webkit-details-marker { display: none; }
+    .answer-key-item > summary::before { content: "▸ "; color: var(--accent); }
+    .answer-key-item[open] > summary::before { content: "▾ "; }
+    .answer-key-meta {
+      display: block; font-size: .75rem; font-weight: 600; color: var(--muted);
+      margin-bottom: .25rem; letter-spacing: .02em;
+    }
+    .answer-key-body { padding: 0 1rem 1rem; }
+    .answer-key-choice {
+      display: block; padding: .45rem .65rem; margin: .3rem 0; border-radius: 8px;
+      border: 1px solid var(--line); font-size: .92rem;
+    }
+    .answer-key-choice.correct {
+      background: var(--ok-bg); border-color: #9fd4c0; font-weight: 600;
+    }
+    .answer-key-choice .ak-letter {
+      display: inline-block; min-width: 1.4rem; font-weight: 700; color: var(--accent);
+    }
+    .answer-key-explain {
+      margin-top: .65rem; padding: .65rem .75rem; border-radius: 8px;
+      background: var(--tip-bg); color: #163a5c; font-size: .9rem;
+    }
+    .answer-key-explain strong { display: block; margin-bottom: .25rem; }
+    .game-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .game-btn.ghost { background: transparent; }
+    .game-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
+    .module-pick { margin: .35rem 0 1rem; }
+    .module-pick select {
+      font: inherit; padding: .5rem .65rem; border-radius: 8px; border: 1px solid var(--line); background: #fff; min-width: 220px;
+    }
+    .game-rules { font-size: .85rem; color: var(--muted); margin: .35rem 0 0; }
+    .game-q-meta { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin-bottom: .65rem; font-size: .82rem; color: var(--muted); }
+    .game-stem { font-size: 1.05rem; font-weight: 600; margin: .35rem 0 .75rem; line-height: 1.45; }
+    .game-edition {
+      font-size: .82rem; color: var(--warn); background: var(--warn-bg); border: 1px solid #efd59a;
+      border-radius: 8px; padding: .45rem .65rem; margin: 0 0 .75rem;
+    }
+    .choice-list { display: grid; gap: .45rem; margin: .5rem 0 1rem; }
+    .choice {
+      text-align: left; width: 100%; font: inherit; cursor: pointer;
+      border: 1px solid var(--line); border-radius: 10px; padding: .75rem .9rem; background: #fff;
+      display: flex; gap: .65rem; align-items: flex-start; min-height: 48px;
+    }
+    .choice:hover:not(:disabled) { border-color: var(--accent); background: #f3faf7; }
+    .choice:disabled { cursor: default; }
+    .choice .letter {
+      flex: 0 0 1.5rem; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+      background: var(--bg-2); display: grid; place-items: center; font-size: .75rem; font-weight: 700; margin-top: .1rem;
+    }
+    .choice.selected { border-color: var(--accent); background: var(--accent-soft); }
+    .choice.correct { border-color: var(--ok); background: var(--ok-bg); }
+    .choice.wrong { border-color: var(--danger); background: var(--danger-bg); }
+    .game-feedback { border-radius: 10px; padding: .85rem 1rem; margin: .75rem 0; border: 1px solid var(--line); }
+    .game-feedback.ok { background: var(--ok-bg); border-color: #b7e0cf; }
+    .game-feedback.bad { background: var(--danger-bg); border-color: #f0c4c0; }
+    .game-feedback a { font-weight: 600; }
+    .game-empty { padding: 1rem; background: var(--warn-bg); border: 1px solid #efd59a; border-radius: 10px; }
+    .sidebar-game {
+      margin-top: .75rem; padding-top: .75rem; border-top: 1px solid #2a4a3d; font-size: .78rem; color: #9bb5aa; line-height: 1.45;
+    }
+    .sidebar-game strong { color: #e8f2ed; font-weight: 600; }
+
+    /* Study Desk additions */
+    .desk-tools {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0 .25rem;
+    }
+    .desk-tools .game-btn {
+      background: #1a3329; color: #e8f2ed; border-color: #2a4a3d; font-size: .78rem; padding: .45rem .7rem;
+    }
+    .desk-tools .game-btn.active-focus { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    .sidebar-session {
+      margin-top: .65rem; font-size: .76rem; color: #9bb5aa; line-height: 1.4;
+    }
+    .sidebar-session strong { color: #e8f2ed; }
+    .nav a .dot {
+      float: right; width: .45rem; height: .45rem; border-radius: 50%; margin-top: .45rem;
+      background: transparent; border: 1px solid #3d5c4f;
+    }
+    .nav a .dot.done { background: #5fd0a5; border-color: #5fd0a5; }
+    .study-session {
+      background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1.15rem 1.25rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
+      scroll-margin-top: 1rem;
+    }
+    .study-session h2 { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 .35rem; }
+    .session-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin: .75rem 0; }
+    .session-timer {
+      font-variant-numeric: tabular-nums; font-size: 1.65rem; font-weight: 700; color: var(--accent);
+      min-width: 4.5ch; letter-spacing: .02em;
+    }
+    .session-goal { flex: 1; min-width: 200px; color: var(--muted); font-size: .92rem; }
+    .session-goal b { color: var(--ink); }
+    .session-progress {
+      height: 8px; background: var(--bg-2); border-radius: 99px; overflow: hidden; margin: .35rem 0 .75rem;
+    }
+    .session-progress > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s ease; }
+    .reading-bar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 80;
+      background: linear-gradient(90deg, var(--accent), #7bc9a8); pointer-events: none;
+    }
+    .focus-exit {
+      position: fixed; top: .75rem; right: .75rem; z-index: 90; display: none;
+    }
+    body.is-focus .focus-exit { display: inline-flex; }
+    body.is-focus .layout { grid-template-columns: 1fr; }
+    body.is-focus .sidebar { display: none; }
+    body.is-focus .main { max-width: 820px; margin: 0 auto; }
+    body.is-focus .module:not(.is-focus-active):not(#practice) { opacity: .42; filter: saturate(.85); }
+    body.is-focus #practice { opacity: 1; filter: none; }
+    .module-rail {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1rem; padding: .55rem .65rem;
+      background: rgba(13,110,86,.06); border: 1px dashed var(--line); border-radius: 10px;
+    }
+    .module-rail span {
+      font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+      align-self: center; margin-right: .25rem;
+    }
+    .module-rail .game-btn { padding: .4rem .7rem; font-size: .8rem; min-height: 40px; }
+    .study-reveal { margin: .85rem 0; border: 1px solid var(--line); border-radius: 10px; background: #f7faf8; }
+    .study-reveal > summary {
+      cursor: pointer; list-style: none; padding: .75rem 1rem; font-weight: 600; color: #0a4f3d;
+    }
+    .study-reveal > summary::-webkit-details-marker { display: none; }
+    .study-reveal > summary::before { content: "▸ "; color: var(--accent); }
+    .study-reveal[open] > summary::before { content: "▾ "; }
+    .study-reveal .exam, .study-reveal .tip, .study-reveal .warn { margin: 0; border: 0; border-radius: 0 0 10px 10px; }
+    .check-row.just-checked { animation: checkPulse .45s ease; }
+    .choice.correct { animation: xpTick .4s ease; }
+    .study-toast {
+      position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%) translateY(120%);
+      background: #12241e; color: #e8f2ed; padding: .7rem 1.1rem; border-radius: 999px;
+      font-size: .88rem; font-weight: 600; z-index: 100; box-shadow: var(--shadow);
+      transition: transform .35s ease; pointer-events: none; max-width: 90vw; text-align: center;
+    }
+    .study-toast.show { transform: translateX(-50%) translateY(0); }
+    .kbd-hint { font-size: .78rem; color: var(--muted); margin: .5rem 0 0; }
+    .mock-timer-badge {
+      display: inline-flex; align-items: center; gap: .35rem; margin: 0 0 .75rem;
+      padding: .35rem .7rem; border-radius: 999px; font-weight: 700; font-variant-numeric: tabular-nums;
+      font-size: .85rem; background: #12241e; color: #e8f2ed;
+    }
+    .mock-timer-badge.urgent { background: #7a1f1f; }
+    .kbd-hint kbd {
+      font: inherit; font-size: .72rem; font-weight: 700; padding: .1rem .35rem;
+      border: 1px solid var(--line); border-radius: 5px; background: #fff;
+    }
+    .exam-facts { margin-top: 1rem; padding-top: .85rem; border-top: 1px dashed var(--line); }
+    @keyframes deskGlow {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(8deg); }
+    }
+    @keyframes moduleArrive {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes checkPulse {
+      0% { background: #f7faf8; }
+      40% { background: var(--accent-soft); }
+      100% { background: #f7faf8; }
+    }
+    @keyframes xpTick {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      body::before { animation: none !important; }
+      .module.is-arrived, .check-row.just-checked, .choice.correct { animation: none !important; }
+      .main, .session-progress > i, .study-toast { transition: none !important; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      body::before { animation: deskGlow 28s ease-in-out infinite; }
+    }
+
+    /* ===== Learning style: gate / kindergarten / adult ===== */
+    body.style-picking .layout,
+    body.style-picking #kinderWorld,
+    body.style-picking #fabStyle,
+    body.style-picking .reading-bar,
+    body.style-picking .focus-exit,
+    body.style-picking .mobile-topbar,
+    body.style-picking .nav-backdrop { display: none !important; }
+    body.style-kinder .layout,
+    body.style-kinder .mobile-topbar,
+    body.style-kinder .nav-backdrop { display: none !important; }
+    body.style-kinder #styleGate { display: none !important; }
+    body.style-adult #styleGate,
+    body.style-adult #kinderWorld { display: none !important; }
+    body:not(.style-kinder) #kinderWorld { display: none !important; }
+    body:not(.style-picking) #styleGate { display: none !important; }
+    body.nav-open { overflow: hidden; }
+
+    #styleGate {
+      min-height: 100vh; display: grid; place-items: center; padding: 2rem 1.25rem 3rem;
+      position: relative; z-index: 5;
+    }
+    .gate-card {
+      width: min(920px, 100%); background: rgba(255,252,247,.94);
+      border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow);
+      padding: 2rem 1.75rem 1.75rem;
+    }
+    .gate-card h1 {
+      font-family: var(--serif); font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+      margin: 0 0 .5rem; letter-spacing: -.02em; text-align: center;
+    }
+    .gate-card .gate-lede {
+      text-align: center; color: var(--muted); margin: 0 auto 1.5rem; max-width: 46ch;
+    }
+    .gate-choices {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    @media (max-width: 720px) {
+      .gate-choices { grid-template-columns: 1fr; }
+    }
+    .gate-choice {
+      text-align: left; cursor: pointer; border: 2px solid var(--line);
+      border-radius: 18px; padding: 1.25rem 1.2rem; background: #fff;
+      font: inherit; color: inherit; transition: border-color .2s, transform .2s, box-shadow .2s;
+      min-height: 180px; display: flex; flex-direction: column; gap: .45rem;
+    }
+    .gate-choice:hover, .gate-choice:focus-visible {
+      border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-2px); outline: none;
+    }
+    .gate-choice.kinder-pick {
+      background: linear-gradient(165deg, #fff8ee, #ffe8d2);
+      border-color: #f0c9a0;
+    }
+    .gate-choice.kinder-pick:hover { border-color: var(--kinder-accent); }
+    .gate-choice.adult-pick {
+      background: linear-gradient(165deg, #f4faf7, #e4f0ea);
+    }
+    .gate-choice .gc-kicker {
+      font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    }
+    .gate-choice.kinder-pick .gc-kicker { color: var(--kinder-accent); font-family: var(--kinder-font); }
+    .gate-choice h2 {
+      margin: 0; font-size: 1.35rem; font-family: var(--serif);
+    }
+    .gate-choice.kinder-pick h2 { font-family: var(--kinder-font); font-weight: 600; }
+    .gate-choice p { margin: 0; color: var(--muted); font-size: .95rem; line-height: 1.45; flex: 1; }
+    .gate-choice .gc-go {
+      font-weight: 700; color: var(--accent); font-size: .9rem; margin-top: .35rem;
+    }
+    .gate-choice.kinder-pick .gc-go { color: #b85a20; }
+    .gate-note { text-align: center; font-size: .78rem; color: var(--muted); margin: 1.1rem 0 0; }
+
+    /* Kindergarten world */
+    #kinderWorld {
+      min-height: 100vh; font-family: var(--kinder-font); color: var(--kinder-ink);
+      background:
+        radial-gradient(900px 500px at 10% 0%, rgba(91,159,212,.25), transparent 55%),
+        radial-gradient(700px 420px at 95% 10%, rgba(224,122,58,.18), transparent 50%),
+        linear-gradient(180deg, #fff9f0 0%, var(--kinder-bg) 40%, #f3ffe8 100%);
+      padding: 1.25rem 1.25rem 6rem;
+    }
+    .kinder-shell { max-width: 820px; margin: 0 auto; }
+    .kinder-top {
+      display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .kinder-top h1 {
+      margin: 0; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700;
+    }
+    .kinder-top .kinder-sub { margin: .2rem 0 0; color: #7a5c3e; font-size: .95rem; }
+    .kinder-progress {
+      display: flex; flex-wrap: wrap; gap: .35rem; margin: 0 0 1.1rem;
+    }
+    .kinder-dot {
+      width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 2px solid #e0c4a0;
+      background: #fff; font: inherit; font-weight: 700; font-size: .78rem; cursor: pointer; color: #7a5c3e;
+    }
+    .kinder-dot.active { background: var(--kinder-accent); border-color: var(--kinder-accent); color: #fff; }
+    .kinder-dot.done { background: var(--kinder-grass); border-color: var(--kinder-grass); color: #fff; }
+    .kinder-lesson {
+      background: #fffdf8; border: 3px solid #f0d2b0; border-radius: 24px;
+      padding: 1.5rem 1.4rem; box-shadow: 0 10px 28px rgba(90,50,20,.08);
+    }
+    .kinder-lesson .story-tag {
+      display: inline-block; background: #ffe0c2; color: #9a4a18; font-weight: 700;
+      font-size: .75rem; padding: .25rem .65rem; border-radius: 999px; margin-bottom: .65rem;
+    }
+    .kinder-lesson h2 { margin: 0 0 .65rem; font-size: 1.55rem; line-height: 1.2; }
+    .kinder-lesson .story {
+      font-size: 1.12rem; line-height: 1.55; margin: 0 0 1rem;
+    }
+    .kinder-lesson .big-idea {
+      background: #eef7ff; border: 2px dashed var(--kinder-sky); border-radius: 16px;
+      padding: .9rem 1rem; margin: 0 0 1rem; font-size: 1.05rem;
+    }
+    .kinder-lesson .big-idea strong { color: #2a6ea8; }
+    .kinder-lesson .grown-up {
+      background: #f3faf4; border-radius: 14px; padding: .85rem 1rem; font-size: .92rem;
+      color: #3d5c42; margin: 0 0 1rem;
+    }
+    .kinder-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .kinder-btn {
+      font: inherit; font-weight: 600; border-radius: 999px; border: 2px solid #e0c4a0;
+      background: #fff; padding: .55rem 1.1rem; cursor: pointer; color: var(--kinder-ink);
+      min-height: 44px;
+    }
+    .kinder-btn.primary {
+      background: var(--kinder-accent); border-color: var(--kinder-accent); color: #fff;
+    }
+    .kinder-btn.sky { background: var(--kinder-sky); border-color: var(--kinder-sky); color: #fff; }
+    .kinder-mascot {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffe8a8, #f0b429 55%, #e07a3a);
+      border: 3px solid #fff; box-shadow: 0 4px 0 #e0c4a0; flex-shrink: 0;
+      position: relative;
+    }
+    .kinder-mascot::after {
+      content: ""; position: absolute; left: 22px; top: 28px; width: 10px; height: 10px; border-radius: 50%;
+      background: #3a2a18; box-shadow: 18px 0 0 #3a2a18;
+    }
+    .kinder-mascot::before {
+      content: ""; position: absolute; left: 26px; top: 44px; width: 22px; height: 10px;
+      border: 3px solid #3a2a18; border-top: 0; border-radius: 0 0 14px 14px;
+    }
+
+    /* Adult path hub */
+    #adultPathHub {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1.15rem 1.25rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
+    }
+    #adultPathHub.hidden-path { display: none; }
+    #adultPathHub h2 { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 .35rem; }
+    #adultPathHub .path-lede { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
+    .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    @media (max-width: 720px) { .path-grid { grid-template-columns: 1fr; } }
+    .path-card {
+      text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 1rem;
+      background: #fff; cursor: pointer; font: inherit; color: inherit;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .path-card:hover, .path-card:focus-visible { border-color: var(--accent); box-shadow: var(--shadow); outline: none; }
+    .path-card h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+    .path-card p { margin: 0; color: var(--muted); font-size: .88rem; }
+    .path-card ol { margin: .65rem 0 0; padding-left: 1.15rem; font-size: .85rem; color: var(--ink); }
+    #adultSandboxJourney {
+      display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--line);
+    }
+    #adultSandboxJourney.show { display: block; }
+    .journey-steps { display: grid; gap: .55rem; }
+    .journey-step {
+      display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+      padding: .75rem .85rem; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line);
+    }
+    .journey-step .js-num {
+      width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--accent); color: #fff;
+      display: grid; place-items: center; font-weight: 700; font-size: .8rem; flex-shrink: 0;
+    }
+    .journey-step .js-body { flex: 1; min-width: 160px; font-size: .9rem; }
+    .adult-path-badge {
+      display: none; font-size: .78rem; font-weight: 600; color: #9bb5aa; margin: .35rem 0 .5rem;
+    }
+    body.style-adult .adult-path-badge { display: block; }
+
+    /* Floating style switcher */
+    #fabStyle {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 120;
+      display: flex; flex-direction: column; align-items: flex-end; gap: .45rem;
+    }
+    #fabStyleMain {
+      border: 0; border-radius: 999px; padding: .7rem 1.05rem; font: inherit; font-weight: 700;
+      font-size: .88rem; cursor: pointer; background: #12241e; color: #e8f2ed;
+      box-shadow: 0 8px 24px rgba(18,36,30,.28); min-height: 48px;
+    }
+    body.style-kinder #fabStyleMain {
+      background: var(--kinder-accent); font-family: var(--kinder-font);
+    }
+    #fabStyleMenu {
+      display: none; flex-direction: column; gap: .35rem; min-width: 220px;
+      background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: .55rem; box-shadow: var(--shadow);
+    }
+    #fabStyleMenu.open { display: flex; }
+    #fabStyleMenu button {
+      text-align: left; border: 0; background: transparent; font: inherit; padding: .55rem .65rem;
+      border-radius: 8px; cursor: pointer; color: var(--ink);
+    }
+    #fabStyleMenu button:hover { background: var(--accent-soft); }
+
+    .account-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .account-actions .game-btn { font-size: .78rem; padding: .45rem .65rem; min-height: 40px; }
+    .account-row { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; font-size: .8rem; }
+    .account-email { color: #e8f2ed; font-weight: 600; word-break: break-all; }
+    .account-sync { color: #5fd0a5; font-size: .72rem; font-weight: 600; }
+    .account-hint { font-size: .72rem; color: #9bb5aa; margin: 0; line-height: 1.4; }
+    #accountBar {
+      margin-bottom: .75rem; padding: .75rem; border-radius: 10px;
+      background: #0d1a16; border: 1px solid #2a4a3d;
+    }
+    #accountMobile { display: none; }
+    .auth-modal {
+      position: fixed; inset: 0; z-index: 200; display: none; place-items: center;
+      padding: 1rem; padding-top: max(1rem, env(safe-area-inset-top));
+    }
+    .auth-modal.open { display: grid; }
+    .auth-backdrop {
+      position: absolute; inset: 0; background: rgba(10, 20, 16, .55); border: 0; cursor: pointer;
+    }
+    .auth-card {
+      position: relative; width: min(420px, 100%); background: #fff;
+      border-radius: 16px; padding: 1.25rem 1.2rem 1.1rem; box-shadow: var(--shadow);
+      max-height: min(90vh, 640px); overflow: auto;
+    }
+    .auth-card h2 { margin: 0 0 .35rem; font-family: var(--serif); font-size: 1.25rem; }
+    .auth-card .auth-lede { color: var(--muted); font-size: .88rem; margin: 0 0 1rem; }
+    .auth-tabs { display: flex; gap: .35rem; margin-bottom: 1rem; }
+    .auth-tabs button {
+      flex: 1; font: inherit; font-weight: 600; padding: .5rem; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--bg-2); cursor: pointer; min-height: 44px;
+    }
+    .auth-tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .auth-field { margin-bottom: .75rem; }
+    .auth-field label { display: block; font-size: .78rem; font-weight: 600; margin-bottom: .25rem; color: var(--muted); }
+    .auth-field input {
+      width: 100%; box-sizing: border-box; font: inherit; padding: .6rem .7rem;
+      border: 1px solid var(--line); border-radius: 8px; min-height: 44px;
+    }
+    .auth-error {
+      color: var(--danger); background: var(--danger-bg); border: 1px solid #f0c4c0;
+      border-radius: 8px; padding: .55rem .65rem; font-size: .85rem; margin-bottom: .65rem;
+    }
+    .auth-close {
+      position: absolute; top: .65rem; right: .65rem; border: 0; background: transparent;
+      font-size: 1.25rem; cursor: pointer; line-height: 1; color: var(--muted); min-width: 44px; min-height: 44px;
+    }
+    .mt-actions { display: flex; gap: .35rem; align-items: center; flex-shrink: 0; }
+
+    .mobile-topbar {
+      display: none; position: sticky; top: 0; z-index: 95;
+      align-items: center; gap: .55rem; justify-content: space-between;
+      padding: .65rem .85rem; padding-top: max(.65rem, env(safe-area-inset-top));
+      background: #12241e; color: #e8f2ed; border-bottom: 1px solid #1e3a30;
+    }
+    .mobile-topbar .mt-brand {
+      font-family: var(--serif); font-weight: 600; font-size: .95rem; margin: 0; line-height: 1.2;
+    }
+    .mobile-topbar .mt-brand span {
+      display: block; font-family: var(--font); font-size: .65rem; font-weight: 500; color: #9bb5aa;
+    }
+    .mobile-topbar .mt-btn {
+      font: inherit; font-weight: 700; font-size: .82rem; min-height: 44px; min-width: 44px;
+      padding: .45rem .75rem; border-radius: 10px; border: 1px solid #2a4a3d;
+      background: #1a3329; color: #e8f2ed; cursor: pointer;
+    }
+    .nav-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 98; background: rgba(10, 20, 16, .45);
+      border: 0; padding: 0; cursor: pointer;
+    }
+    body.nav-open .nav-backdrop { display: block; }
+
+    @media (max-width: 900px) {
+      html { scroll-padding-top: 4.5rem; }
+      .mobile-topbar { display: flex; }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        display: none;
+        position: fixed; top: 0; left: 0; bottom: 0;
+        width: min(86vw, 310px); height: 100%; max-height: 100dvh;
+        z-index: 99; overflow: auto;
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        box-shadow: 8px 0 32px rgba(0,0,0,.28);
+      }
+      body.nav-open .sidebar { display: block; }
+      #accountBar { display: none; }
+      #accountMobile {
+        display: block;
+      }
+      .mobile-topbar .mt-btn-auth { font-size: .72rem; padding: .45rem .55rem; }
+      body.is-focus .mobile-topbar { display: flex; }
+      body.is-focus .sidebar { display: none; }
+      body.is-focus.nav-open .sidebar { display: block; }
+      .main {
+        padding: 1rem .9rem 5.75rem;
+        padding-left: max(.9rem, env(safe-area-inset-left));
+        padding-right: max(.9rem, env(safe-area-inset-right));
+        max-width: 100%;
+      }
+      .hero, .module, .study-session, #adultPathHub, #practice {
+        scroll-margin-top: 4.5rem;
+      }
+      .hero { padding: 1.25rem 1rem 1.1rem; margin-bottom: 1rem; }
+      .hero h1 { font-size: clamp(1.45rem, 6.5vw, 1.85rem); }
+      .hero .lede { font-size: .95rem; }
+      .hero-cta .game-btn, .game-actions .game-btn, .journey-step .game-btn {
+        min-height: 44px; flex: 1 1 auto;
+      }
+      .kbd-hint { display: none; }
+      .module { padding: 1.1rem 1rem; border-radius: 12px; scroll-margin-top: 4.25rem; }
+      .grid-2, .heur { grid-template-columns: 1fr; }
+      .heur .if { border-right: 0; border-bottom: 1px solid var(--line); }
+      .game-stats { grid-template-columns: repeat(3, 1fr); gap: .35rem; }
+      .game-stat { padding: .45rem .3rem; }
+      .game-stat b { font-size: .95rem; }
+      .mode-row {
+        flex-wrap: nowrap; overflow-x: auto; gap: .4rem; padding-bottom: .35rem;
+        -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+      }
+      .mode-btn {
+        flex: 0 0 auto; white-space: nowrap; min-height: 44px; font-size: .82rem;
+      }
+      .module-pick select { min-width: 0; width: 100%; max-width: 100%; min-height: 44px; }
+      .choice { min-height: 52px; padding: .85rem .9rem; }
+      .session-row { flex-direction: column; align-items: flex-start; }
+      .session-timer { font-size: 1.45rem; }
+      .toc-mini { gap: .35rem; }
+      .exam-facts .meta { gap: .35rem; }
+      .chip { font-size: .72rem; }
+      table {
+        display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        border-collapse: collapse;
+      }
+      th, td { white-space: nowrap; }
+      /* allow wrapped cells that are intentionally long text */
+      td:last-child, th:last-child { white-space: normal; min-width: 12rem; }
+      .journey-step { flex-direction: column; align-items: stretch; }
+      .journey-step .game-btn, .journey-step a.game-btn { width: 100%; text-align: center; box-sizing: border-box; }
+      #fabStyle {
+        right: max(.75rem, env(safe-area-inset-right));
+        bottom: max(.85rem, env(safe-area-inset-bottom));
+      }
+      #fabStyleMain { min-height: 48px; padding: .75rem 1.1rem; }
+      #fabStyleMenu { min-width: min(78vw, 240px); }
+      #fabStyleMenu button { min-height: 44px; font-size: .92rem; }
+      .focus-exit {
+        top: auto; bottom: max(4.6rem, calc(env(safe-area-inset-bottom) + 4.2rem));
+        right: max(.75rem, env(safe-area-inset-right)); left: auto;
+      }
+      .study-toast {
+        bottom: max(5.2rem, calc(env(safe-area-inset-bottom) + 4.8rem));
+        max-width: calc(100vw - 1.5rem);
+        font-size: .82rem; padding: .65rem .9rem;
+      }
+      .answer-key-toolbar { flex-direction: column; align-items: stretch; }
+      .answer-key-toolbar input[type="search"] { min-width: 0; width: 100%; min-height: 44px; }
+      .answer-key-item > summary { padding: .85rem .9rem; font-size: .92rem; }
+      #styleGate { padding: 1.25rem .85rem 2rem; padding-top: max(1.25rem, env(safe-area-inset-top)); }
+      .gate-card { padding: 1.35rem 1rem 1.15rem; border-radius: 18px; }
+      .gate-choice { min-height: 0; padding: 1.1rem 1rem; }
+      .gate-choice h2 { font-size: 1.2rem; }
+      #kinderWorld {
+        padding: 1rem .85rem 6rem;
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(6rem, calc(env(safe-area-inset-bottom) + 5.5rem));
+      }
+      .kinder-lesson { padding: 1.15rem 1rem; border-radius: 18px; }
+      .kinder-lesson .story { font-size: 1.02rem; }
+      .kinder-actions .kinder-btn { flex: 1 1 auto; min-height: 44px; }
+      .kinder-top > div { align-items: flex-start; }
+      .kinder-mascot { width: 56px; height: 56px; }
+      .progress-box { font-size: .8rem; }
+      body.is-focus .module { opacity: 1 !important; filter: none !important; }
+    }
+
+    @media (max-width: 420px) {
+      .game-stats { grid-template-columns: repeat(2, 1fr); }
+      .game-stat:last-child:nth-child(5) { grid-column: 1 / -1; }
+      .desk-tools .game-btn { width: 100%; }
+    }
+
+    @media print {
+      .sidebar, .reading-bar, .focus-exit, .study-toast, .desk-tools,
+      .module-rail, #studySession, .hero-cta, .kbd-hint,
+      #styleGate, #fabStyle, #kinderWorld, #adultPathHub,
+      .mobile-topbar, .nav-backdrop { display: none !important; }
+      .layout { display: block !important; }
+      .module { break-inside: avoid; box-shadow: none; opacity: 1 !important; filter: none !important; }
+      #practice { display: none !important; }
+      body, body::before, body::after { background: #fff !important; animation: none !important; }
+      body::before, body::after { display: none !important; }
+    }
+  </style>
+</head>
+<body class="style-picking">
+  <!-- STYLE GATE (first screen) -->
+  <div id="styleGate" role="dialog" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <h1 id="gateTitle">How do you want to learn today?</h1>
+      <p class="gate-lede">Pick a style. You can switch anytime with the button at the bottom-right.</p>
+      <div class="gate-choices">
+        <button type="button" class="gate-choice kinder-pick" id="pickKinder" data-style="kinder">
+          <span class="gc-kicker">Style 1</span>
+          <h2>Kindergarten style</h2>
+          <p>Google Admin explained like you’re ten — classrooms, keys, toy boxes, and friendly stories. Big ideas first, grown-up words later.</p>
+          <span class="gc-go">Start the story →</span>
+        </button>
+        <button type="button" class="gate-choice adult-pick" id="pickAdult" data-style="adult">
+          <span class="gc-kicker">Style 2</span>
+          <h2>Adult style</h2>
+          <p>Exam-ready desk: Sandbox → Walkthrough → Exam, or Focus Mode with the full study modules and mock bank.</p>
+          <span class="gc-go">Enter study desk →</span>
+        </button>
+      </div>
+      <p class="gate-note">Practice aid only — not affiliated with Google or the official exam.</p>
+    </div>
+  </div>
+
+  <!-- KINDERGARTEN WORLD -->
+  <div id="kinderWorld" aria-label="Kindergarten learning style">
+    <div class="kinder-shell">
+      <div class="kinder-top">
+        <div style="display:flex;gap:.85rem;align-items:center">
+          <div class="kinder-mascot" aria-hidden="true"></div>
+          <div>
+            <h1>Admin School for Kids</h1>
+            <p class="kinder-sub">You’re the helper who keeps the big cloud school safe and tidy.</p>
+          </div>
+        </div>
+      </div>
+      <div class="kinder-progress" id="kinderDots" role="tablist" aria-label="Story chapters"></div>
+      <article class="kinder-lesson" id="kinderLesson" aria-live="polite"></article>
+    </div>
+  </div>
+
+  <div class="reading-bar" id="readingBar" aria-hidden="true"></div>
+  <button type="button" class="game-btn focus-exit" id="btnFocusExit">Exit focus</button>
+  <div class="study-toast" id="studyToast" role="status" aria-live="polite"></div>
+
+  <!-- Floating style switcher -->
+  <div id="fabStyle">
+    <div id="fabStyleMenu" role="menu" aria-label="Switch learning style">
+      <button type="button" data-fab="kinder" role="menuitem">Kindergarten style</button>
+      <button type="button" data-fab="adult" role="menuitem">Adult style</button>
+      <button type="button" data-fab="gate" role="menuitem">Choose again…</button>
+    </div>
+    <button type="button" id="fabStyleMain" aria-haspopup="true" aria-expanded="false">Switch style</button>
+  </div>
+
+  <button type="button" class="nav-backdrop" id="navBackdrop" aria-label="Close menu"></button>
+  <div id="accountMobile" aria-live="polite"></div>
+  <div class="mobile-topbar" id="mobileTopbar">
+    <p class="mt-brand">GWS Study Desk<span>Admin exam prep</span></p>
+    <div class="mt-actions">
+      <button type="button" class="mt-btn mt-btn-auth" id="btnAuthMobile">Account</button>
+      <button type="button" class="mt-btn" id="btnNavToggle" aria-expanded="false" aria-controls="sidebarNav">Menu</button>
+    </div>
+  </div>
+
+  <!-- Auth modal -->
+  <div class="auth-modal" id="authModal" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+    <button type="button" class="auth-backdrop" id="authModalBackdrop" aria-label="Close"></button>
+    <div class="auth-card">
+      <button type="button" class="auth-close" id="authModalClose" aria-label="Close">×</button>
+      <h2 id="authModalTitle">Your study profile</h2>
+      <p class="auth-lede">Sign in to sync checklist, practice XP, session timer, and style across devices.</p>
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="active" data-auth-tab="signin">Log in</button>
+        <button type="button" data-auth-tab="signup">Sign up</button>
+      </div>
+      <div id="authError" class="auth-error hidden" role="alert"></div>
+      <form id="authFormSignIn">
+        <div class="auth-field">
+          <label for="authUserIn">Username</label>
+          <input id="authUserIn" name="username" type="text" autocomplete="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_]{3,32}" />
+        </div>
+        <div class="auth-field">
+          <label for="authPassIn">Password</label>
+          <input id="authPassIn" name="password" type="password" autocomplete="current-password" required minlength="6" />
+        </div>
+        <button type="submit" class="game-btn primary" style="width:100%;min-height:44px">Log in</button>
+      </form>
+      <form id="authFormSignUp" class="hidden">
+        <div class="auth-field">
+          <label for="authUserUp">Username</label>
+          <input id="authUserUp" name="username" type="text" autocomplete="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_]{3,32}" />
+        </div>
+        <div class="auth-field">
+          <label for="authPassUp">Password</label>
+          <input id="authPassUp" name="password" type="password" autocomplete="new-password" required minlength="6" />
+        </div>
+        <button type="submit" class="game-btn primary" style="width:100%;min-height:44px">Create account</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebarNav">
+      <p class="brand">GWS Admin Study Desk<span>Associate Google Workspace Administrator</span></p>
+      <p class="adult-path-badge" id="adultPathBadge">Adult style</p>
+      <div class="desk-tools">
+        <button type="button" class="game-btn" id="btnFocusMode" title="Hide sidebar, widen reading">Focus mode</button>
+        <button type="button" class="game-btn" id="btnJumpSession" title="Jump to today’s session">Today</button>
+        <button type="button" class="game-btn" id="btnAdultPaths" title="Sandbox or Focus path">Adult paths</button>
+      </div>
+      <input class="search" id="search" type="search" placeholder="Search topics…" autocomplete="off" />
+      <nav class="nav" id="nav">
+        <div class="nav-sec">Start here</div>
+        <a href="#overview">Exam overview</a>
+        <a href="#studySession">Today’s session</a>
+        <a href="#how-to-study">How to use this guide</a>
+        <div class="nav-sec">Practice</div>
+        <a href="#lastMinute">Last-minute review</a>
+        <a href="#practice">Practice arena</a>
+        <a href="#practice">Mock exam (246)</a>
+        <a href="./gws-admin-console.html">Admin sandbox</a>
+        <div class="nav-sec">Modules</div>
+        <a href="#m0">0 · Foundations</a>
+        <a href="#m1">1 · Users &amp; Directory <span class="w">~20%</span></a>
+        <a href="#m2">2 · Core Services <span class="w">~23%</span></a>
+        <a href="#m3">3 · Data &amp; Compliance <span class="w">~15%</span></a>
+        <a href="#m4">4 · Security <span class="w">~20%</span></a>
+        <a href="#m5">5 · Browsers &amp; Devices <span class="w">~10%</span></a>
+        <a href="#m6">6 · Monitoring <span class="w">~13%</span></a>
+        <a href="#m7">7 · Exam Strategy</a>
+        <div class="nav-sec">Cheat sheets</div>
+        <a href="#heuristics">Decision heuristics</a>
+        <a href="#glossary">Acronym glossary</a>
+        <a href="#tools">Tool → use-case</a>
+        <a href="#dns">DNS cheat-sheet</a>
+      </nav>
+      <div class="progress-box">
+        <div id="accountBar" aria-live="polite"></div>
+        <div>Study checklist progress</div>
+        <div class="progress-bar"><i id="progBar"></i></div>
+        <div><span id="progText">0</span> items checked</div>
+        <div class="sidebar-game" id="sidebarGame">Game: Lv <strong>1</strong> · <strong>0</strong> XP · streak <strong>0</strong></div>
+        <div class="sidebar-session" id="sidebarSession">Today: <strong>not started</strong></div>
+      </div>
+    </aside>
+
+    <main class="main" id="content">
+      <!-- Adult path picker: Sandbox journey vs Focus -->
+      <section id="adultPathHub" aria-label="Adult learning paths">
+        <h2>Adult style — pick your path</h2>
+        <p class="path-lede">Two ways to study like a grown-up admin. You can reopen this from the sidebar anytime.</p>
+        <div class="path-grid">
+          <button type="button" class="path-card" id="pathSandbox" data-path="sandbox">
+            <h3>1 · Sandbox mode</h3>
+            <p>Learn by clicking a fake Admin console, then walk through, then exam.</p>
+            <ol>
+              <li>Open Admin sandbox</li>
+              <li>Run Walkthrough coach</li>
+              <li>Take Practice / Mock (exam drill)</li>
+            </ol>
+          </button>
+          <button type="button" class="path-card" id="pathFocus" data-path="focus">
+            <h3>2 · Focus Mode</h3>
+            <p>Quiet reading desk — modules, timer, heuristics, and mock bank (the current study style).</p>
+            <ol>
+              <li>Enter Focus Mode</li>
+              <li>Read → Check → Drill</li>
+              <li>Mock when ready</li>
+            </ol>
+          </button>
+        </div>
+        <div id="adultSandboxJourney">
+          <h3 style="margin:0 0 .65rem;font-size:1rem">Sandbox journey</h3>
+          <div class="journey-steps">
+            <div class="journey-step">
+              <span class="js-num">1</span>
+              <div class="js-body"><strong>Sandbox</strong> — click around a pretend Admin console (OUs, Gmail DNS, Vault, DLP…).</div>
+              <a class="game-btn primary" href="./gws-admin-console.html">Open sandbox</a>
+            </div>
+            <div class="journey-step">
+              <span class="js-num">2</span>
+              <div class="js-body"><strong>Walkthrough</strong> — coach dock guides modules 0–7 inside the sandbox.</div>
+              <a class="game-btn" href="./gws-admin-console.html?wt=1">Start walkthrough</a>
+            </div>
+            <div class="journey-step">
+              <span class="js-num">3</span>
+              <div class="js-body"><strong>Exam drill</strong> — Practice arena / Mock 50 timed. Use what you practiced in the sandbox.</div>
+              <a class="game-btn" href="#practice" id="btnSandboxExam">Go to exam practice</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <header class="hero" id="overview">
+        <div class="hero-kicker">Your study desk</div>
+        <h1>Google Workspace Admin — explained simply</h1>
+        <p class="lede">
+          Sit down, pick a module, and learn like you’re configuring a real tenant.
+          Workspace is the company office in the cloud — you don’t build the walls; you decide who gets keys,
+          which rooms they enter, and how security watches the doors.
+        </p>
+        <div class="hero-cta">
+          <button type="button" class="game-btn primary" id="btnStartSession">Start today’s session</button>
+          <a class="game-btn" href="#lastMinute">Last-minute review</a>
+          <a class="game-btn" href="#practice">Practice / Mock</a>
+          <a class="game-btn" href="./gws-admin-console.html">Admin sandbox</a>
+          <button type="button" class="game-btn ghost" id="btnFocusFromHero">Focus mode</button>
+        </div>
+        <p class="kbd-hint">Shortcuts: <kbd>F</kbd> focus · <kbd>T</kbd> timer · <kbd>P</kbd> practice · <kbd>Esc</kbd> exit focus (disabled while typing)</p>
+        <div class="exam-facts">
+          <div class="meta">
+            <span class="chip">50–60 questions</span>
+            <span class="chip">120 minutes</span>
+            <span class="chip">~75% to pass</span>
+            <span class="chip">Valid 3 years</span>
+            <span class="chip">admin.google.com</span>
+          </div>
+          <div class="toc-mini">
+            <a href="#studySession">Today’s session</a>
+            <a href="#practice">Practice arena</a>
+            <a href="./gws-admin-console.html">Admin sandbox</a>
+            <a href="#m0">Foundations</a>
+            <a href="#m1">Users ~20%</a>
+            <a href="#m2">Services ~23%</a>
+            <a href="#m3">Compliance ~15%</a>
+            <a href="#m4">Security ~20%</a>
+            <a href="#heuristics">Heuristics</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="study-session module" id="studySession" data-search="session timer pomodoro today focus study ritual">
+        <h2>Today’s study session</h2>
+        <p class="goal" id="sessionGoalText">A calm 25-minute block: read one module, tick a checklist item, then drill the Practice arena.</p>
+        <div class="session-row">
+          <div class="session-timer" id="sessionTimer" aria-live="polite">25:00</div>
+          <div class="session-goal">
+            Focus module: <b id="sessionFocusLabel">Module 0 · Foundations</b><br />
+            Goal: <b id="sessionGoalLabel">Read Foundations + tick one checkbox</b>
+          </div>
+        </div>
+        <div class="session-progress" aria-hidden="true"><i id="sessionProg"></i></div>
+        <div class="game-actions">
+          <button type="button" class="game-btn primary" id="btnTimerStart">Start 25:00</button>
+          <button type="button" class="game-btn" id="btnTimerPause">Pause</button>
+          <button type="button" class="game-btn" id="btnTimerReset">Reset</button>
+          <button type="button" class="game-btn" id="btnGoFocusModule">Open focus module</button>
+          <button type="button" class="game-btn" id="btnSessionDone">Mark session done</button>
+        </div>
+        <p class="kbd-hint">Timer pauses when this tab is hidden. Progress saves as <code>gws-study-session-v1</code>.</p>
+      </section>
+
+      <section class="module" id="how-to-study" data-search="study method checklist">
+        <h2>How to use this guide</h2>
+        <ol>
+          <li>Read each module’s <em>plain English</em> box first — get the idea before the details.</li>
+          <li>Learn the <em>exam tips</em> and decision tables — those decide most scenario questions.</li>
+          <li>Tick the checkboxes as you go (saved in this browser).</li>
+          <li>Play the <a href="#practice">Practice arena</a> — scenario rounds with XP and streaks.</li>
+          <li>Drill the <a href="#heuristics">Decision heuristics</a> every day until they feel automatic.</li>
+          <li>Use <strong>Focus mode</strong> and <strong>Today’s session</strong> when you want a quieter reading mood.</li>
+          <li>Open the <a href="./gws-admin-console.html">Admin sandbox</a> to practice OU inheritance, Vault holds, DLP, GCDS, and offboarding.</li>
+        </ol>
+        <div class="tip">
+          <strong>Study tip</strong><br />
+          The exam is scenario-based. Don’t memorize menus blindly. Ask: <em>What is the constraint?</em>
+          (cost, data safe, only some users, managed devices, edition limits…) — then pick the tool that matches.
+        </div>
+      </section>
+
+      <!-- LAST-MINUTE REVIEW -->
+      <section class="module" id="lastMinute" data-search="last minute cram review night before memorize recovery windows vault dlp mock">
+        <h2>Last-minute review</h2>
+        <p class="goal">Cram sheet from your last-minute notes + mock-exam patterns. Read once the night before; drill Mock 50 timed when awake.</p>
+
+        <div class="plain">
+          <strong>Night-before ritual (45–60 min)</strong><br />
+          1) Skim this page · 2) Re-read Decision heuristics · 3) Run <em>Mock 50 (timed)</em> closed-book · 4) Review every miss explanation · 5) Sleep.
+        </div>
+
+        <h3>Must-lock facts</h3>
+        <table>
+          <thead><tr><th>Topic</th><th>Lock this in</th></tr></thead>
+          <tbody>
+            <tr><td>OU vs Group</td><td>OU = one structural home, service on/off. Group = cross-cutting overlay / fluid membership.</td></tr>
+            <tr><td>Provisioning</td><td>On-prem AD → GCDS · Cloud IdP (Entra) → Directory Sync · One-off → manual/CSV · Content → DMS (not sync).</td></tr>
+            <tr><td>Domains</td><td>Alias = same users get extra addresses · Secondary = separate accounts (licensed) · Always MX after verify.</td></tr>
+            <tr><td>Outbound spam</td><td>SPF + DKIM + DMARC — not a random Gmail toggle.</td></tr>
+            <tr><td>Vault “big three”</td><td>Hold beats retention delete · AUL keeps leavers’ data cheap · Vault ≠ DLP (retention/eDiscovery vs prevent leaks).</td></tr>
+            <tr><td>Security tools</td><td>Dashboard/health = broad posture · Investigation tool = one incident · Alert center = notifications.</td></tr>
+            <tr><td>Away from PC</td><td>Suspend / reset password → Google Admin mobile app.</td></tr>
+            <tr><td>Recovery windows</td><td>Deleted user ~20 days · Drive/Gmail restore windows (often ~25 / ~30 — confirm wording on question) · Know which log to open.</td></tr>
+            <tr><td>Wipe types</td><td>Account wipe = Workspace data off device · Device wipe = full factory reset (company-owned).</td></tr>
+            <tr><td>Edition gate</td><td>If scenario names Starter/Standard, ask: does this edition include DLP / CAA / Investigation?</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip">
+          <strong>Mock exam loaded</strong><br />
+          <span id="mockBankCount">246</span> scenario questions from your mock PDF are in Practice arena modes
+          <strong>Mock 10</strong>, <strong>Mock by domain</strong>, <strong>Mock 50 (timed ~90 min)</strong>, <strong>Mock Full (all)</strong>, and <strong>Answer key</strong>.
+          Practice aid only — not Google’s official exam.
+        </div>
+      </section>
+
+      <!-- PRACTICE ARENA -->
+      <section class="module" id="practice" data-search="practice game quiz scenario xp streak drill arena exam mix heuristics mock">
+        <h2>Practice arena</h2>
+        <p class="goal">Learn by playing: curated drills + your full 246-question mock bank. Practice aid only — not affiliated with Google or the official exam.</p>
+
+        <div id="gameLobby">
+          <div class="game-stats" id="gameStats" aria-live="polite">
+            <div class="game-stat"><b id="statLevel">1</b><span>Level</span></div>
+            <div class="game-stat"><b id="statXp">0</b><span>XP</span></div>
+            <div class="game-stat"><b id="statStreak">0</b><span>Streak</span></div>
+            <div class="game-stat"><b id="statBest">0</b><span>Best streak</span></div>
+            <div class="game-stat"><b id="statAcc">—</b><span>Accuracy</span></div>
+          </div>
+
+          <h3>Mode</h3>
+          <div class="mode-row" id="modeRow" role="group" aria-label="Practice mode">
+            <button type="button" class="mode-btn active" data-mode="quick">Quick 10</button>
+            <button type="button" class="mode-btn" data-mode="module">By module</button>
+            <button type="button" class="mode-btn" data-mode="heur">Heuristics</button>
+            <button type="button" class="mode-btn" data-mode="mix">Exam Mix</button>
+            <button type="button" class="mode-btn" data-mode="mock10">Mock 10</button>
+            <button type="button" class="mode-btn" data-mode="mockDomain">Mock by domain</button>
+            <button type="button" class="mode-btn" data-mode="mock50">Mock 50 timed</button>
+            <button type="button" class="mode-btn" data-mode="mockFull">Mock Full (all)</button>
+            <button type="button" class="mode-btn" data-mode="answerKey">Answer key</button>
+          </div>
+          <div class="module-pick hidden" id="modulePick">
+            <label for="moduleSelect">Module / domain&nbsp;
+              <select id="moduleSelect">
+                <option value="all">All domains</option>
+                <option value="m0">0 · Foundations</option>
+                <option value="m1">1 · Users &amp; Directory</option>
+                <option value="m2">2 · Core Services</option>
+                <option value="m3">3 · Data &amp; Compliance</option>
+                <option value="m4">4 · Security</option>
+                <option value="m5">5 · Browsers &amp; Devices</option>
+                <option value="m6">6 · Monitoring</option>
+                <option value="m7">7 · Exam Strategy</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="game-rules" id="gameRules">Correct: +10 XP (+5 if hard, +10 if expert). Miss resets streak. Level = 1 + floor(XP ÷ 100).</p>
+          <div class="game-actions">
+            <button type="button" class="game-btn primary" id="btnStart">Start round</button>
+            <button type="button" class="game-btn ghost" id="btnResetGame">Reset game progress</button>
+          </div>
+          <div class="memo" style="margin-top:1rem">
+            <strong>Disclaimer</strong><br />
+            This is a personal study drill, not Google’s official exam and not affiliated with Google.
+          </div>
+        </div>
+
+        <div id="gameStage" class="hidden" aria-live="polite"></div>
+        <div id="gameSummary" class="hidden"></div>
+      </section>
+
+      <!-- MODULE 0 -->
+      <section class="module" id="m0" data-search="foundations editions OU group inheritance admin console pooled storage cloud identity">
+        <h2>Module 0 · Foundations</h2>
+        <p class="goal">Goal: build the mental model everything else hangs on.</p>
+
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          Google Workspace is the company’s email, files, meetings, and chat — all in Google’s cloud.
+          Your job as admin is <em>not</em> to run servers. Your job is to configure people, rules, security, and support.
+          The Admin console (<code>admin.google.com</code>) is your control room.
+        </div>
+
+        <h3>0.1 Editions (plans)</h3>
+        <p>Editions differ by storage, security, and compliance features. Exam loves to ask: “Can this edition even do that?”</p>
+        <table>
+          <thead><tr><th>Edition</th><th>Best for</th><th>Remember</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Business Starter / Standard / Plus</td>
+              <td>Small–mid companies (Business capped ~300 seats)</td>
+              <td>Plus is the hands-on tier: Vault + advanced endpoint mgmt. Storage grows by tier (~30GB / ~2TB / ~5TB pooled per user — verify in Billing).</td>
+            </tr>
+            <tr>
+              <td>Enterprise Standard / Plus</td>
+              <td>Bigger orgs</td>
+              <td>Adds DLP for Drive/Chat, context-aware access, Security Center / Investigation tool, S/MIME, data regions. Many exam features are Enterprise.</td>
+            </tr>
+            <tr>
+              <td>Frontline</td>
+              <td>Shift / deskless workers</td>
+              <td>Lightweight, low-storage seats. Licensing-fit scenarios.</td>
+            </tr>
+            <tr>
+              <td>Education</td>
+              <td>Schools</td>
+              <td>Same console ideas; education licensing + safety extras.</td>
+            </tr>
+            <tr>
+              <td>Cloud Identity (Free / Premium)</td>
+              <td>Identity only</td>
+              <td>Users, groups, SSO, 2SV, devices — <em>no</em> Gmail/Drive seat. For non-Workspace users or identity-only licensing.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          If a question mentions DLP, context-aware access, data regions, or the investigation tool — first check whether the stated edition includes it. The “correct” action may be unavailable on Business Starter.
+        </div>
+
+        <h3>Storage is pooled</h3>
+        <div class="plain">
+          <strong>Analogy</strong><br />
+          Imagine one big company water tank. Every license adds water to the tank. Anyone can drink from it until the tank is empty (or you set per-person limits).
+          Low storage? Add licenses, set quotas, or free space — not “upgrade one mailbox.”
+        </div>
+
+        <h3>0.2 Admin console map</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h4>Directory</h4>
+            <p>Users, Groups, OUs, Buildings &amp; resources, company profile.</p>
+          </div>
+          <div class="card">
+            <h4>Apps</h4>
+            <p>Gmail, Drive, Calendar, Meet, Chat, Gemini + Marketplace + SSO apps.</p>
+          </div>
+          <div class="card">
+            <h4>Security</h4>
+            <p>2SV, passwords, CAA, API controls, DLP, Security center, Alert center.</p>
+          </div>
+          <div class="card">
+            <h4>Devices / Reporting / Billing / Account</h4>
+            <p>Phones &amp; Chrome · logs &amp; reports · licenses · domains, roles, data regions, migration.</p>
+          </div>
+        </div>
+        <div class="tip">
+          <strong>Speed tip</strong><br />
+          Use the top search bar (“DKIM”, “retention”, “2SV”). Away from computer? Google Admin mobile app can suspend users, reset passwords, view alerts.
+        </div>
+
+        <h3>0.3 The #1 mental model: Org → OUs → Users (+ Groups on top)</h3>
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          <em>Organizational Units (OUs)</em> = folders in a company tree. Every person sits in <strong>exactly one</strong> folder.<br />
+          Settings on a parent folder flow down to children (inheritance) unless a child overrides them.<br />
+          <em>Groups</em> = sticky notes that can sit on people from many folders. One person can be in many groups.
+        </div>
+        <table>
+          <thead><tr><th>Use an OU when…</th><th>Use a Group when…</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Setting follows structure; service on/off; one clear answer per person (e.g. disable Chat for Warehouse).</td>
+              <td>Membership cuts across departments or changes often; layering an exception (e.g. Gemini pilot for mixed teams).</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="memo">
+          <strong>Rule of thumb</strong><br />
+          OUs answer “who is this person, structurally?” Groups answer “what are they allowed to do, regardless of where they sit?”
+          If OU + group policies conflict → <strong>group usually wins</strong> (most specific group wins when several apply).
+        </div>
+
+        <h3>0.4 How a setting reaches a user</h3>
+        <ol class="steps">
+          <li>Service must be On (org / OU / group).</li>
+          <li>Start from org default → apply user’s OU (inheritance) → apply group overrides.</li>
+          <li>Console shows the <em>effective</em> value for the scope you selected — always check that.</li>
+          <li>Most changes take minutes; some up to 24 hours. “Nothing happened” = wrong scope or waiting for propagation.</li>
+        </ol>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m0a" /> I understand OU vs Group and when group overrides OU.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m0b" /> I know storage is pooled and editions gate features.</label></div>
+      </section>
+
+      <!-- MODULE 1 -->
+      <section class="module" id="m1" data-search="users domains directory lifecycle suspend delete archive AUL GCDS SCIM SAML alias OU groups buildings">
+        <h2>Module 1 · Users, Domains &amp; Directory <span class="pct">~20%</span></h2>
+        <p class="goal">Goal: manage the full life of an account — create, change, suspend, delete, archive — plus domains, groups, and rooms.</p>
+
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          Every employee account has a life story: born (provisioned) → works → maybe put on leave (suspend) → leaves the company (delete or archive).
+          The exam hammers <em>what happens to data and licenses</em> at each step.
+        </div>
+
+        <h3>1.1 User life cycle (memorize this)</h3>
+        <table>
+          <thead><tr><th>State</th><th>Can sign in?</th><th>Data &amp; license</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Active</strong></td><td>Yes</td><td>Uses a full license. Full access.</td></tr>
+            <tr><td><strong>Suspended</strong></td><td>No</td><td>Data kept. License still used. Instantly reversible. Best for leave / investigation.</td></tr>
+            <tr><td><strong>Deleted</strong></td><td>No</td><td>Recoverable <strong>20 days</strong>, then gone. Transfer Drive first. License freed.</td></tr>
+            <tr><td><strong>Archived (AUL)</strong></td><td>No</td><td>Cheaper Archived User License. Vault can keep data without a full seat. Ideal for ex-staff under retention.</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Clean off-boarding order</h4>
+        <ol class="steps">
+          <li><strong>Suspend</strong> immediately — cuts access, destroys nothing.</li>
+          <li>Reset password / sign out sessions (Session Control).</li>
+          <li><strong>Transfer Drive</strong> (and other) data to manager/successor.</li>
+          <li>End state: <strong>delete</strong> (reclaim license) or <strong>Archived User License</strong> (keep data cheap for Vault).</li>
+        </ol>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Cheap + keep ex-employee data → <strong>Archived User License</strong>. Need them back / still investigating → <strong>suspend</strong>. Truly gone + data transferred → <strong>delete</strong> (20-day window).
+        </div>
+        <div class="warn">
+          <strong>Common pitfall</strong><br />
+          Deleting before transferring Drive ownership = classic data-loss mistake. Shared Drive files belong to the team — no transfer needed.
+        </div>
+
+        <h3>1.2 Creating users &amp; provisioning tools</h3>
+        <p>Small batches: manual or CSV. Ongoing / large: sync or SCIM. Match the tool to the source of truth.</p>
+        <table>
+          <thead><tr><th>Method</th><th>When</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Manual / CSV</td><td>One-off, small batches</td><td>No sync</td></tr>
+            <tr><td><strong>GCDS</strong></td><td>On-prem LDAP / Active Directory</td><td>One-way AD → Workspace; you install a connector</td></tr>
+            <tr><td><strong>Directory Sync</strong></td><td>Cloud IdP (e.g. Entra ID)</td><td>Google-hosted; no server</td></tr>
+            <tr><td><strong>SCIM + SAML</strong></td><td>IdP (Okta/Entra) owns accounts + login</td><td>SCIM = create/update/disable; SAML = sign-in. Workspace is SP.</td></tr>
+            <tr><td>Admin SDK / API</td><td>Custom automation</td><td>Programmatic</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Exam tip — sync vs migration</strong><br />
+          Sync tools move <em>identities</em>. Migration tools (DMS) move <em>content</em> (email/files). Don’t mix them up.
+        </div>
+
+        <h3>1.2b SSO (SAML)</h3>
+        <div class="plain">
+          <strong>Analogy</strong><br />
+          The Identity Provider (Okta/Entra) is the nightclub bouncer with the guest list. Google trusts the bouncer’s stamp (SAML assertion) and lets the person in.
+          Keep a <strong>break-glass Super Admin</strong> that bypasses SSO so you’re never locked out if the IdP dies.
+        </div>
+
+        <h3>1.3 Aliases, rename, OU moves</h3>
+        <ul>
+          <li><strong>Email alias</strong> = extra address → same mailbox. No extra license.</li>
+          <li><strong>Rename primary email</strong> keeps old address as alias so mail still flows.</li>
+          <li>Separate mailbox = separate user + license.</li>
+        </ul>
+
+        <h3>1.5–1.6 Licenses &amp; passwords</h3>
+        <p>Licenses can be automatic (everyone gets a seat) or manual (per user/OU/group). Can’t reach a paid service? Check license first.
+        Password rules live under Security → Authentication → Password management.</p>
+
+        <h3>1.7 OU design</h3>
+        <p>Design OUs for <em>how policies differ</em>, not the org chart. Fewer purpose-built OUs beat deep confusing trees.
+        Common pattern: Standard staff · High-security · Shared/Kiosk · Contractors + groups for exceptions.</p>
+
+        <h3>1.8 Groups</h3>
+        <table>
+          <thead><tr><th>Type</th><th>What it’s for</th></tr></thead>
+          <tbody>
+            <tr><td>Distribution list</td><td>Email many people via one address</td></tr>
+            <tr><td>Collaborative Inbox</td><td>Shared queue (support@) — take / assign / resolve</td></tr>
+            <tr><td>Dynamic group</td><td>Membership from a query (department = Sales) — auto-updates</td></tr>
+            <tr><td>Security group</td><td>Access/security policies, not just email</td></tr>
+          </tbody>
+        </table>
+        <p>Also control: who can join, post, view members, and whether outsiders can post.</p>
+
+        <h3>1.9 Domains</h3>
+        <table>
+          <thead><tr><th>Type</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Primary</strong></td><td>Main company identity</td></tr>
+            <tr><td><strong>Secondary</strong></td><td>Separate set of user accounts on another domain (each needs a license)</td></tr>
+            <tr><td><strong>Domain alias</strong></td><td>Every existing user gets an extra address — no new accounts, no extra licenses</td></tr>
+          </tbody>
+        </table>
+        <p>Verify ownership with TXT (or CNAME / HTML / meta / MX), then add MX for mail.</p>
+
+        <h3>1.10 Buildings &amp; resources</h3>
+        <p>Rooms/equipment under Directory → Buildings and resources. Become bookable calendars.
+        “Add 200 rooms across 10 sites” → <strong>CSV bulk upload</strong>, not one-by-one.</p>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m1a" /> I can pick Suspend vs Delete vs Archive for a scenario.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m1b" /> I can match GCDS / Directory Sync / SCIM+SAML / DMS.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m1c" /> I know alias domain vs secondary domain.</label></div>
+      </section>
+
+      <!-- MODULE 2 -->
+      <section class="module" id="m2" data-search="gmail drive calendar meet chat gemini MX SPF DKIM DMARC shared drive DMS migration routing quarantine">
+        <h2>Module 2 · Core Workspace Services <span class="pct">~23%</span></h2>
+        <p class="goal">Goal: configure Gmail, Drive, Calendar, Meet, Chat, Gemini — and know where each toggle lives.</p>
+
+        <h3>2.1 Gmail</h3>
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          <strong>MX records</strong> tell the internet “deliver our mail to Google.” That’s inbound routing only.
+          Outbound spam problems are almost always missing <strong>SPF + DKIM + DMARC</strong> — not a random Gmail toggle.
+        </div>
+        <table>
+          <thead><tr><th>Record</th><th>DNS</th><th>What it proves</th></tr></thead>
+          <tbody>
+            <tr><td>MX</td><td>MX</td><td>Where inbound mail goes (<code>smtp.google.com</code> or legacy ASPMX set)</td></tr>
+            <tr><td>SPF</td><td>TXT</td><td>Which servers may send as your domain</td></tr>
+            <tr><td>DKIM</td><td>TXT</td><td>Cryptographic signature — message wasn’t altered and is yours</td></tr>
+            <tr><td>DMARC</td><td>TXT (_dmarc)</td><td>What receivers do if SPF/DKIM fail (none → quarantine → reject) + reports</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Outbound mail lands in spam → finish SPF + DKIM + DMARC. Start DMARC at <code>p=none</code> (monitor), then tighten.
+        </div>
+
+        <h4>Routing &amp; compliance</h4>
+        <ul>
+          <li>Content / attachment compliance — match words/patterns/types → quarantine, reject, modify, BCC, footer.</li>
+          <li>Dual / split delivery — copy to another system or split Google vs legacy during migration.</li>
+          <li>Inbound/outbound gateways — relay through a third-party filter.</li>
+          <li>Security Sandbox — detonates attachments before delivery.</li>
+          <li>Attachments: send up to ~25 MB (bigger → Drive link). Disable POP/IMAP/forwarding to reduce data leak risk.</li>
+          <li>Delegation — assistant reads/sends on someone’s behalf.</li>
+        </ul>
+
+        <h4>Migration</h4>
+        <p><strong>Data Migration Service (DMS)</strong> moves email/calendar/contacts from Exchange/M365, IMAP, or another Workspace.
+        Migration = content. Sync = identities.</p>
+
+        <h3>2.2 Drive &amp; Docs</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h4>My Drive</h4>
+            <p>Owned by a person. Must transfer when they leave.</p>
+          </div>
+          <div class="card">
+            <h4>Shared Drive</h4>
+            <p>Owned by the team. Survives off-boarding. Prefer for org content.</p>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Shared Drive role</th><th>Can roughly do</th></tr></thead>
+          <tbody>
+            <tr><td>Manager</td><td>Everything incl. members &amp; delete drive</td></tr>
+            <tr><td>Content manager</td><td>Add/edit/move/delete files; not membership</td></tr>
+            <tr><td>Contributor</td><td>Add/edit; limited move/delete</td></tr>
+            <tr><td>Commenter / Viewer</td><td>Comment only / view only</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>Sharing defaults: internal vs external; warn/block outside shares.</li>
+          <li><strong>Target audiences</strong> — safer “share with All of Company”-style suggestions.</li>
+          <li><strong>Trust rules</strong> — precise who-can-share-with-whom (Module 3).</li>
+          <li>Pooled storage + per-OU quotas.</li>
+        </ul>
+
+        <h3>2.3 Calendar</h3>
+        <ul>
+          <li>Internal/external sharing defaults; block invite spam from unknowns.</li>
+          <li>Resource calendars from Buildings &amp; resources + booking rules/delegates.</li>
+          <li>Calendar delegation for assistants; transfer event ownership when organizer leaves.</li>
+        </ul>
+
+        <h3>2.4 Meet</h3>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Unwanted guests / join problems → <strong>Meet safety</strong> (host controls, knocking, org-only).<br />
+          Bad audio/video → <strong>Meet quality tool</strong> (Module 6), not safety.
+        </div>
+
+        <h3>2.5 Chat</h3>
+        <p>History on/off matters: if history was off, Vault can’t retain what never existed.
+        Control spaces, external chat, moderation, approved bots.</p>
+
+        <h3>2.6 Gemini</h3>
+        <ul>
+          <li>Org prompts/content are <strong>not</strong> used to train Google’s foundation models.</li>
+          <li>Enable per OU; pilot with a group first.</li>
+          <li>Extensions let Gemini act across Gmail/Drive; use usage reports for adoption.</li>
+        </ul>
+
+        <h3>2.7 AppSheet vs Apps Script</h3>
+        <p>No-code app from Sheets/Drive → <strong>AppSheet</strong>. Custom JavaScript glue → <strong>Apps Script</strong>.</p>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m2a" /> I can explain SPF / DKIM / DMARC in one sentence each.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m2b" /> I know Shared Drive vs My Drive for off-boarding.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m2c" /> Meet safety ≠ Meet quality tool.</label></div>
+      </section>
+
+      <!-- MODULE 3 -->
+      <section class="module" id="m3" data-search="vault retention hold matter DLP labels takeout data export data regions trust rules eDiscovery">
+        <h2>Module 3 · Data Governance &amp; Compliance <span class="pct">~15%</span></h2>
+        <p class="goal">Goal: retain, protect, classify, and export data — and know which tool does which job.</p>
+
+        <h3>3.1 Google Vault</h3>
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          Vault is the company’s legal filing cabinet for Gmail, Drive, Chat, Meet recordings, Groups.
+          It is <em>not</em> a user backup/restore button. It’s for retention, legal hold, and eDiscovery.
+        </div>
+        <ul>
+          <li><strong>Retention rules</strong> — auto keep/purge by service, date, scope (default + custom).</li>
+          <li><strong>Holds</strong> — freeze data for litigation; live inside a <strong>Matter</strong> (case folder). Hold <em>always beats</em> retention deletion.</li>
+          <li><strong>Search &amp; export</strong> — find and export with metadata for lawyers.</li>
+          <li><strong>Vault audit</strong> — who searched/exported/changed holds.</li>
+        </ul>
+        <div class="exam">
+          <strong>Big Vault facts</strong><br />
+          1) Hold wins over retention delete.<br />
+          2) Keep ex-employee data cheap → Archived User License.<br />
+          3) Vault ≠ backup for users.<br />
+          4) Chat/Meet only retainable if history/recording was on when created.
+        </div>
+
+        <h3>3.2 DLP (Data Loss Prevention)</h3>
+        <div class="plain">
+          <strong>Analogy</strong><br />
+          DLP is a security guard reading documents as they leave the building. Sees a credit card number? Blocks, warns, or logs it.
+        </div>
+        <p>Detectors (credit card, SSN, custom regex/word lists) + actions (block / warn / audit) + scope (OU/group).
+        Drive DLP on share; Gmail on outbound; Chat on messages/uploads. Advanced Drive/Chat DLP = Enterprise.</p>
+
+        <h3>3.3 Drive trust rules</h3>
+        <p>Granular sharing control: OU ↔ OU, group, domain, user; external + visitors.
+        Answer for “Legal may share with outside counsel’s domain, but nobody else may share externally.”</p>
+
+        <h3>3.4 Export &amp; residency</h3>
+        <table>
+          <thead><tr><th>Tool</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td>Google Takeout (user)</td><td>User self-exports own data — often restricted</td></tr>
+            <tr><td>Data Export tool (Super Admin)</td><td>Export entire org (waiting period) — big “get everything out”</td></tr>
+            <tr><td>Vault export</td><td>Targeted eDiscovery for a matter</td></tr>
+            <tr><td>Data regions</td><td>Store covered data at rest in US/Europe etc. by OU</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.5 Labels</h3>
+        <p>Tags like Public / Internal / Confidential. User-applied, default, DLP-driven, or AI classification.
+        Labels bridge classification → enforcement: label “Confidential” then DLP/trust rules act on it.</p>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m3a" /> Hold overrides retention — locked in.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m3b" /> I can choose Vault vs DLP vs Trust rules vs Takeout.</label></div>
+      </section>
+
+      <!-- MODULE 4 -->
+      <section class="module" id="m4" data-search="2SV CAA context-aware access admin roles least privilege session control security center investigation marketplace OAuth API">
+        <h2>Module 4 · Security Policies &amp; Access <span class="pct">~20%</span></h2>
+        <p class="goal">Goal: protect sign-in, delegate admin power safely, watch threats, control which apps touch data.</p>
+
+        <h3>4.1 Passwords &amp; 2-Step Verification (2SV)</h3>
+        <div class="plain">
+          <strong>In plain English</strong><br />
+          Password = something you know. 2SV = second proof (phone prompt, authenticator, security key).
+          Rollout: allow → set enforcement date → give new users an enrollment grace period.
+        </div>
+        <table>
+          <thead><tr><th>Method</th><th>Strength</th></tr></thead>
+          <tbody>
+            <tr><td>Security keys / passkeys</td><td>Strongest, phishing-resistant — require for admins / high-risk</td></tr>
+            <tr><td>Authenticator / Google prompt</td><td>Strong + convenient</td></tr>
+            <tr><td>Backup codes</td><td>Emergency one-time codes</td></tr>
+            <tr><td>SMS / phone call</td><td>Weakest (SIM-swap) but better than none</td></tr>
+          </tbody>
+        </table>
+        <div class="warn">
+          <strong>Pitfall</strong><br />
+          Enforce 2SV with zero enrollment window → lock people out. Always pilot + grace period. Protect Super Admins hard; keep break-glass account.
+        </div>
+
+        <h3>4.2 Context-Aware Access (CAA)</h3>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          <strong>2SV</strong> proves <em>who</em> you are.<br />
+          <strong>CAA</strong> decides if the <em>situation</em> is allowed (managed device, corp network, country).<br />
+          Words like device state / network / geography → CAA (often Enterprise).
+        </div>
+
+        <h3>4.3 Admin roles — least privilege</h3>
+        <table>
+          <thead><tr><th>Role</th><th>Can do</th></tr></thead>
+          <tbody>
+            <tr><td>Super Admin</td><td>Everything — keep rare, strongest 2SV, not for daily work</td></tr>
+            <tr><td>User Management Admin</td><td>Create/suspend/reset non-admins — not critical security</td></tr>
+            <tr><td>Help Desk Admin</td><td>Password resets &amp; basic help — deliberately limited</td></tr>
+            <tr><td>Groups / Services / Mobile / Reports…</td><td>Scoped function</td></tr>
+            <tr><td>Custom role</td><td>Pick only exact privileges; scope to OU if regional</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Help desk resets passwords only → Help Desk Admin (or custom). Regional admin → role scoped to that OU. Never gift Super Admin for a narrow need.
+        </div>
+
+        <h3>4.4 Session control</h3>
+        <p>How long web sessions last before re-login. Shorter for sensitive groups. Complements 2SV + CAA.</p>
+
+        <h3>4.5 Security center toolkit</h3>
+        <table>
+          <thead><tr><th>Need</th><th>Tool</th></tr></thead>
+          <tbody>
+            <tr><td>Quick health / gaps vs best practice</td><td>Security dashboard / health page</td></tr>
+            <tr><td>Investigate + remediate (delete mail, suspend, remove access)</td><td><strong>Investigation tool</strong></td></tr>
+            <tr><td>Auto-notify when X happens</td><td>Activity rule + Alert center</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.6 Apps, Marketplace, API access</h3>
+        <ul>
+          <li>Marketplace allowlist — only approved apps.</li>
+          <li>API controls (OAuth) — Trusted / Limited / Blocked; restrict Gmail/Drive scopes.</li>
+          <li>Workspace as IdP for SaaS via SAML (Web &amp; mobile apps).</li>
+          <li>Connected apps — revoke tokens already granted.</li>
+        </ul>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Risky app already connected → block/Limited in API controls + remove token under Connected apps.
+          Stop new junk installs → Marketplace allowlist.
+        </div>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m4a" /> 2SV vs CAA is clear.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m4b" /> Least privilege admin roles — I won’t pick Super Admin by habit.</label></div>
+      </section>
+
+      <!-- MODULE 5 -->
+      <section class="module" id="m5" data-search="mobile MDM chrome CBCM account wipe device wipe BYOD extension force install">
+        <h2>Module 5 · Browsers &amp; Endpoints <span class="pct">~10%</span></h2>
+        <p class="goal">Goal: keep company data safe on phones, laptops, browsers — and off-board cleanly.</p>
+
+        <h3>5.1 Mobile device management</h3>
+        <table>
+          <thead><tr><th>Approach</th><th>What you get</th></tr></thead>
+          <tbody>
+            <tr><td>Basic</td><td>Agentless: screen lock + wipe corporate account. On by default.</td></tr>
+            <tr><td>Advanced</td><td>Full MDM: approval, stronger policies, apps, full device wipe. Needs compatible edition.</td></tr>
+            <tr><td>Third-party</td><td>Intune, Jamf, etc. if company already standardizes there.</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Off-boarding wipe choice</strong><br />
+          BYOD / personal phone → <strong>account wipe</strong> (company data only, leave photos).<br />
+          Company-owned → <strong>device wipe</strong> OK (factory reset).<br />
+          Suspending the user also cuts mobile access immediately.
+        </div>
+
+        <h3>5.2 Chrome Browser Cloud Management (CBCM)</h3>
+        <p>Enroll browsers with a token; enforce updates, Safe Browsing, homepage, extensions by OU/group — same inheritance model.</p>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Finance must have extension X and can’t remove it → <strong>Force install</strong> on Finance OU/group.<br />
+          Stop random extensions → block all, allow approved list.
+        </div>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m5a" /> Account wipe vs device wipe — automatic.</label></div>
+      </section>
+
+      <!-- MODULE 6 -->
+      <section class="module" id="m6" data-search="email log search audit logs investigation status dashboard HAR toolbox recovery trash 20 days 25 days 30 days">
+        <h2>Module 6 · Monitoring &amp; Troubleshooting <span class="pct">~13%</span></h2>
+        <p class="goal">Goal: find the right log fast, recover data, escalate cleanly.</p>
+
+        <h3>6.1 Where to look first</h3>
+        <table>
+          <thead><tr><th>Question</th><th>Go to</th></tr></thead>
+          <tbody>
+            <tr><td>Is Google down for everyone?</td><td>Workspace Status Dashboard</td></tr>
+            <tr><td>Did this email get delivered?</td><td><strong>Email Log Search</strong> (last 30 days)</td></tr>
+            <tr><td>Who changed an admin setting?</td><td>Admin audit log</td></tr>
+            <tr><td>Suspicious sign-in?</td><td>Login audit + investigation tool</td></tr>
+            <tr><td>File sharing / access?</td><td>Drive log events</td></tr>
+            <tr><td>Group membership changes?</td><td>Groups audit log</td></tr>
+            <tr><td>Which app got data access?</td><td>OAuth / Token audit log</td></tr>
+            <tr><td>Device enrollments?</td><td>Devices audit log</td></tr>
+          </tbody>
+        </table>
+
+        <h3>6.2 Email troubleshooting</h3>
+        <p>Email Log Search for delivery path (delivered / rejected / quarantined / in transit).
+        Headers + SPF/DKIM/DMARC → Google Admin Toolbox (<code>toolbox.googleapps.com</code>) Messageheader tool.
+        HAR file for support: Chrome DevTools → Network → Preserve log → reproduce → Save as HAR. Treat as sensitive.</p>
+
+        <h3>6.3 Recovery windows (memorize)</h3>
+        <table>
+          <thead><tr><th>Thing</th><th>Window</th></tr></thead>
+          <tbody>
+            <tr><td>Drive Trash</td><td>30 days, then auto-purged</td></tr>
+            <tr><td>Admin restore deleted Drive/Gmail data</td><td>~25 days after that</td></tr>
+            <tr><td>Deleted user account</td><td>20 days to restore, then permanent</td></tr>
+          </tbody>
+        </table>
+
+        <h3>6.4 Reports &amp; support</h3>
+        <p>Reporting → usage, storage, account/device activity for trends.
+        Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Google Support case.</p>
+
+        <div class="check-row"><label><input type="checkbox" data-check="m6a" /> I match questions to the right log instinctively.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m6b" /> Recovery windows 20 / 25 / 30 memorized.</label></div>
+      </section>
+
+      <!-- MODULE 7 -->
+      <section class="module" id="m7" data-search="exam strategy pacing multiple select scenario distractors">
+        <h2>Module 7 · Exam Strategy</h2>
+        <ul>
+          <li>~2 minutes per question; flag and move on; review flagged at end.</li>
+          <li>Multiple-select tells you how many — pick exactly that many.</li>
+          <li>Read for the <em>constraint</em>: only some users, minimise cost, managed devices, preserve data, edition limits.</li>
+          <li>Pick the most specific correct tool (least privilege, narrowest scope).</li>
+          <li>Beware distractors that exist but solve a different problem (safety vs quality, sync vs migration, dashboard vs investigation).</li>
+        </ul>
+      </section>
+
+      <!-- HEURISTICS -->
+      <section class="module" id="heuristics" data-search="decision heuristics if then cheat sheet">
+        <h2>Decision heuristics (drill daily)</h2>
+        <p class="goal">If you only memorize one page, make it this one.</p>
+
+        <div class="heur"><div class="if">Only some users, mirrors structure, service on/off</div><div class="then">→ Organizational Unit</div></div>
+        <div class="heur"><div class="if">Cross-department / fluid membership / access overlay</div><div class="then">→ Group (often Security group)</div></div>
+        <div class="heur"><div class="if">Keep ex-employee data cheaply</div><div class="then">→ Archived User License</div></div>
+        <div class="heur"><div class="if">Access only from managed devices / corp network / region</div><div class="then">→ Context-Aware Access</div></div>
+        <div class="heur"><div class="if">Department-to-department or domain-specific sharing</div><div class="then">→ Drive trust rules</div></div>
+        <div class="heur"><div class="if">Stop sensitive content leaving (cards, PII)</div><div class="then">→ DLP rule</div></div>
+        <div class="heur"><div class="if">Preserve data for litigation despite retention</div><div class="then">→ Vault hold inside a Matter</div></div>
+        <div class="heur"><div class="if">On-prem AD source of identities</div><div class="then">→ GCDS</div></div>
+        <div class="heur"><div class="if">Cloud IdP (Entra) source of identities</div><div class="then">→ Directory Sync</div></div>
+        <div class="heur"><div class="if">Email/files from another provider</div><div class="then">→ Migration tool (DMS)</div></div>
+        <div class="heur"><div class="if">Outbound mail flagged as spam by recipients</div><div class="then">→ Complete SPF + DKIM + DMARC</div></div>
+        <div class="heur"><div class="if">Was this one message delivered?</div><div class="then">→ Email Log Search</div></div>
+        <div class="heur"><div class="if">Investigate then remediate an incident</div><div class="then">→ Investigation tool</div></div>
+        <div class="heur"><div class="if">Away from computer / on phone</div><div class="then">→ Google Admin mobile app</div></div>
+        <div class="heur"><div class="if">BYOD off-board wipe</div><div class="then">→ Account wipe (not full device)</div></div>
+
+        <div class="check-row"><label><input type="checkbox" data-check="h1" /> I reviewed heuristics twice without looking at answers.</label></div>
+      </section>
+
+      <!-- GLOSSARY -->
+      <section class="module" id="glossary" data-search="acronym glossary OU GCDS IdP SP SAML SCIM 2SV CAA DLP AUL DMS ELS HAR MX MDM CBCM">
+        <h2>Appendix A · Acronym glossary</h2>
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>OU</td><td>Organizational Unit — tree node; one user, one OU</td></tr>
+            <tr><td>GCDS</td><td>Google Cloud Directory Sync — on-prem AD/LDAP → Workspace</td></tr>
+            <tr><td>Directory Sync</td><td>Cloud IdP sync (e.g. Entra), Google-hosted</td></tr>
+            <tr><td>IdP / SP</td><td>Identity Provider / Service Provider (SSO roles)</td></tr>
+            <tr><td>SAML / SSO</td><td>Federated sign-on standard</td></tr>
+            <tr><td>SCIM</td><td>Automated account provisioning between systems</td></tr>
+            <tr><td>2SV</td><td>2-Step Verification</td></tr>
+            <tr><td>CAA</td><td>Context-Aware Access</td></tr>
+            <tr><td>DLP</td><td>Data Loss Prevention</td></tr>
+            <tr><td>AUL</td><td>Archived User License</td></tr>
+            <tr><td>DMS</td><td>Data Migration Service</td></tr>
+            <tr><td>ELS</td><td>Email Log Search (30 days)</td></tr>
+            <tr><td>HAR</td><td>HTTP Archive for support diagnostics</td></tr>
+            <tr><td>MX / SPF / DKIM / DMARC</td><td>Mail routing + authentication trio</td></tr>
+            <tr><td>MDM</td><td>Mobile Device Management</td></tr>
+            <tr><td>CBCM</td><td>Chrome Browser Cloud Management</td></tr>
+            <tr><td>OAuth</td><td>Token-based app authorization with scopes</td></tr>
+            <tr><td>SKU</td><td>Specific license/edition assigned to a user</td></tr>
+            <tr><td>Cloud Identity</td><td>Identity-only SKU without Workspace apps</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- TOOLS -->
+      <section class="module" id="tools" data-search="tool use case quick reference vault dlp investigation">
+        <h2>Appendix B · Tool → use-case</h2>
+        <table>
+          <thead><tr><th>Tool</th><th>Use it when…</th></tr></thead>
+          <tbody>
+            <tr><td>GCDS / Directory Sync / SCIM</td><td>Keep identities in sync from an external source of truth</td></tr>
+            <tr><td>Data Migration Service</td><td>Move email/calendar/contact content into Gmail</td></tr>
+            <tr><td>Vault</td><td>Retention, legal hold, eDiscovery search/export</td></tr>
+            <tr><td>DLP</td><td>Detect and act on sensitive content automatically</td></tr>
+            <tr><td>Drive trust rules</td><td>Precise control of who can share with whom</td></tr>
+            <tr><td>Context-aware access</td><td>Access depends on device/network/location</td></tr>
+            <tr><td>Investigation tool</td><td>Search across logs and remediate in bulk</td></tr>
+            <tr><td>Email Log Search + Toolbox</td><td>Diagnose delivery or authentication of email</td></tr>
+            <tr><td>Meet quality tool</td><td>Diagnose audio/video performance</td></tr>
+            <tr><td>Security health page</td><td>Find configuration gaps vs best practice</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- DNS -->
+      <section class="module" id="dns" data-search="DNS MX SPF DKIM DMARC verification TXT">
+        <h2>Appendix C · DNS cheat-sheet</h2>
+        <table>
+          <thead><tr><th>Record</th><th>Purpose</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>MX</td><td>Route inbound mail to Google</td><td><code>smtp.google.com</code> priority 1 (or legacy ASPMX set)</td></tr>
+            <tr><td>TXT (SPF)</td><td>List authorised senders</td><td>One SPF record per domain; include Google</td></tr>
+            <tr><td>TXT (DKIM)</td><td>Sign outbound mail</td><td>Generate in Authenticate email → publish → Start authentication</td></tr>
+            <tr><td>TXT (_dmarc)</td><td>Failure policy + reports</td><td>Start <code>p=none</code> → quarantine → reject</td></tr>
+            <tr><td>TXT / CNAME (verification)</td><td>Prove domain ownership</td><td>Alt: HTML file, meta tag, or MX</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p class="footer note">
+        Built from your <em>Google Workspace Administration — Notes &amp; Manuals (Expanded)</em> for Associate GWS Admin prep.
+        Open this file in any browser. Progress saves on this device; use <strong>Log in / Sign up</strong> to sync with a username and password.
+      </p>
+    </main>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./data/mock-bank.js"></script>
+  <script src="./data/gws-auth.js"></script>
+  <script>
+    window.GWS_AUTH = window.GWS_AUTH || {};
+    const store = window.gwsStorage || {
+      getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      setItem(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+      removeItem(k) { try { localStorage.removeItem(k); } catch (e) {} },
+      getJSON(k, fb) {
+        try {
+          const raw = localStorage.getItem(k);
+          if (!raw) return fb();
+          const d = JSON.parse(raw);
+          return d && typeof d === "object" ? d : fb();
+        } catch (e) { try { localStorage.removeItem(k); } catch (e2) {} return fb(); }
+      },
+      setJSON(k, d) { try { localStorage.setItem(k, JSON.stringify(d)); } catch (e) {} }
+    };
+    window.addEventListener("gws-profile-loaded", () => window.location.reload());
+
+    (function () {
+      const CHECK_KEY = "gws-study-checks-v1";
+      let saved = {};
+      try {
+        saved = store.getJSON(CHECK_KEY, () => ({})) || {};
+      } catch (e) {
+        saved = {};
+      }
+      const boxes = [...document.querySelectorAll("input[data-check]")];
+      const bar = document.getElementById("progBar");
+      const text = document.getElementById("progText");
+
+      function paintChecks() {
+        let n = 0;
+        boxes.forEach((b) => {
+          const id = b.getAttribute("data-check");
+          b.checked = !!saved[id];
+          b.closest(".check-row")?.classList.toggle("done", b.checked);
+          if (b.checked) n++;
+        });
+        const pct = boxes.length ? (n / boxes.length) * 100 : 0;
+        bar.style.width = pct + "%";
+        text.textContent = n + " / " + boxes.length;
+      }
+
+      boxes.forEach((b) => {
+        b.addEventListener("change", () => {
+          saved[b.getAttribute("data-check")] = b.checked;
+          try {
+            store.setJSON(CHECK_KEY, saved);
+          } catch (e) { /* private mode */ }
+          paintChecks();
+        });
+      });
+      paintChecks();
+
+      const search = document.getElementById("search");
+      const modules = [...document.querySelectorAll(".module, .hero")];
+      let inRound = false;
+      search.addEventListener("input", () => {
+        const q = search.value.trim().toLowerCase();
+        modules.forEach((m) => {
+          if (!q) { m.classList.remove("hidden"); return; }
+          if (inRound && m.id === "practice") { m.classList.remove("hidden"); return; }
+          const hay = (m.id + " " + m.textContent + " " + (m.dataset.search || "")).toLowerCase();
+          m.classList.toggle("hidden", !hay.includes(q));
+        });
+      });
+
+      const links = [...document.querySelectorAll(".nav a")];
+      // Only hash links are valid querySelector targets (skip ./gws-admin-console.html etc.)
+      const map = links
+        .map((a) => {
+          const href = a.getAttribute("href") || "";
+          if (!href.startsWith("#") || href.length < 2) return null;
+          try {
+            const el = document.querySelector(href);
+            return el ? { a, el } : null;
+          } catch (e) {
+            return null;
+          }
+        })
+        .filter(Boolean);
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const id = "#" + e.target.id;
+          links.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === id));
+        });
+      }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+      map.forEach(({ el }) => io.observe(el));
+
+      /* ========== Scenario Drill Game ========== */
+      const GAME_KEY = "gws-study-game-v1";
+      const MOCK = Array.isArray(window.MOCK_BANK) ? window.MOCK_BANK : [];
+      const mockCountEl = document.getElementById("mockBankCount");
+      if (mockCountEl) mockCountEl.textContent = String(MOCK.length || 246);
+      const BANK = [
+        { id: "m0-ou-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "You need to turn Chat OFF for everyone in the Warehouse team, and each person has exactly one structural home. What should you use?", constraints: ["service on/off", "mirrors structure"], choices: [{ id: "a", text: "A security group overlay only" }, { id: "b", text: "An Organizational Unit for Warehouse" }, { id: "c", text: "A Collaborative Inbox" }, { id: "d", text: "Cloud Identity Free" }], answer: ["b"], explain: "Service on/off that mirrors structure and one answer per person → OU. Groups are for cross-cutting overlays.", guideHref: "#m0" },
+        { id: "m0-grp-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "A Gemini pilot includes people from Sales, IT, and Legal. Membership will change weekly. Best targeting method?", constraints: ["cross-department", "fluid"], choices: [{ id: "a", text: "Move everyone into one OU" }, { id: "b", text: "A group (often a security group) as an overlay" }, { id: "c", text: "Delete and recreate users each week" }, { id: "d", text: "Domain alias" }], answer: ["b"], explain: "Fluid membership across the tree → group overlay. OUs answer structural identity.", guideHref: "#m0" },
+        { id: "m0-pool-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "The company is low on Drive storage. One power user is huge, but storage is pooled. First correct mental model?", constraints: [], choices: [{ id: "a", text: "Upgrade only that one mailbox’s private allotment" }, { id: "b", text: "Add licenses, set quotas, or free space — pool is shared" }, { id: "c", text: "Turn off Gmail to free Drive" }, { id: "d", text: "Delete the primary domain" }], answer: ["b"], explain: "Modern Workspace storage is pooled org-wide. Fix pool capacity or quotas — not a single mailbox ‘upgrade’ myth.", guideHref: "#m0" },
+        { id: "m0-ed-01", module: "m0", difficulty: 2, type: "single", selectCount: 1, stem: "A scenario on Business Starter asks you to enable advanced Drive DLP and the investigation tool. What should you check first?", constraints: ["edition"], choices: [{ id: "a", text: "Whether those capabilities exist on the stated edition" }, { id: "b", text: "Only DNS MX records" }, { id: "c", text: "Whether Chat history is off" }, { id: "d", text: "Whether buildings are created" }], answer: ["a"], explain: "Many advanced security/compliance tools are Enterprise-tier. Always ask: does this edition include it?", guideHref: "#m0", editionNote: "Advanced DLP / investigation tool are typically Enterprise-tier." },
+        { id: "m0-mobile-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "You’re away from your computer and must suspend a compromised user. Best answer?", constraints: ["away from computer"], choices: [{ id: "a", text: "Wait until Monday" }, { id: "b", text: "Google Admin mobile app" }, { id: "c", text: "Email Log Search" }, { id: "d", text: "Vault matter" }], answer: ["b"], explain: "On-the-go admin tasks (suspend, reset password, alerts) → Admin mobile app.", guideHref: "#m0" },
+
+        { id: "m1-aul-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "An employee left. Legal needs their data retained cheaply without a full Workspace seat. What do you use?", constraints: ["minimise cost", "preserve data"], choices: [{ id: "a", text: "Keep them Active forever" }, { id: "b", text: "Archived User License (AUL)" }, { id: "c", text: "Delete immediately with no transfer" }, { id: "d", text: "Domain alias" }], answer: ["b"], explain: "AUL keeps data for Vault/retention without a full active seat — the cost-preserving end state.", guideHref: "#m1" },
+        { id: "m1-sus-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "HR puts someone on leave for two weeks and may reinstate them. You must cut access now without destroying data. First action?", constraints: ["preserve data"], choices: [{ id: "a", text: "Delete the user" }, { id: "b", text: "Suspend the account" }, { id: "c", text: "Remove the primary domain" }, { id: "d", text: "Wipe their Shared Drive" }], answer: ["b"], explain: "Suspend cuts sign-in, keeps data, still uses a license, and is instantly reversible.", guideHref: "#m1" },
+        { id: "m1-del-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "You deleted a user by mistake. How long do you typically have to restore the account?", constraints: [], choices: [{ id: "a", text: "2 days" }, { id: "b", text: "20 days" }, { id: "c", text: "90 days" }, { id: "d", text: "Forever" }], answer: ["b"], explain: "Deleted users are recoverable for about 20 days, then permanent. Transfer Drive before deleting when planned.", guideHref: "#m1" },
+        { id: "m1-gcds-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Identities live in on-prem Active Directory and must sync into Workspace. Which tool?", constraints: ["on-prem AD"], choices: [{ id: "a", text: "Data Migration Service" }, { id: "b", text: "GCDS (Google Cloud Directory Sync)" }, { id: "c", text: "Email Log Search" }, { id: "d", text: "Drive trust rules" }], answer: ["b"], explain: "On-prem LDAP/AD → GCDS (one-way into Workspace). DMS moves content, not identities.", guideHref: "#m1" },
+        { id: "m1-dirsync-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Source of truth is Microsoft Entra ID (cloud). Best Google-hosted identity sync?", constraints: ["cloud IdP"], choices: [{ id: "a", text: "GCDS on a PC under a desk" }, { id: "b", text: "Directory Sync" }, { id: "c", text: "Vault hold" }, { id: "d", text: "CBCM" }], answer: ["b"], explain: "Cloud IdP such as Entra → Directory Sync (Google-hosted cousin of GCDS).", guideHref: "#m1" },
+        { id: "m1-mig-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "You’re moving mailboxes from Microsoft 365 into Gmail. Sync or migrate?", constraints: ["email content"], choices: [{ id: "a", text: "GCDS only" }, { id: "b", text: "Data Migration Service (or migration tooling)" }, { id: "c", text: "SPF record alone" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Content (mail/calendar/contacts) → migration tools. Sync tools move identities.", guideHref: "#m2" },
+        { id: "m1-alias-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "Every existing user needs an extra address at newsite.com without new accounts or licenses. Choose:", constraints: [], choices: [{ id: "a", text: "Secondary domain" }, { id: "b", text: "Domain alias" }, { id: "c", text: "Frontline licenses for everyone" }, { id: "d", text: "Cloud Identity Premium only" }], answer: ["b"], explain: "Domain alias = same users get extra addresses. Secondary domain = separate accounts (each licensed).", guideHref: "#m1" },
+        { id: "m1-xfer-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Before deleting a leavers’ account, what should you do with My Drive files they own?", constraints: ["preserve data"], choices: [{ id: "a", text: "Nothing — Shared Drive rules auto-apply to My Drive" }, { id: "b", text: "Transfer Drive ownership to a successor/manager" }, { id: "c", text: "Only reset their password" }, { id: "d", text: "Publish a DMARC reject policy" }], answer: ["b"], explain: "My Drive is person-owned — transfer before delete. Shared Drive content already belongs to the team.", guideHref: "#m1" },
+        { id: "m1-sso-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "You configure SAML SSO with Okta. What should you keep so you’re not locked out if Okta is down?", constraints: ["break-glass"], choices: [{ id: "a", text: "A Super Admin that bypasses SSO" }, { id: "b", text: "No admins at all" }, { id: "c", text: "Only SMS 2SV for everyone" }, { id: "d", text: "Disable all domains" }], answer: ["a"], explain: "Keep a break-glass Super Admin excluded from SSO / recoverable independently.", guideHref: "#m1" },
+        { id: "m1-rooms-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "Facilities asks you to add 200 meeting rooms across 10 sites. Best approach?", constraints: [], choices: [{ id: "a", text: "Create each room manually in the UI one by one" }, { id: "b", text: "Bulk-upload buildings and rooms via CSV" }, { id: "c", text: "Use Vault export" }, { id: "d", text: "Turn on Gemini" }], answer: ["b"], explain: "Large estates → CSV bulk for buildings/resources.", guideHref: "#m1" },
+
+        { id: "m2-spam-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Outbound mail lands in recipients’ spam folders. What’s the usual fix?", constraints: ["outbound spam"], choices: [{ id: "a", text: "Turn off Meet" }, { id: "b", text: "Complete SPF + DKIM + DMARC (and tighten DMARC over time)" }, { id: "c", text: "Delete all groups" }, { id: "d", text: "Disable 2SV" }], answer: ["b"], explain: "Outbound reputation/authentication gaps → SPF, DKIM, DMARC — not a random Gmail UI toggle.", guideHref: "#dns" },
+        { id: "m2-mx-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "What do MX records primarily control?", constraints: [], choices: [{ id: "a", text: "Outbound DKIM signing keys" }, { id: "b", text: "Where inbound mail is delivered" }, { id: "c", text: "Drive sharing defaults" }, { id: "d", text: "Chrome extensions" }], answer: ["b"], explain: "MX directs inbound mail to Google (e.g. smtp.google.com). Auth trio handles outbound legitimacy.", guideHref: "#m2" },
+        { id: "m2-sd-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Why put org project files in a Shared Drive instead of one person’s My Drive?", constraints: ["off-boarding"], choices: [{ id: "a", text: "Shared Drive files are owned by the team and survive off-boarding" }, { id: "b", text: "Shared Drives ignore all permissions" }, { id: "c", text: "My Drive cannot store Docs" }, { id: "d", text: "Vault cannot see Shared Drives" }], answer: ["a"], explain: "Team ownership avoids transfer-or-lose drama when someone leaves.", guideHref: "#m2" },
+        { id: "m2-meet-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Unwanted guests keep joining Meet. Where do you look first?", constraints: [], choices: [{ id: "a", text: "Meet quality tool" }, { id: "b", text: "Meet safety settings (host controls, knocking, org-only)" }, { id: "c", text: "SPF record" }, { id: "d", text: "Buildings CSV" }], answer: ["b"], explain: "Join/safety problems → Meet safety. Audio/video quality → Meet quality tool.", guideHref: "#m2" },
+        { id: "m2-meetq-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Users complain Meet audio/video is choppy. Best diagnostic tool?", constraints: [], choices: [{ id: "a", text: "Meet safety settings only" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Performance/quality ≠ safety lockdown.", guideHref: "#m6" },
+        { id: "m2-att-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Gmail send size limit for attachments is roughly…", constraints: [], choices: [{ id: "a", text: "2 MB (then fails forever)" }, { id: "b", text: "25 MB (larger often becomes a Drive link)" }, { id: "c", text: "2 GB always inline" }, { id: "d", text: "Unlimited with no Drive" }], answer: ["b"], explain: "About 25 MB send limit; oversize typically uploads to Drive and sends as a link.", guideHref: "#m2" },
+        { id: "m2-gem-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Leadership asks: does Gemini use our prompts to train Google’s foundation models?", constraints: [], choices: [{ id: "a", text: "Yes, always, for all editions" }, { id: "b", text: "Org prompts/content stay in your protections and are not used to train foundation models" }, { id: "c", text: "Only if Chat history is on" }, { id: "d", text: "Only if you disable 2SV" }], answer: ["b"], explain: "Privacy reassurance answer for Workspace Gemini: not used to train foundation models.", guideHref: "#m2" },
+        { id: "m2-appsheet-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Business wants a no-code app from Sheets data. Match the tool:", constraints: [], choices: [{ id: "a", text: "Apps Script only" }, { id: "b", text: "AppSheet" }, { id: "c", text: "GCDS" }, { id: "d", text: "Vault" }], answer: ["b"], explain: "No-code → AppSheet. Custom JS glue → Apps Script.", guideHref: "#m2" },
+        { id: "m2-dmarc-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "You’re turning on DMARC for the first time. Sensible start policy?", constraints: [], choices: [{ id: "a", text: "p=reject immediately with no monitoring" }, { id: "b", text: "Start at p=none to monitor, then quarantine, then reject" }, { id: "c", text: "Skip SPF and DKIM" }, { id: "d", text: "Use only MX for authentication" }], answer: ["b"], explain: "Monitor first (p=none), then tighten — classic exam guidance.", guideHref: "#dns" },
+        { id: "m2-pop-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Security wants to reduce data-exfiltration risk via old mail clients. Common control?", constraints: [], choices: [{ id: "a", text: "Disable POP/IMAP (and watch auto-forwarding) per OU" }, { id: "b", text: "Delete all MX records" }, { id: "c", text: "Turn off Vault" }, { id: "d", text: "Remove all OUs" }], answer: ["a"], explain: "Disabling POP/IMAP/forwarding is a common exfiltration control.", guideHref: "#m2" },
+
+        { id: "m3-hold-01", module: "m3", difficulty: 1, type: "single", selectCount: 1, stem: "Retention would delete mail in 30 days, but Legal needs it preserved for a lawsuit. What wins?", constraints: ["litigation"], choices: [{ id: "a", text: "Retention always deletes anyway" }, { id: "b", text: "A Vault hold inside a Matter — hold overrides retention deletion" }, { id: "c", text: "Takeout for one user only" }, { id: "d", text: "Chrome force-install" }], answer: ["b"], explain: "Hold always beats retention purge while the hold stands.", guideHref: "#m3" },
+        { id: "m3-vault-01", module: "m3", difficulty: 1, type: "single", selectCount: 1, stem: "Is Vault a user-facing backup/restore tool for accidental deletes?", constraints: [], choices: [{ id: "a", text: "Yes — tell users to restore from Vault daily" }, { id: "b", text: "No — Vault is retention / legal hold / eDiscovery" }, { id: "c", text: "Only for Meet quality" }, { id: "d", text: "Only for Chrome extensions" }], answer: ["b"], explain: "Don’t treat Vault as Time Machine for end users.", guideHref: "#m3" },
+        { id: "m3-dlp-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Block external Drive sharing when a file contains credit-card numbers. Which control?", constraints: ["sensitive content"], choices: [{ id: "a", text: "DLP rule with a credit-card detector" }, { id: "b", text: "MX record change" }, { id: "c", text: "Collaborative Inbox" }, { id: "d", text: "Buildings CSV" }], answer: ["a"], explain: "Detect & act on sensitive content → DLP.", guideHref: "#m3", editionNote: "Advanced Drive/Chat DLP is typically Enterprise-tier — confirm edition." },
+        { id: "m3-trust-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Legal may share with outside counsel’s domain; nobody else may share externally. Best fit?", constraints: ["domain-specific sharing"], choices: [{ id: "a", text: "Drive trust rules" }, { id: "b", text: "Email Log Search" }, { id: "c", text: "Frontline SKU" }, { id: "d", text: "HAR file" }], answer: ["a"], explain: "Granular who-can-share-with-whom → trust rules (finer than a blunt external on/off).", guideHref: "#m3" },
+        { id: "m3-label-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Automatically protect anything marked Confidential. Pattern?", constraints: [], choices: [{ id: "a", text: "Label + DLP (or rules) keyed to that label" }, { id: "b", text: "Only SPF" }, { id: "c", text: "Only domain alias" }, { id: "d", text: "Disable Calendar" }], answer: ["a"], explain: "Labels classify; DLP / trust rules enforce based on the label.", guideHref: "#m3" },
+        { id: "m3-export-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Super Admin needs an org-wide ‘get everything out’ export (not a single matter). Tool?", constraints: [], choices: [{ id: "a", text: "Data Export tool" }, { id: "b", text: "Email Log Search" }, { id: "c", text: "CBCM" }, { id: "d", text: "Meet safety" }], answer: ["a"], explain: "Org-wide export → Data Export tool. Vault export is targeted eDiscovery.", guideHref: "#m3" },
+        { id: "m3-chat-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Chat history was OFF when messages were sent. Can Vault retain those messages later?", constraints: [], choices: [{ id: "a", text: "Yes, Vault invents history" }, { id: "b", text: "No — if history wasn’t on, there’s nothing to retain" }, { id: "c", text: "Only with Frontline" }, { id: "d", text: "Only via MX" }], answer: ["b"], explain: "Chat/Meet retainability depends on history/recording being on when created.", guideHref: "#m3" },
+        { id: "m3-region-01", module: "m3", difficulty: 2, type: "single", selectCount: 1, stem: "Regulator requires covered data at rest in Europe. Which feature family?", constraints: ["residency"], choices: [{ id: "a", text: "Data regions (apply by OU)" }, { id: "b", text: "Collaborative Inbox" }, { id: "c", text: "Force-install extension" }, { id: "d", text: "POP only" }], answer: ["a"], explain: "Data regions for residency compliance.", guideHref: "#m3", editionNote: "Data regions are typically Enterprise-tier — confirm edition." },
+
+        { id: "m4-2sv-01", module: "m4", difficulty: 1, type: "single", selectCount: 1, stem: "You’re enforcing 2SV tomorrow with no enrollment window. What’s the risk?", constraints: [], choices: [{ id: "a", text: "Nothing — users magically enroll" }, { id: "b", text: "Users without a second factor get locked out" }, { id: "c", text: "MX records break" }, { id: "d", text: "Vault holds expire" }], answer: ["b"], explain: "Allow 2SV, set enforcement date, give enrollment grace — then enforce.", guideHref: "#m4" },
+        { id: "m4-caa-01", module: "m4", difficulty: 2, type: "single", selectCount: 1, stem: "Access to Drive must be allowed only from managed, encrypted devices on the corporate network. 2SV alone enough?", constraints: ["managed devices", "network"], choices: [{ id: "a", text: "Yes — 2SV covers device state" }, { id: "b", text: "No — use Context-Aware Access for situational conditions" }, { id: "c", text: "Only SPF" }, { id: "d", text: "Only AUL" }], answer: ["b"], explain: "2SV = who you are. CAA = whether the situation (device/network/geo) is allowed.", guideHref: "#m4", editionNote: "Advanced CAA conditions are typically Enterprise-tier." },
+        { id: "m4-role-01", module: "m4", difficulty: 1, type: "single", selectCount: 1, stem: "Help desk should reset passwords and nothing else. Best role approach?", constraints: ["least privilege"], choices: [{ id: "a", text: "Give everyone Super Admin" }, { id: "b", text: "Help Desk Admin (or a tight custom role)" }, { id: "c", text: "No admin roles exist" }, { id: "d", text: "Vault Super Admin only" }], answer: ["b"], explain: "Least privilege — never hand Super Admin for a narrow need.", guideHref: "#m4" },
+        { id: "m4-ourole-01", module: "m4", difficulty: 2, type: "single", selectCount: 1, stem: "A regional admin should manage users only in the APAC OU. How?", constraints: [], choices: [{ id: "a", text: "Assign an admin role scoped to that OU" }, { id: "b", text: "Give Super Admin and ask them to be careful" }, { id: "c", text: "Disable Reporting" }, { id: "d", text: "Delete other OUs" }], answer: ["a"], explain: "Role assignment scope can be org-wide or a specific OU.", guideHref: "#m4" },
+        { id: "m4-inv-01", module: "m4", difficulty: 2, type: "single", selectCount: 1, stem: "You must search across logs and remediate in bulk (suspend users, remove file access). Tool?", constraints: ["investigate then remediate"], choices: [{ id: "a", text: "Security health page only" }, { id: "b", text: "Investigation tool" }, { id: "c", text: "Buildings & resources" }, { id: "d", text: "Template gallery" }], answer: ["b"], explain: "Investigate + act → investigation tool. Health page finds config gaps.", guideHref: "#m4", editionNote: "Full Security Center / investigation tool is typically Enterprise-tier." },
+        { id: "m4-oauth-01", module: "m4", difficulty: 2, type: "single", selectCount: 1, stem: "A risky third-party app already has OAuth access to Drive. What do you do?", constraints: [], choices: [{ id: "a", text: "Ignore it" }, { id: "b", text: "Block/Limited in API controls and remove its token under Connected apps" }, { id: "c", text: "Delete MX records" }, { id: "d", text: "Turn off Calendar only" }], answer: ["b"], explain: "API controls + revoke connected tokens. New installs → Marketplace allowlist.", guideHref: "#m4" },
+        { id: "m4-key-01", module: "m4", difficulty: 1, type: "single", selectCount: 1, stem: "Strongest phishing-resistant 2SV for Super Admins?", constraints: [], choices: [{ id: "a", text: "SMS only" }, { id: "b", text: "Security keys / passkeys" }, { id: "c", text: "Password only" }, { id: "d", text: "Recovery email alone" }], answer: ["b"], explain: "Security keys/passkeys are the strongest, phishing-resistant option.", guideHref: "#m4" },
+
+        { id: "m5-wipe-01", module: "m5", difficulty: 1, type: "single", selectCount: 1, stem: "Employee leaves; their phone is personal BYOD. Correct wipe?", constraints: ["BYOD"], choices: [{ id: "a", text: "Full device wipe (factory reset)" }, { id: "b", text: "Account wipe — remove corporate data only" }, { id: "c", text: "Delete the company domain" }, { id: "d", text: "Disable SPF" }], answer: ["b"], explain: "BYOD → account wipe. Company-owned → device wipe is acceptable.", guideHref: "#m5" },
+        { id: "m5-ext-01", module: "m5", difficulty: 1, type: "single", selectCount: 1, stem: "Finance must have extension X and cannot remove it. Chrome policy?", constraints: [], choices: [{ id: "a", text: "Force install scoped to Finance OU/group" }, { id: "b", text: "Vault hold" }, { id: "c", text: "DMARC reject" }, { id: "d", text: "AUL" }], answer: ["a"], explain: "CBCM force-install on the right OU/group.", guideHref: "#m5" },
+        { id: "m5-block-01", module: "m5", difficulty: 1, type: "single", selectCount: 1, stem: "Stop users installing random Chrome extensions?", constraints: [], choices: [{ id: "a", text: "Block all, allow an approved list" }, { id: "b", text: "Delete Gmail" }, { id: "c", text: "Turn off 2SV" }, { id: "d", text: "Remove all buildings" }], answer: ["a"], explain: "Allowlist/block pattern under Chrome apps & extensions.", guideHref: "#m5" },
+        { id: "m5-basic-01", module: "m5", difficulty: 2, type: "single", selectCount: 1, stem: "Basic mobile management typically lets you…", constraints: [], choices: [{ id: "a", text: "Require screen lock and wipe the corporate account (agentless)" }, { id: "b", text: "Factory-reset any BYOD without policy" }, { id: "c", text: "Replace Vault" }, { id: "d", text: "Change MX automatically" }], answer: ["a"], explain: "Basic = lightweight account controls; Advanced = fuller MDM including whole-device wipe.", guideHref: "#m5" },
+
+        { id: "m6-els-01", module: "m6", difficulty: 1, type: "single", selectCount: 1, stem: "Was this one message delivered in the last week?", constraints: [], choices: [{ id: "a", text: "Email Log Search (about last 30 days)" }, { id: "b", text: "Drive trust rules" }, { id: "c", text: "AppSheet" }, { id: "d", text: "Domain alias" }], answer: ["a"], explain: "Message delivery tracing → ELS.", guideHref: "#m6" },
+        { id: "m6-admin-01", module: "m6", difficulty: 1, type: "single", selectCount: 1, stem: "Who turned off 2SV enforcement last night?", constraints: [], choices: [{ id: "a", text: "Admin audit log" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Buildings CSV" }, { id: "d", text: "Template gallery" }], answer: ["a"], explain: "Admin setting changes → admin audit log.", guideHref: "#m6" },
+        { id: "m6-status-01", module: "m6", difficulty: 1, type: "single", selectCount: 1, stem: "Gmail seems down. Is it just us or everyone?", constraints: [], choices: [{ id: "a", text: "Google Workspace Status Dashboard" }, { id: "b", text: "Only Vault" }, { id: "c", text: "Only CAA" }, { id: "d", text: "Only AUL" }], answer: ["a"], explain: "Global outage check → Status Dashboard before opening a support case.", guideHref: "#m6" },
+        { id: "m6-win-01", module: "m6", difficulty: 2, type: "single", selectCount: 1, stem: "Drive Trash auto-purges after roughly how long?", constraints: [], choices: [{ id: "a", text: "24 hours" }, { id: "b", text: "30 days" }, { id: "c", text: "1 year" }, { id: "d", text: "Never" }], answer: ["b"], explain: "Trash ~30 days; admin restore window ~25 days after; deleted user ~20 days.", guideHref: "#m6" },
+        { id: "m6-har-01", module: "m6", difficulty: 2, type: "single", selectCount: 1, stem: "Google Support asks for a HAR file. What’s the privacy note?", constraints: [], choices: [{ id: "a", text: "HARs are always public" }, { id: "b", text: "HARs can contain session tokens — treat as sensitive" }, { id: "c", text: "HARs replace Vault" }, { id: "d", text: "HARs fix SPF automatically" }], answer: ["b"], explain: "Share HARs only with Support; they can include cookies/tokens.", guideHref: "#m6" },
+
+        { id: "m7-multi-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "A multiple-select question says ‘select TWO’. You should…", constraints: [], choices: [{ id: "a", text: "Pick as many as feel right" }, { id: "b", text: "Pick exactly two" }, { id: "c", text: "Always pick all options" }, { id: "d", text: "Skip every multi-select" }], answer: ["b"], explain: "Read the count — pick exactly that many.", guideHref: "#m7" },
+        { id: "m7-pace-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "Rough pacing for a 120-minute exam with ~60 questions?", constraints: [], choices: [{ id: "a", text: "~2 minutes per question; flag and move on" }, { id: "b", text: "30 minutes per question" }, { id: "c", text: "No time limit exists" }, { id: "d", text: "Answer only Module 5" }], answer: ["a"], explain: "Pace ~2 min/q; review flagged items at the end.", guideHref: "#m7" },
+        { id: "m7-spec-01", module: "m7", difficulty: 2, type: "single", selectCount: 1, stem: "Two answers technically work. Which do you usually prefer?", constraints: ["least privilege"], choices: [{ id: "a", text: "The broadest Super Admin change" }, { id: "b", text: "The most specific tool / narrowest scope that meets the constraint" }, { id: "c", text: "Whatever mentions Vault" }, { id: "d", text: "Whatever mentions Meet" }], answer: ["b"], explain: "Most specific correct tool + least privilege wins most scenarios.", guideHref: "#m7" },
+
+        { id: "heur-01", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Requirement: access only from managed devices on the corp network. Reach for…", constraints: [], choices: [{ id: "a", text: "Context-Aware Access" }, { id: "b", text: "Collaborative Inbox" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Buildings CSV" }], answer: ["a"], explain: "Device/network/geo conditions → CAA.", guideHref: "#heuristics", editionNote: "Advanced CAA is typically Enterprise-tier." },
+        { id: "heur-02", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Keep an ex-employee’s data cheaply for retention. Reach for…", constraints: ["minimise cost"], choices: [{ id: "a", text: "Archived User License" }, { id: "b", text: "Force-install extension" }, { id: "c", text: "MX only" }, { id: "d", text: "AppSheet" }], answer: ["a"], explain: "Cheap retention end-state → AUL.", guideHref: "#heuristics" },
+        { id: "heur-03", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Stop credit-card numbers leaving via Drive share. Reach for…", constraints: [], choices: [{ id: "a", text: "DLP rule" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Calendar free/busy default only" }, { id: "d", text: "HAR analyzer" }], answer: ["a"], explain: "Sensitive content leaving → DLP.", guideHref: "#heuristics", editionNote: "Advanced Drive DLP is typically Enterprise-tier." },
+        { id: "heur-04", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "On-prem AD is the identity source of truth. Reach for…", constraints: [], choices: [{ id: "a", text: "GCDS" }, { id: "b", text: "Data Migration Service" }, { id: "c", text: "Drive labels only" }, { id: "d", text: "Session control only" }], answer: ["a"], explain: "Identities from on-prem AD → GCDS. Content moves use migration tools.", guideHref: "#heuristics" },
+        { id: "heur-05", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Department-to-department sharing limits (Legal ↔ Counsel domain only). Reach for…", constraints: [], choices: [{ id: "a", text: "Drive trust rules" }, { id: "b", text: "Email Log Search" }, { id: "c", text: "Frontline only" }, { id: "d", text: "Gemini extensions" }], answer: ["a"], explain: "Precise sharing topology → trust rules.", guideHref: "#heuristics" },
+
+        { id: "m1-multi-01", module: "m1", difficulty: 2, type: "multi", selectCount: 2, stem: "Select TWO steps that belong in a clean off-boarding sequence before reclaiming a license.", constraints: ["preserve data"], choices: [{ id: "a", text: "Suspend to cut access immediately" }, { id: "b", text: "Transfer Drive data to a successor" }, { id: "c", text: "Delete MX records for the whole company" }, { id: "d", text: "Disable SPF for everyone" }], answer: ["a", "b"], explain: "Suspend → reset/sign-out → transfer data → then delete or archive. Don’t break org mail auth as ‘off-boarding’.", guideHref: "#m1" },
+        { id: "m4-multi-01", module: "m4", difficulty: 2, type: "multi", selectCount: 2, stem: "Select TWO actions that help when a shady Marketplace/OAuth app is already connected.", constraints: [], choices: [{ id: "a", text: "Mark it Blocked/Limited in API controls" }, { id: "b", text: "Remove its token under Connected apps" }, { id: "c", text: "Delete the Status Dashboard" }, { id: "d", text: "Turn off all OU inheritance forever" }], answer: ["a", "b"], explain: "API controls + revoke tokens. Tighten Marketplace allowlist to stop new junk.", guideHref: "#m4" },
+        { id: "m2-multi-01", module: "m2", difficulty: 2, type: "multi", selectCount: 2, stem: "Select TWO DNS records that prove outbound mail legitimacy (not just inbound routing).", constraints: [], choices: [{ id: "a", text: "SPF" }, { id: "b", text: "DKIM" }, { id: "c", text: "AAAA for youtube.com" }, { id: "d", text: "Chrome enrollment token" }], answer: ["a", "b"], explain: "SPF + DKIM (+ DMARC policy) authenticate outbound. MX is mainly inbound routing.", guideHref: "#dns" },
+        { id: "m6-multi-01", module: "m6", difficulty: 2, type: "multi", selectCount: 2, stem: "Select TWO places you’d check when diagnosing a mail delivery mystery.", constraints: [], choices: [{ id: "a", text: "Email Log Search" }, { id: "b", text: "Admin Toolbox messageheader / auth checks" }, { id: "c", text: "Force-install a random extension" }, { id: "d", text: "Delete all users" }], answer: ["a", "b"], explain: "ELS for path/status; Toolbox for headers/auth. Don’t ‘fix’ with destructive unrelated changes.", guideHref: "#m6" }
+      ];
+
+      const defaultState = () => ({
+        v: 1,
+        xp: 0,
+        streak: 0,
+        bestStreak: 0,
+        answered: {},
+        lastMode: "quick"
+      });
+
+      function loadGame() {
+        try {
+          const raw = store.getItem(GAME_KEY);
+          if (!raw) return defaultState();
+          const data = JSON.parse(raw);
+          if (!data || data.v !== 1 || typeof data.xp !== "number") return defaultState();
+          return {
+            v: 1,
+            xp: data.xp || 0,
+            streak: data.streak || 0,
+            bestStreak: data.bestStreak || 0,
+            answered: data.answered && typeof data.answered === "object" ? data.answered : {},
+            lastMode: data.lastMode || "quick"
+          };
+        } catch (e) {
+          try { store.removeItem(GAME_KEY); } catch (e2) {}
+          return defaultState();
+        }
+      }
+
+      function saveGame(state) {
+        try {
+          store.setItem(GAME_KEY, JSON.stringify(state));
+        } catch (e) { /* ignore */ }
+      }
+
+      function levelOf(xp) { return 1 + Math.floor(xp / 100); }
+
+      function xpFor(q) {
+        let n = 10;
+        if (q.difficulty === 2) n += 5;
+        if (q.difficulty === 3) n += 10;
+        return n;
+      }
+
+      function accuracy(state) {
+        const vals = Object.values(state.answered);
+        if (!vals.length) return null;
+        let c = 0, t = 0;
+        vals.forEach((v) => { c += v.correct || 0; t += v.n || 0; });
+        if (!t) return null;
+        return Math.round((c / t) * 100);
+      }
+
+      const el = {
+        lobby: document.getElementById("gameLobby"),
+        stage: document.getElementById("gameStage"),
+        summary: document.getElementById("gameSummary"),
+        modulePick: document.getElementById("modulePick"),
+        moduleSelect: document.getElementById("moduleSelect"),
+        btnStart: document.getElementById("btnStart"),
+        btnReset: document.getElementById("btnResetGame"),
+        sidebarGame: document.getElementById("sidebarGame"),
+        modeRow: document.getElementById("modeRow")
+      };
+
+      let state = loadGame();
+      let mode = state.lastMode || "quick";
+      let round = null;
+      let mockTimerId = null;
+      let mockSecondsLeft = 0;
+
+      function stopMockTimer() {
+        if (mockTimerId) { clearInterval(mockTimerId); mockTimerId = null; }
+        mockSecondsLeft = 0;
+      }
+
+      function fmtMock(sec) {
+        const s = Math.max(0, sec | 0);
+        const m = Math.floor(s / 60);
+        const r = s % 60;
+        return String(m).padStart(2, "0") + ":" + String(r).padStart(2, "0");
+      }
+
+      function paintMockTimerBadge() {
+        if (!round || !el.stage) return;
+        let badge = el.stage.querySelector(".mock-timer-badge");
+        if (mode !== "mock50") {
+          if (badge) badge.remove();
+          return;
+        }
+        if (!badge) {
+          badge = document.createElement("div");
+          badge.className = "mock-timer-badge";
+          el.stage.insertBefore(badge, el.stage.firstChild);
+        }
+        badge.textContent = "Mock clock " + fmtMock(mockSecondsLeft);
+        badge.classList.toggle("urgent", mockSecondsLeft > 0 && mockSecondsLeft <= 5 * 60);
+      }
+
+      function paintStats() {
+        document.getElementById("statLevel").textContent = String(levelOf(state.xp));
+        document.getElementById("statXp").textContent = String(state.xp);
+        document.getElementById("statStreak").textContent = String(state.streak);
+        document.getElementById("statBest").textContent = String(state.bestStreak);
+        const acc = accuracy(state);
+        document.getElementById("statAcc").textContent = acc == null ? "—" : acc + "%";
+        while (el.sidebarGame.firstChild) el.sidebarGame.removeChild(el.sidebarGame.firstChild);
+        el.sidebarGame.appendChild(document.createTextNode("Game: Lv "));
+        const s1 = document.createElement("strong"); s1.textContent = String(levelOf(state.xp));
+        el.sidebarGame.appendChild(s1);
+        el.sidebarGame.appendChild(document.createTextNode(" · "));
+        const s2 = document.createElement("strong"); s2.textContent = String(state.xp);
+        el.sidebarGame.appendChild(s2);
+        el.sidebarGame.appendChild(document.createTextNode(" XP · streak "));
+        const s3 = document.createElement("strong"); s3.textContent = String(state.streak);
+        el.sidebarGame.appendChild(s3);
+      }
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+
+      function filterBank() {
+        if (mode === "heur") return BANK.filter((q) => q.module === "heur");
+        if (mode === "module") {
+          const m = el.moduleSelect.value;
+          if (m === "all") return BANK.slice();
+          return BANK.filter((q) => q.module === m);
+        }
+        if (mode === "mock10" || mode === "mock50" || mode === "mockFull") return MOCK.slice();
+        if (mode === "mockDomain" || mode === "answerKey") {
+          const m = el.moduleSelect.value;
+          if (m === "all") return MOCK.slice();
+          const target = (m === "m0" || m === "m7") ? "m1" : m;
+          return MOCK.filter((q) => q.module === target);
+        }
+        return BANK.slice();
+      }
+
+      function pickRoundQuestions() {
+        let pool = filterBank();
+        if (mode === "mix") {
+          // Light exam weighting by oversampling heavier modules
+          const weights = { m0: 1, m1: 3, m2: 4, m3: 2, m4: 3, m5: 1, m6: 2, m7: 1, heur: 2 };
+          const weighted = [];
+          BANK.forEach((q) => {
+            const w = weights[q.module] || 1;
+            for (let i = 0; i < w; i++) weighted.push(q);
+          });
+          pool = weighted;
+        }
+        const unique = [];
+        const seen = new Set();
+        const order = (mode === "mockFull" || mode === "answerKey") ? pool.slice() : shuffle(pool);
+        order.forEach((q) => {
+          if (!seen.has(q.id)) { seen.add(q.id); unique.push(q); }
+        });
+        if (mode === "answerKey") return unique;
+        if (mode === "mockFull") return shuffle(unique);
+        if (mode === "quick" || mode === "mix") return unique.slice(0, 10);
+        if (mode === "mock10") return unique.slice(0, 10);
+        if (mode === "mock50") return unique.slice(0, Math.min(50, unique.length));
+        if (mode === "mockDomain") return unique.slice(0, Math.min(20, unique.length));
+        return unique.slice(0, Math.min(12, unique.length));
+      }
+
+      function setMode(next) {
+        mode = next;
+        state.lastMode = next;
+        saveGame(state);
+        el.modeRow.querySelectorAll(".mode-btn").forEach((b) => {
+          b.classList.toggle("active", b.getAttribute("data-mode") === next);
+        });
+        el.modulePick.classList.toggle("hidden", next !== "module" && next !== "mockDomain" && next !== "answerKey");
+        const rules = document.getElementById("gameRules");
+        if (rules) {
+          if (next === "mock50") {
+            rules.textContent = "Timed mock: 50 random items from your 246-question bank · ~90 minutes · closed-book feel. Time expiry ends the round.";
+          } else if (next === "mockFull") {
+            rules.textContent = "Full mock: answer every question in the bank (" + MOCK.length + "). Untimed. Confirm before start — this is a long session.";
+          } else if (next === "answerKey") {
+            rules.textContent = "Answer key: browse every question with the real answer highlighted, explanation, and a link back to the guide.";
+          } else if (next === "mock10" || next === "mockDomain") {
+            rules.textContent = "Mock bank (" + MOCK.length + " Qs from your PDF). Review every explanation — especially misses.";
+          } else {
+            rules.textContent = "Correct: +10 XP (+5 if hard, +10 if expert). Miss resets streak. Level = 1 + floor(XP ÷ 100).";
+          }
+        }
+        if (el.btnStart) {
+          el.btnStart.textContent = next === "answerKey" ? "Open answer key" : (next === "mockFull" ? "Start full mock" : "Start round");
+        }
+        const pool = filterBank();
+        el.btnStart.disabled = pool.length === 0;
+      }
+
+      el.modeRow.addEventListener("click", (e) => {
+        const btn = e.target.closest(".mode-btn");
+        if (!btn) return;
+        setMode(btn.getAttribute("data-mode"));
+      });
+      el.moduleSelect.addEventListener("change", () => {
+        if (mode === "mockDomain" || mode === "answerKey") setMode(mode);
+        else setMode("module");
+      });
+
+      function clearNode(node) {
+        while (node.firstChild) node.removeChild(node.firstChild);
+      }
+
+      function showLobby() {
+        inRound = false;
+        stopMockTimer();
+        el.lobby.classList.remove("hidden");
+        el.stage.classList.add("hidden");
+        el.summary.classList.add("hidden");
+        clearNode(el.stage);
+        clearNode(el.summary);
+        paintStats();
+      }
+
+      const MOD_LABELS = {
+        m0: "M0 Foundations", m1: "M1 Directory", m2: "M2 Services", m3: "M3 Compliance",
+        m4: "M4 Security", m5: "M5 Endpoints", m6: "M6 Monitoring", m7: "M7 Strategy", heur: "Heuristics"
+      };
+      const LETTERS = "ABCDEFGH";
+
+      function showAnswerKey() {
+        const qs = pickRoundQuestions();
+        stopMockTimer();
+        inRound = false;
+        round = null;
+        el.lobby.classList.add("hidden");
+        el.summary.classList.add("hidden");
+        el.stage.classList.remove("hidden");
+        clearNode(el.stage);
+
+        const title = document.createElement("h3");
+        title.textContent = "Answer key";
+        el.stage.appendChild(title);
+
+        const intro = document.createElement("p");
+        intro.className = "game-rules";
+        intro.textContent = qs.length + " questions · expand any row to see choices, the correct answer, explanation, and guide link.";
+        el.stage.appendChild(intro);
+
+        const toolbar = document.createElement("div");
+        toolbar.className = "answer-key-toolbar";
+        const search = document.createElement("input");
+        search.type = "search";
+        search.placeholder = "Filter questions…";
+        search.setAttribute("aria-label", "Filter answer key");
+        const expandAll = document.createElement("button");
+        expandAll.type = "button";
+        expandAll.className = "game-btn";
+        expandAll.textContent = "Expand all";
+        const collapseAll = document.createElement("button");
+        collapseAll.type = "button";
+        collapseAll.className = "game-btn";
+        collapseAll.textContent = "Collapse all";
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "game-btn";
+        back.textContent = "Back to lobby";
+        back.addEventListener("click", showLobby);
+        toolbar.appendChild(search);
+        toolbar.appendChild(expandAll);
+        toolbar.appendChild(collapseAll);
+        toolbar.appendChild(back);
+        el.stage.appendChild(toolbar);
+
+        const list = document.createElement("div");
+        list.className = "answer-key-list";
+        el.stage.appendChild(list);
+
+        const items = [];
+        qs.forEach((q, idx) => {
+          const details = document.createElement("details");
+          details.className = "answer-key-item";
+          details.dataset.hay = (q.id + " " + q.stem + " " + (q.explain || "") + " " + (q.module || "")).toLowerCase();
+
+          const summary = document.createElement("summary");
+          const meta = document.createElement("span");
+          meta.className = "answer-key-meta";
+          const num = q.id && String(q.id).indexOf("mock-") === 0
+            ? "Q" + String(q.id).replace("mock-", "")
+            : "Q" + (idx + 1);
+          meta.textContent = num + " · " + (MOD_LABELS[q.module] || q.module || "—");
+          summary.appendChild(meta);
+          summary.appendChild(document.createTextNode(q.stem));
+          details.appendChild(summary);
+
+          const body = document.createElement("div");
+          body.className = "answer-key-body";
+
+          const ansSet = new Set(q.answer || []);
+          (q.choices || []).forEach((ch, i) => {
+            const row = document.createElement("div");
+            row.className = "answer-key-choice" + (ansSet.has(ch.id) ? " correct" : "");
+            const letter = document.createElement("span");
+            letter.className = "ak-letter";
+            letter.textContent = LETTERS[i] || ch.id.toUpperCase();
+            row.appendChild(letter);
+            row.appendChild(document.createTextNode(" " + ch.text));
+            if (ansSet.has(ch.id)) {
+              row.appendChild(document.createTextNode(" ✓ correct"));
+            }
+            body.appendChild(row);
+          });
+
+          const explain = document.createElement("div");
+          explain.className = "answer-key-explain";
+          const exTitle = document.createElement("strong");
+          exTitle.textContent = "Why this is correct";
+          explain.appendChild(exTitle);
+          explain.appendChild(document.createTextNode(q.explain || "—"));
+          body.appendChild(explain);
+
+          if (q.guideHref) {
+            const link = document.createElement("a");
+            link.href = q.guideHref;
+            link.textContent = "Open related guide section →";
+            link.style.display = "inline-block";
+            link.style.marginTop = ".55rem";
+            body.appendChild(link);
+          }
+
+          details.appendChild(body);
+          list.appendChild(details);
+          items.push(details);
+        });
+
+        function applyFilter() {
+          const q = search.value.trim().toLowerCase();
+          let shown = 0;
+          items.forEach((item) => {
+            const hit = !q || (item.dataset.hay || "").includes(q);
+            item.classList.toggle("hidden", !hit);
+            if (hit) shown++;
+          });
+          intro.textContent = shown + " / " + qs.length + " questions shown · expand a row for the real answer + explanation.";
+        }
+        search.addEventListener("input", applyFilter);
+        expandAll.addEventListener("click", () => items.forEach((d) => { if (!d.classList.contains("hidden")) d.open = true; }));
+        collapseAll.addEventListener("click", () => items.forEach((d) => { d.open = false; }));
+      }
+
+      function startRound() {
+        if (mode === "answerKey") {
+          showAnswerKey();
+          return;
+        }
+        const qs = pickRoundQuestions();
+        if (!qs.length) {
+          clearNode(el.stage);
+          el.lobby.classList.add("hidden");
+          el.stage.classList.remove("hidden");
+          el.summary.classList.add("hidden");
+          const empty = document.createElement("div");
+          empty.className = "game-empty";
+          empty.textContent = "No questions in this filter yet. Pick another mode.";
+          el.stage.appendChild(empty);
+          const back = document.createElement("button");
+          back.type = "button";
+          back.className = "game-btn";
+          back.textContent = "Back to lobby";
+          back.addEventListener("click", showLobby);
+          el.stage.appendChild(back);
+          return;
+        }
+        if (mode === "mockFull" && qs.length > 30) {
+          if (!confirm("Start full mock with all " + qs.length + " questions? This can take a long time. Progress XP still saves as you go.")) {
+            return;
+          }
+        }
+        inRound = true;
+        round = {
+          questions: qs,
+          index: 0,
+          correct: 0,
+          xpGained: 0,
+          misses: {},
+          locked: false,
+          selected: new Set(),
+          timedOut: false
+        };
+        el.lobby.classList.add("hidden");
+        el.summary.classList.add("hidden");
+        el.stage.classList.remove("hidden");
+        stopMockTimer();
+        if (mode === "mock50") {
+          mockSecondsLeft = 90 * 60;
+          mockTimerId = setInterval(() => {
+            if (document.visibilityState === "hidden") return;
+            mockSecondsLeft -= 1;
+            paintMockTimerBadge();
+            if (mockSecondsLeft <= 0) {
+              stopMockTimer();
+              if (round) round.timedOut = true;
+              showSummary();
+            }
+          }, 1000);
+        }
+        renderQuestion();
+      }
+
+      function sameSet(a, b) {
+        if (a.length !== b.length) return false;
+        const s = new Set(a);
+        return b.every((x) => s.has(x));
+      }
+
+      function renderQuestion() {
+        const q = round.questions[round.index];
+        round.locked = false;
+        round.selected = new Set();
+        clearNode(el.stage);
+        paintMockTimerBadge();
+
+        const meta = document.createElement("div");
+        meta.className = "game-q-meta";
+        const prog = document.createElement("span");
+        prog.textContent = "Question " + (round.index + 1) + " / " + round.questions.length;
+        meta.appendChild(prog);
+        const mod = document.createElement("span");
+        mod.className = "chip";
+        mod.textContent = q.module === "heur" ? "Heuristics" : q.module.toUpperCase();
+        meta.appendChild(mod);
+        if (q.type === "multi") {
+          const ms = document.createElement("span");
+          ms.className = "chip";
+          ms.textContent = "Select " + (q.selectCount || 2);
+          meta.appendChild(ms);
+        }
+        (q.constraints || []).forEach((c) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = c;
+          meta.appendChild(chip);
+        });
+        el.stage.appendChild(meta);
+
+        if (q.editionNote) {
+          const ed = document.createElement("div");
+          ed.className = "game-edition";
+          ed.textContent = "Edition note: " + q.editionNote;
+          el.stage.appendChild(ed);
+        }
+
+        const stem = document.createElement("div");
+        stem.className = "game-stem";
+        stem.textContent = q.stem;
+        el.stage.appendChild(stem);
+
+        const list = document.createElement("div");
+        list.className = "choice-list";
+        const letters = "ABCD";
+        q.choices.forEach((ch, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "choice";
+          btn.setAttribute("data-id", ch.id);
+          const letter = document.createElement("span");
+          letter.className = "letter";
+          letter.textContent = letters[i] || String(i + 1);
+          const label = document.createElement("span");
+          label.textContent = ch.text;
+          btn.appendChild(letter);
+          btn.appendChild(label);
+          btn.addEventListener("click", () => onChoose(ch.id, btn, q));
+          list.appendChild(btn);
+        });
+        el.stage.appendChild(list);
+
+        if (q.type === "multi") {
+          const actions = document.createElement("div");
+          actions.className = "game-actions";
+          const submit = document.createElement("button");
+          submit.type = "button";
+          submit.className = "game-btn primary";
+          submit.id = "btnSubmitMulti";
+          submit.textContent = "Submit answers";
+          submit.addEventListener("click", () => grade(q));
+          actions.appendChild(submit);
+          el.stage.appendChild(actions);
+        }
+
+        const sticky = document.createElement("p");
+        sticky.className = "game-rules";
+        sticky.textContent = "Streak " + state.streak + " · XP " + state.xp + " · Lv " + levelOf(state.xp);
+        el.stage.appendChild(sticky);
+      }
+
+      function onChoose(id, btn, q) {
+        if (round.locked) return;
+        if (q.type === "multi") {
+          if (round.selected.has(id)) {
+            round.selected.delete(id);
+            btn.classList.remove("selected");
+          } else {
+            if (round.selected.size >= (q.selectCount || 2)) return;
+            round.selected.add(id);
+            btn.classList.add("selected");
+          }
+          return;
+        }
+        round.selected = new Set([id]);
+        grade(q);
+      }
+
+      function grade(q) {
+        if (round.locked) return;
+        if (q.type === "multi" && round.selected.size !== (q.selectCount || 2)) return;
+        if (!round.selected.size) return;
+        round.locked = true;
+
+        const picked = [...round.selected];
+        const ok = sameSet(picked, q.answer);
+        const gained = ok ? xpFor(q) : 0;
+
+        if (ok) {
+          state.xp += gained;
+          state.streak += 1;
+          if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+          round.correct += 1;
+          round.xpGained += gained;
+        } else {
+          state.streak = 0;
+          round.misses[q.module] = (round.misses[q.module] || 0) + 1;
+        }
+
+        const rec = state.answered[q.id] || { correct: 0, n: 0 };
+        rec.n += 1;
+        if (ok) rec.correct += 1;
+        state.answered[q.id] = rec;
+        saveGame(state);
+        paintStats();
+
+        el.stage.querySelectorAll(".choice").forEach((btn) => {
+          btn.disabled = true;
+          const id = btn.getAttribute("data-id");
+          if (q.answer.includes(id)) btn.classList.add("correct");
+          if (picked.includes(id) && !q.answer.includes(id)) btn.classList.add("wrong");
+        });
+        const multiBtn = document.getElementById("btnSubmitMulti");
+        if (multiBtn) multiBtn.disabled = true;
+
+        const fb = document.createElement("div");
+        fb.className = "game-feedback " + (ok ? "ok" : "bad");
+        const title = document.createElement("strong");
+        title.textContent = ok ? ("Correct · +" + gained + " XP") : "Not quite";
+        fb.appendChild(title);
+        fb.appendChild(document.createElement("br"));
+        fb.appendChild(document.createTextNode(q.explain));
+        if (q.guideHref) {
+          fb.appendChild(document.createElement("br"));
+          const link = document.createElement("a");
+          link.href = q.guideHref;
+          link.textContent = "Review in guide →";
+          fb.appendChild(link);
+        }
+        el.stage.appendChild(fb);
+
+        const actions = document.createElement("div");
+        actions.className = "game-actions";
+        const next = document.createElement("button");
+        next.type = "button";
+        next.className = "game-btn primary";
+        next.textContent = round.index + 1 >= round.questions.length ? "See results" : "Next question";
+        next.addEventListener("click", () => {
+          round.index += 1;
+          if (round.index >= round.questions.length) showSummary();
+          else renderQuestion();
+        });
+        actions.appendChild(next);
+        el.stage.appendChild(actions);
+      }
+
+      function showSummary() {
+        inRound = false;
+        stopMockTimer();
+        clearNode(el.stage);
+        clearNode(el.summary);
+        el.stage.classList.add("hidden");
+        el.summary.classList.remove("hidden");
+
+        const h = document.createElement("h3");
+        h.textContent = round && round.timedOut ? "Time’s up — mock stopped" : "Round complete";
+        el.summary.appendChild(h);
+
+        const p = document.createElement("p");
+        p.textContent = "Score: " + round.correct + " / " + round.questions.length +
+          " · Answered through Q" + Math.min(round.index + (round.locked ? 1 : 0), round.questions.length) +
+          " · XP gained: " + round.xpGained +
+          " · Level: " + levelOf(state.xp);
+        el.summary.appendChild(p);
+
+        const missMods = Object.keys(round.misses).sort((a, b) => round.misses[b] - round.misses[a]);
+        if (missMods.length) {
+          const weak = document.createElement("p");
+          weak.textContent = "Weakest this round: " + missMods.map((m) => m.toUpperCase()).join(", ");
+          el.summary.appendChild(weak);
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "game-actions";
+        const again = document.createElement("button");
+        again.type = "button";
+        again.className = "game-btn primary";
+        again.textContent = "Play again";
+        again.addEventListener("click", startRound);
+        actions.appendChild(again);
+
+        const lobby = document.createElement("button");
+        lobby.type = "button";
+        lobby.className = "game-btn";
+        lobby.textContent = "Back to lobby";
+        lobby.addEventListener("click", showLobby);
+        actions.appendChild(lobby);
+
+        if (missMods.length) {
+          const href = missMods[0] === "heur" ? "#heuristics" : "#" + missMods[0];
+          const rev = document.createElement("a");
+          rev.className = "game-btn";
+          rev.href = href;
+          rev.textContent = "Review weakest module";
+          actions.appendChild(rev);
+        }
+        el.summary.appendChild(actions);
+        paintStats();
+      }
+
+      el.btnStart.addEventListener("click", startRound);
+      el.btnReset.addEventListener("click", () => {
+        if (!confirm("Reset all Practice arena XP, streaks, and answer history?")) return;
+        state = defaultState();
+        state.lastMode = mode;
+        saveGame(state);
+        paintStats();
+      });
+
+      setMode(mode);
+      paintStats();
+    })();
+
+
+    /* ========== Study Desk UI (additive; does not touch game BANK) ========== */
+    (function () {
+      const UI_KEY = "gws-study-ui-v1";
+      const SESSION_KEY = "gws-study-session-v1";
+      const CHECK_KEY = "gws-study-checks-v1";
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function loadJSON(key, fallback) {
+        return store.getJSON(key, fallback);
+      }
+      function saveJSON(key, data) {
+        store.setJSON(key, data);
+      }
+
+      const ui = loadJSON(UI_KEY, () => ({ focus: false }));
+      const today = new Date().toISOString().slice(0, 10);
+      let session = loadJSON(SESSION_KEY, () => ({
+        date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false,
+        focusModule: "m0", done: false, elapsed: 0
+      }));
+      if (session.date !== today) {
+        session = { date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false, focusModule: pickFocusModule(), done: false, elapsed: 0 };
+        saveJSON(SESSION_KEY, session);
+      }
+
+      const MODULE_LABELS = {
+        m0: "Module 0 · Foundations",
+        m1: "Module 1 · Users & Directory",
+        m2: "Module 2 · Core Services",
+        m3: "Module 3 · Data & Compliance",
+        m4: "Module 4 · Security",
+        m5: "Module 5 · Browsers & Devices",
+        m6: "Module 6 · Monitoring",
+        m7: "Module 7 · Exam Strategy"
+      };
+
+      function loadChecks() {
+        return loadJSON(CHECK_KEY, () => ({}));
+      }
+
+      function pickFocusModule() {
+        const checks = loadChecks();
+        const order = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"];
+        for (const m of order) {
+          const keys = [...document.querySelectorAll('input[data-check^="' + m + '"]')].map((el) => el.getAttribute("data-check"));
+          if (!keys.length) continue;
+          if (keys.some((k) => !checks[k])) return m;
+        }
+        return "m0";
+      }
+
+      if (!session.focusModule) session.focusModule = pickFocusModule();
+
+      const toastEl = document.getElementById("studyToast");
+      let toastTimer = null;
+      function toast(msg) {
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+      }
+
+      /* Focus mode */
+      function setFocus(on) {
+        document.body.classList.toggle("is-focus", !!on);
+        ui.focus = !!on;
+        saveJSON(UI_KEY, ui);
+        const btn = document.getElementById("btnFocusMode");
+        if (btn) btn.classList.toggle("active-focus", !!on);
+        if (on) {
+          const active = document.querySelector(".module.is-arrived") || document.getElementById(session.focusModule);
+          document.querySelectorAll(".module").forEach((m) => m.classList.remove("is-focus-active"));
+          if (active) active.classList.add("is-focus-active");
+        }
+      }
+      document.getElementById("btnFocusMode")?.addEventListener("click", () => setFocus(!document.body.classList.contains("is-focus")));
+      document.getElementById("btnFocusFromHero")?.addEventListener("click", () => setFocus(true));
+      document.getElementById("btnFocusExit")?.addEventListener("click", () => setFocus(false));
+      if (ui.focus) setFocus(true);
+
+      /* Reading progress */
+      const bar = document.getElementById("readingBar");
+      function paintReading() {
+        if (!bar) return;
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+        bar.style.width = pct + "%";
+      }
+      window.addEventListener("scroll", paintReading, { passive: true });
+      paintReading();
+
+      /* Module arrive animation + focus active tracking */
+      const arriveIo = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          if (!reduceMotion) e.target.classList.add("is-arrived");
+          if (document.body.classList.contains("is-focus")) {
+            document.querySelectorAll(".module").forEach((m) => m.classList.remove("is-focus-active"));
+            e.target.classList.add("is-focus-active");
+          }
+        });
+      }, { threshold: 0.18 });
+      document.querySelectorAll(".module").forEach((m) => arriveIo.observe(m));
+
+      /* Wrap exam tips in spoiler details (content stays searchable) */
+      document.querySelectorAll("#m0, #m1, #m2, #m3, #m4, #m5, #m6, #m7").forEach((mod) => {
+        mod.querySelectorAll(".exam").forEach((ex) => {
+          if (ex.closest("details")) return;
+          const details = document.createElement("details");
+          details.className = "study-reveal";
+          const summary = document.createElement("summary");
+          summary.textContent = "Exam tip — reveal when ready";
+          ex.parentNode.insertBefore(details, ex);
+          details.appendChild(summary);
+          details.appendChild(ex);
+        });
+      });
+
+      /* Module rails: Read → Check → Drill */
+      function drillModule(modId) {
+        const modeBtn = document.querySelector('#modeRow .mode-btn[data-mode="module"]');
+        const select = document.getElementById("moduleSelect");
+        if (modeBtn) modeBtn.click();
+        if (select) {
+          select.value = modId;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        location.hash = "#practice";
+        setTimeout(() => {
+          document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }, 30);
+      }
+
+      ["m0","m1","m2","m3","m4","m5","m6","m7"].forEach((id) => {
+        const mod = document.getElementById(id);
+        if (!mod || mod.querySelector(".module-rail")) return;
+        const rail = document.createElement("div");
+        rail.className = "module-rail";
+        const label = document.createElement("span");
+        label.textContent = "Study loop";
+        rail.appendChild(label);
+        const bRead = document.createElement("button");
+        bRead.type = "button"; bRead.className = "game-btn"; bRead.textContent = "1 · Read";
+        bRead.addEventListener("click", () => {
+          mod.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          setFocus(true);
+          mod.classList.add("is-focus-active");
+        });
+        const bCheck = document.createElement("button");
+        bCheck.type = "button"; bCheck.className = "game-btn"; bCheck.textContent = "2 · Check";
+        bCheck.addEventListener("click", () => {
+          const row = mod.querySelector(".check-row");
+          row?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+          row?.querySelector("input")?.focus();
+        });
+        const bDrill = document.createElement("button");
+        bDrill.type = "button"; bDrill.className = "game-btn primary"; bDrill.textContent = "3 · Drill";
+        bDrill.addEventListener("click", () => drillModule(id));
+        rail.appendChild(bRead); rail.appendChild(bCheck); rail.appendChild(bDrill);
+        const h2 = mod.querySelector("h2");
+        if (h2 && h2.nextSibling) mod.insertBefore(rail, h2.nextSibling);
+        else mod.prepend(rail);
+      });
+
+      /* Nav dots from checklist */
+      function paintNavDots() {
+        const checks = loadChecks();
+        document.querySelectorAll('#nav a[href^="#m"]').forEach((a) => {
+          const id = a.getAttribute("href").slice(1);
+          if (!/^m[0-7]$/.test(id)) return;
+          let dot = a.querySelector(".dot");
+          if (!dot) {
+            dot = document.createElement("span");
+            dot.className = "dot";
+            a.appendChild(dot);
+          }
+          const keys = [...document.querySelectorAll('input[data-check^="' + id + '"]')].map((el) => el.getAttribute("data-check"));
+          const done = keys.length && keys.every((k) => checks[k]);
+          dot.classList.toggle("done", !!done);
+        });
+      }
+      paintNavDots();
+
+      /* Checklist pulse + refresh dots */
+      document.querySelectorAll("input[data-check]").forEach((input) => {
+        input.addEventListener("change", () => {
+          const row = input.closest(".check-row");
+          if (row && input.checked && !reduceMotion) {
+            row.classList.remove("just-checked");
+            void row.offsetWidth;
+            row.classList.add("just-checked");
+          }
+          setTimeout(paintNavDots, 0);
+        });
+      });
+
+      /* Session timer */
+      const timerEl = document.getElementById("sessionTimer");
+      const progEl = document.getElementById("sessionProg");
+      const focusLabel = document.getElementById("sessionFocusLabel");
+      const goalLabel = document.getElementById("sessionGoalLabel");
+      const sideSession = document.getElementById("sidebarSession");
+      let intervalId = null;
+
+      function fmt(sec) {
+        const s = Math.max(0, sec | 0);
+        const m = Math.floor(s / 60);
+        const r = s % 60;
+        return String(m).padStart(2, "0") + ":" + String(r).padStart(2, "0");
+      }
+
+      function paintSession() {
+        session.focusModule = session.focusModule || pickFocusModule();
+        if (focusLabel) focusLabel.textContent = MODULE_LABELS[session.focusModule] || session.focusModule;
+        if (goalLabel) goalLabel.textContent = "Read " + (MODULE_LABELS[session.focusModule] || "a module") + " · tick a checkbox · optional drill";
+        if (timerEl) timerEl.textContent = fmt(session.secondsLeft);
+        const total = (session.minutesGoal || 25) * 60;
+        const donePct = total ? Math.min(100, ((total - session.secondsLeft) / total) * 100) : 0;
+        if (progEl) progEl.style.width = donePct + "%";
+        if (sideSession) {
+          while (sideSession.firstChild) sideSession.removeChild(sideSession.firstChild);
+          sideSession.appendChild(document.createTextNode("Today: "));
+          const st = document.createElement("strong");
+          st.textContent = session.done ? "done ✓" : (session.running ? "timer running" : "ready");
+          sideSession.appendChild(st);
+        }
+        saveJSON(SESSION_KEY, session);
+      }
+
+      function stopTimer() {
+        session.running = false;
+        if (intervalId) { clearInterval(intervalId); intervalId = null; }
+        paintSession();
+      }
+
+      function tick() {
+        if (document.visibilityState === "hidden") return;
+        if (session.secondsLeft <= 0) {
+          stopTimer();
+          session.done = true;
+          paintSession();
+          toast("Session block complete — nice work.");
+          return;
+        }
+        session.secondsLeft -= 1;
+        session.elapsed = (session.elapsed || 0) + 1;
+        paintSession();
+      }
+
+      function startTimer() {
+        if (session.secondsLeft <= 0) session.secondsLeft = (session.minutesGoal || 25) * 60;
+        session.running = true;
+        session.done = false;
+        if (intervalId) clearInterval(intervalId);
+        intervalId = setInterval(tick, 1000);
+        paintSession();
+        toast("Timer on — deep work mode.");
+      }
+
+      document.getElementById("btnTimerStart")?.addEventListener("click", startTimer);
+      document.getElementById("btnTimerPause")?.addEventListener("click", stopTimer);
+      document.getElementById("btnTimerReset")?.addEventListener("click", () => {
+        stopTimer();
+        session.secondsLeft = (session.minutesGoal || 25) * 60;
+        session.elapsed = 0;
+        session.done = false;
+        paintSession();
+      });
+      document.getElementById("btnGoFocusModule")?.addEventListener("click", () => {
+        const el = document.getElementById(session.focusModule);
+        el?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      });
+      document.getElementById("btnSessionDone")?.addEventListener("click", () => {
+        stopTimer();
+        session.done = true;
+        paintSession();
+        toast("Session marked done. Come back tomorrow.");
+      });
+      document.getElementById("btnStartSession")?.addEventListener("click", () => {
+        session.focusModule = pickFocusModule();
+        paintSession();
+        document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        startTimer();
+        setTimeout(() => {
+          document.getElementById(session.focusModule)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }, 400);
+      });
+      document.getElementById("btnJumpSession")?.addEventListener("click", () => {
+        document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        // Pausing ticks while hidden is handled inside tick(); no extra interval needed
+      });
+
+      // Resume running timer after reload only if user left it running same day
+      if (session.running && session.secondsLeft > 0 && !session.done) {
+        intervalId = setInterval(tick, 1000);
+      } else {
+        session.running = false;
+      }
+      paintSession();
+
+      /* Keyboard shortcuts — ignore when typing */
+      function typingTarget(el) {
+        if (!el) return false;
+        const tag = (el.tagName || "").toLowerCase();
+        return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
+      }
+      document.addEventListener("keydown", (e) => {
+        if (typingTarget(document.activeElement)) return;
+        if (e.key === "Escape") { setFocus(false); return; }
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "f") { e.preventDefault(); setFocus(!document.body.classList.contains("is-focus")); }
+        else if (k === "t") {
+          e.preventDefault();
+          document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+          if (!session.running) startTimer();
+        }
+        else if (k === "p") {
+          e.preventDefault();
+          location.hash = "#practice";
+          document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        }
+      });
+    })();
+
+    /* ========== Learning style gate (Kindergarten vs Adult) ========== */
+    (function () {
+      const STYLE_KEY = "gws-study-style-v1";
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function loadStyle() {
+        try {
+          const data = store.getJSON(STYLE_KEY, () => ({ style: null, adultPath: null, kinderChapter: 0 }));
+          return {
+            style: data.style === "kinder" || data.style === "adult" ? data.style : null,
+            adultPath: data.adultPath === "sandbox" || data.adultPath === "focus" ? data.adultPath : null,
+            kinderChapter: Math.max(0, Number(data.kinderChapter) || 0)
+          };
+        } catch (e) {
+          return { style: null, adultPath: null, kinderChapter: 0 };
+        }
+      }
+      function saveStyle(s) {
+        store.setJSON(STYLE_KEY, s);
+      }
+
+      let state = loadStyle();
+
+      const CHAPTERS = [
+        {
+          tag: "Chapter 1 · The big school",
+          title: "Workspace is a giant school in the sky",
+          story: "Imagine a huge school that isn’t a building — it lives in the clouds. Kids (and grown-ups) open Gmail, Drive, Meet, and Chat there. You don’t build the school. You are the helper who decides who gets a backpack, which classroom they sit in, and which doors stay locked.",
+          idea: "Google Workspace = the cloud school. Admin console (admin.google.com) = the teacher’s control room.",
+          grown: "Grown-up words: tenant, Admin console, services (Gmail, Drive, Meet, Chat, Calendar)."
+        },
+        {
+          tag: "Chapter 2 · Classrooms vs clubs",
+          title: "OUs are classrooms. Groups are clubs.",
+          story: "Every student sits in exactly one classroom (that’s their home base). Rules for “Warehouse classroom” can turn Chat off for that whole room. Clubs are different — the Chess Club can have kids from many classrooms. Clubs are perfect for special projects that cross rooms.",
+          idea: "OU = one home classroom (service on/off). Group = club sticker on top (overlaps many rooms).",
+          grown: "Grown-up words: Organizational Unit (OU), inheritance, group overlay / security group."
+        },
+        {
+          tag: "Chapter 3 · Backpacks & keys",
+          title: "Users are people with backpacks and keys",
+          story: "A user account is a person’s backpack: mail, files, chats. If someone is mean or lost their key, you can freeze the backpack (suspend) so they can’t open doors — but you don’t throw the backpack away yet. Leaving forever? Hand files to a friend first, then archive or delete.",
+          idea: "Suspend = freeze now, keep stuff. Delete = after ~20 days it’s really gone. Archive license = keep data cheap for lawyers.",
+          grown: "Grown-up words: Suspend, Delete, restore window (~20 days), Archived User License (AUL), transfer Drive."
+        },
+        {
+          tag: "Chapter 4 · The mail room",
+          title: "Mail needs street signs (DNS)",
+          story: "When someone sends a letter from your school, other schools check street signs: “Is this really from your address?” Those signs are SPF, DKIM, and DMARC. If signs are missing, letters land in the spam junk pile — not because Gmail is “broken,” but because the street signs weren’t finished.",
+          idea: "Outbound spam problems → finish SPF + DKIM + DMARC. MX signs tell the world where incoming mail should be delivered.",
+          grown: "Grown-up words: MX (inbound), SPF / DKIM / DMARC (outbound auth), domain verify TXT."
+        },
+        {
+          tag: "Chapter 5 · Toy boxes",
+          title: "My Drive vs Shared Drive",
+          story: "My Drive is one kid’s toy box — when they leave school, toys can vanish unless you give them to someone else. A Shared Drive is the classroom toy shelf. The shelf belongs to the class, so toys stay when one kid leaves. Put school project toys on the shelf!",
+          idea: "Team files → Shared Drive. Personal files → My Drive (transfer before delete).",
+          grown: "Grown-up words: My Drive ownership, Shared Drive, sharing defaults, trust rules, DLP."
+        },
+        {
+          tag: "Chapter 6 · The locked diary",
+          title: "Vault is the locked diary (not the hall monitor)",
+          story: "Vault keeps important papers even if someone empties their backpack. A “hold” is like a teacher saying “nobody may throw this away for the court case.” That hold always wins over the normal “throw away after 30 days” rule. Stopping secrets from leaking out the door is a different job (DLP — the hall monitor).",
+          idea: "Vault = keep / find / export. Hold beats delete. DLP = stop leaks. Don’t mix them up!",
+          grown: "Grown-up words: retention, hold, matter, eDiscovery, DLP detectors, edition limits (Enterprise)."
+        },
+        {
+          tag: "Chapter 7 · Door guards",
+          title: "Passwords, second keys, and “where are you?”",
+          story: "A password is the first key. 2-Step Verification is a second key (phone or security key) so a stolen password isn’t enough. Context-Aware Access asks: “Are you on a school laptop? On campus Wi‑Fi?” before opening special rooms. Super Admin is the master key — don’t hand it out for tiny jobs.",
+          idea: "2SV = second key. CAA = room rules based on context. Least privilege = smallest key that works.",
+          grown: "Grown-up words: 2SV, CAA, session control, admin roles, break-glass Super Admin."
+        },
+        {
+          tag: "Chapter 8 · Detectives",
+          title: "When something goes weird, call the right detective",
+          story: "Lost mail? Email Log Search detective. Who signed in at midnight? Login audit. Did an admin flip a switch? Admin audit. Choppy Meet video? Meet quality tool — not the Meet safety lock. Matching the right detective is half the exam!",
+          idea: "Match the problem → the right log or tool. Don’t grab a random flashlight.",
+          grown: "Grown-up words: Email Log Search, audit logs, Alert center, investigation tool, Meet quality vs safety."
+        }
+      ];
+
+      const lessonEl = document.getElementById("kinderLesson");
+      const dotsEl = document.getElementById("kinderDots");
+      const hub = document.getElementById("adultPathHub");
+      const journey = document.getElementById("adultSandboxJourney");
+      const badge = document.getElementById("adultPathBadge");
+      const fabMain = document.getElementById("fabStyleMain");
+      const fabMenu = document.getElementById("fabStyleMenu");
+      const toastEl = document.getElementById("studyToast");
+
+      function toast(msg) {
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => toastEl.classList.remove("show"), 2200);
+      }
+
+      function paintDots() {
+        if (!dotsEl) return;
+        while (dotsEl.firstChild) dotsEl.removeChild(dotsEl.firstChild);
+        CHAPTERS.forEach((_, i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "kinder-dot";
+          b.textContent = String(i + 1);
+          b.setAttribute("aria-label", "Chapter " + (i + 1));
+          if (i === state.kinderChapter) b.classList.add("active");
+          if (i < state.kinderChapter) b.classList.add("done");
+          b.addEventListener("click", () => {
+            state.kinderChapter = i;
+            saveStyle(state);
+            paintLesson();
+          });
+          dotsEl.appendChild(b);
+        });
+      }
+
+      function paintLesson() {
+        if (!lessonEl) return;
+        const i = Math.min(state.kinderChapter, CHAPTERS.length - 1);
+        state.kinderChapter = i;
+        const ch = CHAPTERS[i];
+        while (lessonEl.firstChild) lessonEl.removeChild(lessonEl.firstChild);
+
+        const tag = document.createElement("div");
+        tag.className = "story-tag";
+        tag.textContent = ch.tag;
+        lessonEl.appendChild(tag);
+
+        const h2 = document.createElement("h2");
+        h2.textContent = ch.title;
+        lessonEl.appendChild(h2);
+
+        const story = document.createElement("p");
+        story.className = "story";
+        story.textContent = ch.story;
+        lessonEl.appendChild(story);
+
+        const idea = document.createElement("div");
+        idea.className = "big-idea";
+        const ideaStrong = document.createElement("strong");
+        ideaStrong.textContent = "Big idea: ";
+        idea.appendChild(ideaStrong);
+        idea.appendChild(document.createTextNode(ch.idea));
+        lessonEl.appendChild(idea);
+
+        const grown = document.createElement("div");
+        grown.className = "grown-up";
+        grown.textContent = ch.grown;
+        lessonEl.appendChild(grown);
+
+        const actions = document.createElement("div");
+        actions.className = "kinder-actions";
+
+        const prev = document.createElement("button");
+        prev.type = "button";
+        prev.className = "kinder-btn";
+        prev.textContent = "← Back";
+        prev.disabled = i === 0;
+        prev.addEventListener("click", () => {
+          state.kinderChapter = Math.max(0, i - 1);
+          saveStyle(state);
+          paintLesson();
+        });
+
+        const next = document.createElement("button");
+        next.type = "button";
+        next.className = "kinder-btn primary";
+        next.textContent = i >= CHAPTERS.length - 1 ? "Finished! Try Adult style →" : "Next chapter →";
+        next.addEventListener("click", () => {
+          if (i >= CHAPTERS.length - 1) {
+            applyStyle("adult");
+            toast("Nice — now try Adult style when you’re ready for exam mode.");
+            return;
+          }
+          state.kinderChapter = i + 1;
+          saveStyle(state);
+          paintLesson();
+        });
+
+        const toAdult = document.createElement("button");
+        toAdult.type = "button";
+        toAdult.className = "kinder-btn sky";
+        toAdult.textContent = "Switch to Adult style";
+        toAdult.addEventListener("click", () => applyStyle("adult"));
+
+        actions.appendChild(prev);
+        actions.appendChild(next);
+        actions.appendChild(toAdult);
+        lessonEl.appendChild(actions);
+        paintDots();
+        if (!reduceMotion) lessonEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      function paintAdultPathUI() {
+        if (badge) {
+          if (state.adultPath === "sandbox") badge.textContent = "Adult · Sandbox path";
+          else if (state.adultPath === "focus") badge.textContent = "Adult · Focus path";
+          else badge.textContent = "Adult style — pick a path";
+        }
+        if (!hub) return;
+        if (state.style !== "adult") return;
+        if (!state.adultPath) {
+          hub.classList.remove("hidden-path");
+          if (journey) journey.classList.remove("show");
+        } else {
+          // Keep hub visible but compact journey if sandbox
+          hub.classList.remove("hidden-path");
+          if (journey) journey.classList.toggle("show", state.adultPath === "sandbox");
+        }
+      }
+
+      function applyStyle(style, opts) {
+        opts = opts || {};
+        state.style = style;
+        if (style !== "adult" && opts.clearPath) state.adultPath = null;
+        saveStyle(state);
+
+        document.body.classList.remove("style-picking", "style-kinder", "style-adult");
+        if (!style) {
+          document.body.classList.add("style-picking");
+          if (fabMenu) fabMenu.classList.remove("open");
+          if (fabMain) fabMain.setAttribute("aria-expanded", "false");
+          return;
+        }
+        document.body.classList.add(style === "kinder" ? "style-kinder" : "style-adult");
+        if (style === "kinder") paintLesson();
+        if (style === "adult") {
+          paintAdultPathUI();
+          if (!opts.skipScroll) {
+            const target = !state.adultPath ? hub : document.getElementById("overview");
+            setTimeout(() => target && target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 40);
+          }
+        }
+      }
+
+      function setAdultPath(path) {
+        state.adultPath = path;
+        saveStyle(state);
+        paintAdultPathUI();
+        if (path === "focus") {
+          if (!document.body.classList.contains("is-focus")) {
+            document.getElementById("btnFocusMode")?.click();
+          }
+          document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+          toast("Focus path — quiet desk mode.");
+        } else if (path === "sandbox") {
+          journey?.classList.add("show");
+          hub?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          toast("Sandbox path — follow steps 1 → 2 → 3.");
+        }
+      }
+
+      document.getElementById("pickKinder")?.addEventListener("click", () => {
+        state.kinderChapter = state.kinderChapter || 0;
+        applyStyle("kinder");
+        toast("Kindergarten style — story time!");
+      });
+      document.getElementById("pickAdult")?.addEventListener("click", () => {
+        applyStyle("adult");
+        toast("Adult style — pick Sandbox or Focus.");
+      });
+
+      document.getElementById("pathSandbox")?.addEventListener("click", () => setAdultPath("sandbox"));
+      document.getElementById("pathFocus")?.addEventListener("click", () => setAdultPath("focus"));
+      document.getElementById("btnAdultPaths")?.addEventListener("click", () => {
+        state.adultPath = null;
+        saveStyle(state);
+        paintAdultPathUI();
+        hub?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      });
+      document.getElementById("btnSandboxExam")?.addEventListener("click", (e) => {
+        // hash navigation; ensure practice visible
+        setTimeout(() => document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 10);
+      });
+
+      fabMain?.addEventListener("click", () => {
+        const open = fabMenu?.classList.toggle("open");
+        fabMain.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      fabMenu?.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-fab]");
+        if (!btn) return;
+        const act = btn.getAttribute("data-fab");
+        fabMenu.classList.remove("open");
+        fabMain?.setAttribute("aria-expanded", "false");
+        if (act === "gate") applyStyle(null);
+        else if (act === "kinder") applyStyle("kinder");
+        else if (act === "adult") applyStyle("adult");
+      });
+      document.addEventListener("click", (e) => {
+        if (!fabMenu?.classList.contains("open")) return;
+        if (e.target.closest("#fabStyle")) return;
+        fabMenu.classList.remove("open");
+        fabMain?.setAttribute("aria-expanded", "false");
+      });
+
+      // Boot
+      if (state.style === "kinder" || state.style === "adult") {
+        applyStyle(state.style, { skipScroll: true });
+      } else {
+        applyStyle(null);
+      }
+
+      /* Mobile nav drawer */
+      function setNavOpen(open) {
+        document.body.classList.toggle("nav-open", !!open);
+        const btn = document.getElementById("btnNavToggle");
+        if (btn) {
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          btn.textContent = open ? "Close" : "Menu";
+        }
+      }
+      document.getElementById("btnNavToggle")?.addEventListener("click", () => {
+        setNavOpen(!document.body.classList.contains("nav-open"));
+      });
+      document.getElementById("navBackdrop")?.addEventListener("click", () => setNavOpen(false));
+      document.getElementById("nav")?.addEventListener("click", (e) => {
+        const a = e.target.closest("a");
+        if (!a) return;
+        setNavOpen(false);
+        const href = a.getAttribute("href") || "";
+        if (href.startsWith("#") && href.length > 1) {
+          const target = document.getElementById(href.slice(1));
+          if (target) {
+            e.preventDefault();
+            const top = target.getBoundingClientRect().top + window.scrollY - 72;
+            window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
+            history.pushState(null, "", href);
+          }
+        }
+      });
+      window.addEventListener("resize", () => {
+        if (window.matchMedia("(min-width: 901px)").matches) setNavOpen(false);
+      });
+    })();
+
+  </script>
+</body>
+</html>

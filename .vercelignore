@@ -1,0 +1,11 @@
+node_modules
+dist
+.mac-setup-stage
+_pdf_extract
+.git
+.DS_Store
+*.zip
+*.dmg
+*.exe
+Open Study Desk.command
+package-lock.json

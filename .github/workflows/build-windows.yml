@@ -1,0 +1,30 @@
+# Build Windows NSIS installer + portable + zip
+name: Build Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install & build
+        run: |
+          npm ci
+          npm run dist:win
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gws-admin-study-desk-windows
+          path: |
+            dist/*.exe
+            dist/*.zip
+          if-no-files-found: error

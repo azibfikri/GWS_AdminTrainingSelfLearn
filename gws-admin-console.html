@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GWS Admin Console Simulator — Exam Sandbox</title>
+  <link rel="icon" href="./favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --ink: #202124;
+      --muted: #5f6368;
+      --line: #dadce0;
+      --nav: #f1f3f4;
+      --nav-hover: #e8eaed;
+      --nav-active: #e8f0fe;
+      --blue: #1a73e8;
+      --blue-dark: #174ea6;
+      --green: #188038;
+      --green-bg: #e6f4ea;
+      --amber: #ea8600;
+      --amber-bg: #fef7e0;
+      --red: #d93025;
+      --red-bg: #fce8e6;
+      --sidebar-w: 260px;
+      --coach-w: 340px;
+      --top-h: 56px;
+      --radius: 8px;
+      --shadow: 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      --font: "Roboto", system-ui, sans-serif;
+      --display: "Google Sans", "Roboto", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+    button, input, select, textarea { font: inherit; }
+    a { color: var(--blue); }
+    .banner {
+      background: #fef7e0; border-bottom: 1px solid #f9e3a0; color: #3c4043;
+      padding: .55rem 1rem; font-size: .85rem; text-align: center;
+    }
+    .banner strong { color: #b06000; }
+    .topbar {
+      height: var(--top-h); background: var(--surface); border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: .75rem; padding: 0 1rem; position: sticky; top: 0; z-index: 20;
+    }
+    .logo {
+      font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: var(--ink);
+      display: flex; align-items: center; gap: .5rem; text-decoration: none;
+    }
+    .logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #4285f4, #34a853);
+      display: grid; place-items: center; color: #fff; font-size: .75rem; font-weight: 700;
+    }
+    .top-spacer { flex: 1; }
+    .chip {
+      display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .55rem;
+      border-radius: 999px; background: var(--nav); border: 1px solid var(--line); font-size: .78rem; font-weight: 500;
+    }
+    .chip.blue { background: var(--nav-active); border-color: #c2d7fc; color: var(--blue-dark); }
+    .btn {
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+      border-radius: 4px; padding: .45rem .85rem; cursor: pointer; font-weight: 500; font-size: .875rem;
+    }
+    .btn:hover { background: var(--nav); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .btn.primary:hover { background: var(--blue-dark); }
+    .btn.danger { background: var(--red); border-color: var(--red); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: calc(100vh - var(--top-h) - 40px); }
+    .sidebar {
+      background: var(--nav); border-right: 1px solid var(--line); padding: .75rem 0 2rem; overflow: auto;
+    }
+    .nav-sec {
+      margin: .85rem 1rem .25rem; font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .nav-item {
+      display: block; width: 100%; text-align: left; border: 0; background: transparent;
+      padding: .55rem 1rem .55rem 1.15rem; cursor: pointer; color: var(--ink); font-size: .9rem;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: var(--nav-hover); }
+    .nav-item.active { background: var(--nav-active); border-left-color: var(--blue); color: var(--blue-dark); font-weight: 500; }
+    .nav-item .sub { display: block; font-size: .75rem; color: var(--muted); font-weight: 400; margin-top: .1rem; }
+    .main { padding: 1.25rem 1.5rem 3rem; overflow: auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .panel h1 {
+      font-family: var(--display); font-size: 1.55rem; font-weight: 700; margin: 0 0 .35rem;
+    }
+    .lede { color: var(--muted); margin: 0 0 1rem; max-width: 70ch; }
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1rem 1.1rem; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(60,64,67,.08);
+    }
+    .card h2 { font-size: 1rem; margin: 0 0 .65rem; font-weight: 500; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 1rem; }
+    .tip {
+      background: #e8f0fe; border: 1px solid #c2d7fc; border-radius: var(--radius);
+      padding: .75rem .9rem; font-size: .88rem; margin: .75rem 0;
+    }
+    .warn {
+      background: var(--amber-bg); border: 1px solid #f9e3a0; border-radius: var(--radius);
+      padding: .75rem .9rem; font-size: .88rem; margin: .75rem 0;
+    }
+    .danger-box {
+      background: var(--red-bg); border: 1px solid #f6aea9; border-radius: var(--radius);
+      padding: .75rem .9rem; font-size: .88rem; margin: .75rem 0;
+    }
+    .ok-box {
+      background: var(--green-bg); border: 1px solid #a8dab5; border-radius: var(--radius);
+      padding: .75rem .9rem; font-size: .88rem; margin: .75rem 0;
+    }
+    .field { margin: .55rem 0; }
+    .field label { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-bottom: .25rem; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: .55rem .65rem; border: 1px solid var(--line); border-radius: 4px; background: #fff;
+    }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .5rem 0; }
+    .badge {
+      display: inline-flex; align-items: center; padding: .15rem .45rem; border-radius: 4px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase;
+    }
+    .badge.inherited { background: #e8f0fe; color: var(--blue-dark); }
+    .badge.override { background: var(--amber-bg); color: #b06000; }
+    .badge.hold { background: var(--green-bg); color: var(--green); }
+    .badge.suspended { background: var(--amber-bg); color: #b06000; }
+    .badge.deleted { background: var(--red-bg); color: var(--red); }
+    .badge.aul { background: #e8eaed; color: #3c4043; }
+    .badge.group { background: #f3e8fd; color: #7627bb; }
+    .ou-tree { list-style: none; margin: 0; padding: 0; }
+    .ou-tree ul { list-style: none; margin: 0; padding-left: 1.1rem; border-left: 1px solid var(--line); }
+    .ou-node {
+      display: flex; align-items: center; gap: .4rem; padding: .35rem .45rem; border-radius: 4px;
+      cursor: pointer; margin: 2px 0;
+    }
+    .ou-node:hover { background: var(--nav); }
+    .ou-node.selected { background: var(--nav-active); }
+    .user-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .user-table th, .user-table td { text-align: left; padding: .55rem .45rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .user-table th { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .log {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem;
+      background: #202124; color: #e8eaed; border-radius: 6px; padding: .75rem .9rem;
+      max-height: 260px; overflow: auto; white-space: pre-wrap;
+    }
+    .log .add { color: #81c995; }
+    .log .upd { color: #8ab4f8; }
+    .log .skip { color: #fdd663; }
+    .log .del { color: #f28b82; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li {
+      position: relative; padding: .75rem .75rem .75rem 2.6rem; margin: .4rem 0;
+      border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+    }
+    .steps li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: .65rem; top: .75rem; width: 1.4rem; height: 1.4rem;
+      border-radius: 50%; background: var(--blue); color: #fff; font-size: .75rem; font-weight: 700;
+      display: grid; place-items: center;
+    }
+    .steps li.done { border-color: #a8dab5; background: var(--green-bg); }
+    .steps li.locked { opacity: .55; }
+    .toast {
+      position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%) translateY(120%);
+      background: #323232; color: #fff; padding: .7rem 1.1rem; border-radius: 4px; z-index: 50;
+      font-size: .88rem; transition: transform .25s ease; max-width: 90vw; text-align: center;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .scenario-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+    .scenario-card {
+      border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; background: #fff; cursor: pointer; text-align: left;
+    }
+    .scenario-card:hover { border-color: var(--blue); box-shadow: var(--shadow); }
+    .scenario-card h3 { margin: 0 0 .35rem; font-size: 1rem; }
+    .scenario-card p { margin: 0; color: var(--muted); font-size: .85rem; }
+    .eff-box {
+      border: 1px dashed var(--line); border-radius: var(--radius); padding: .85rem; background: #fafafa;
+    }
+    .eff-box .line { margin: .35rem 0; font-size: .9rem; }
+    .muted { color: var(--muted); font-size: .85rem; }
+    .hidden { display: none !important; }
+    
+    body.coach-open .layout { grid-template-columns: var(--sidebar-w) 1fr var(--coach-w); }
+    body.coach-open .main { padding-right: 1.25rem; }
+    .coach {
+      display: none; background: var(--surface); border-left: 1px solid var(--line);
+      padding: .85rem .9rem 1.5rem; overflow: auto; position: sticky; top: var(--top-h);
+      height: calc(100vh - var(--top-h) - 40px); z-index: 15;
+    }
+    body.coach-open .coach { display: block; }
+    .coach h2 { font-family: var(--display); font-size: 1.05rem; margin: 0 0 .35rem; }
+    .coach-progress { height: 6px; background: var(--nav); border-radius: 99px; overflow: hidden; margin: .45rem 0 .75rem; }
+    .coach-progress > i { display: block; height: 100%; background: var(--blue); width: 0%; }
+    .coach-meta { font-size: .78rem; color: var(--muted); margin-bottom: .5rem; }
+    .coach-title { font-size: 1rem; font-weight: 700; margin: .35rem 0; }
+    .coach-body { font-size: .88rem; color: var(--ink); margin: 0 0 .65rem; }
+    .coach-do { background: #e8f0fe; border: 1px solid #c2d7fc; border-radius: var(--radius); padding: .65rem .75rem; font-size: .85rem; margin: .5rem 0; }
+    .coach-do strong { display: block; margin-bottom: .25rem; color: var(--blue-dark); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+    .coach-why { font-size: .82rem; color: var(--muted); margin: .5rem 0 .75rem; }
+    .coach-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
+    .coach-fab {
+      display: none; position: fixed; right: 1rem; bottom: 1rem; z-index: 18;
+      background: var(--blue); color: #fff; border: 0; border-radius: 999px;
+      padding: .65rem 1rem; font-weight: 500; cursor: pointer; box-shadow: var(--shadow);
+    }
+    body.coach-minimized .coach-fab { display: inline-flex; }
+    body.coach-minimized.coach-open .coach { display: none; }
+    body.coach-minimized.coach-open .layout { grid-template-columns: var(--sidebar-w) 1fr; }
+    .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    @media (max-width: 1100px) {
+      body.coach-open .layout { grid-template-columns: var(--sidebar-w) 1fr; }
+      body.coach-open .coach {
+        position: fixed; left: 0; right: 0; bottom: 0; top: auto; height: 42vh;
+        border-left: 0; border-top: 1px solid var(--line); z-index: 25;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .coach-progress > i { transition: none; }
+    }
+
+    
+    .tabs { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--line); margin: 0 0 1rem; }
+    .tab {
+      border: 0; background: transparent; padding: .65rem .9rem; cursor: pointer; font-weight: 500;
+      color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .5rem; border-radius: 999px;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .status-pill.ok { background: var(--green-bg); color: var(--green); }
+    .status-pill.warn { background: var(--amber-bg); color: #b06000; }
+    .status-pill.bad { background: var(--red-bg); color: var(--red); }
+    .status-pill.muted { background: var(--nav); color: var(--muted); }
+    .dns-table { width: 100%; border-collapse: collapse; font-size: .82rem; margin: .5rem 0; }
+    .dns-table th, .dns-table td { text-align: left; padding: .5rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; font-family: ui-monospace, Menlo, monospace; }
+    .dns-table th { font-family: var(--font); font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .checklist { list-style: none; padding: 0; margin: .5rem 0; }
+    .checklist li { padding: .45rem 0; border-bottom: 1px dashed var(--line); display: flex; gap: .5rem; align-items: flex-start; }
+    .breadcrumb { font-size: .8rem; color: var(--muted); margin: 0 0 .75rem; }
+    .codebox {
+      background: #f1f3f4; border: 1px solid var(--line); border-radius: 4px; padding: .55rem .65rem;
+      font-family: ui-monospace, Menlo, monospace; font-size: .78rem; word-break: break-all; margin: .35rem 0 .65rem;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-right: 0; border-bottom: 1px solid var(--line); max-height: 220px; }
+      .grid-2, .grid-3, .scenario-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <strong>Educational simulator</strong> — not the real Google Admin Console and not affiliated with Google.
+    Pair with your <a href="./index.html">Study Desk</a>.
+  </div>
+  <header class="topbar">
+    <a class="logo" href="./gws-admin-console.html"><span class="mark">G</span> Admin console <span class="chip">Simulator</span></a>
+    <div class="top-spacer"></div>
+    <label class="chip" for="editionSelect">Edition
+      <select id="editionSelect" style="border:0;background:transparent;font:inherit;font-weight:500">
+        <option value="business_plus">Business Plus</option>
+        <option value="enterprise">Enterprise</option>
+      </select>
+    </label>
+    <span class="chip blue" id="tenantChip">exam-demo.example</span>
+    <span class="chip">Super Admin</span>
+    <button type="button" class="btn primary" id="btnWalkthrough" aria-expanded="false" aria-controls="coach">Walkthrough</button>
+    <button type="button" class="btn ghost" id="btnReset">Reset sandbox</button>
+    <a class="btn" href="./index.html">Study Desk</a>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Admin menu"></nav>
+    <main class="main" id="main"></main>
+    <aside class="coach" id="coach" aria-label="Walkthrough trainer" tabindex="-1"></aside>
+  </div>
+  <button type="button" class="coach-fab" id="coachFab" aria-label="Resume walkthrough">Tour</button>
+  <div class="sr-live" id="coachLive" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./config.js"></script>
+  <script src="./data/gws-auth.js"></script>
+  <script>
+    const simStore = window.gwsStorage || {
+      getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      setItem(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+      removeItem(k) { try { localStorage.removeItem(k); } catch (e) {} }
+    };
+    window.addEventListener("gws-profile-loaded", () => window.location.reload());
+  (function () {
+    const STORAGE_KEY = "gwsAdminSim.v1";
+    const MAX_OUS = 50;
+    const MAX_USERS = 200;
+
+    const ROUTES = [
+      { sec: "Directory", id: "users", label: "Users", sub: "Accounts & OU placement" },
+      { sec: "Directory", id: "groups", label: "Groups", sub: "Security group overlay demo" },
+      { sec: "Directory", id: "ous", label: "Organizational units", sub: "Inheritance visualizer" },
+      { sec: "Apps", id: "gmail", label: "Gmail", sub: "Setup · MX · SPF/DKIM/DMARC" },
+      { sec: "Apps", id: "drive", label: "Drive and Docs", sub: "External sharing policy" },
+      { sec: "Apps", id: "calendar", label: "Calendar", stub: true, tip: "Resource calendars come from Buildings & resources.", href: "./index.html#m2" },
+      { sec: "Security", id: "access", label: "Access and data control", stub: true, tip: "2SV proves who; Context-Aware Access checks device/network/geo (often Enterprise).", href: "./index.html#m4" },
+      { sec: "Security", id: "dlp", label: "Data protection / DLP", sub: "Rule tester" },
+      { sec: "Security", id: "password", label: "Password management", stub: true, tip: "Length, reuse, strength; reset from user page.", href: "./index.html#m4" },
+      { sec: "Devices", id: "endpoints", label: "Endpoints", stub: true, tip: "Chrome Browser Cloud Management enrolls with a token.", href: "./index.html#m5" },
+      { sec: "Devices", id: "mobile", label: "Mobile & Chrome", sub: "Wipe types" },
+      { sec: "Account", id: "account", label: "Account settings", stub: true, tip: "Company profile, admin roles, data regions (Enterprise).", href: "./index.html#m0" },
+      { sec: "Account", id: "domains", label: "Domains", sub: "Add · verify · primary/alias" },
+      { sec: "Account", id: "storage", label: "Storage", sub: "Pooled storage meter" },
+      { sec: "Reporting", id: "reporting", label: "Audit logs", sub: "Simulated admin activity" },
+      { sec: "Scenarios", id: "scenarios", label: "Scenario hub", sub: "GCDS · Vault · DLP · Offboarding" },
+      { sec: "Scenarios", id: "gcds", label: "GCDS dry-run", sub: "AD → Workspace sync" },
+      { sec: "Scenarios", id: "vault", label: "Vault legal hold", sub: "Hold overrides retention" },
+      { sec: "Scenarios", id: "offboard", label: "Offboarding wizard", sub: "Suspend → transfer → delete/AUL" }
+    ];
+
+    function uid(prefix) {
+      return prefix + "_" + Math.random().toString(36).slice(2, 9);
+    }
+
+    function seedState() {
+      const root = "ou_root";
+      const sales = "ou_sales";
+      const eng = "ou_eng";
+      const ctr = "ou_ctr";
+      return {
+        version: 1,
+        tenant: { domain: "exam-demo.example", edition: "business_plus" },
+        ous: [
+          { id: root, name: "Root", parentId: null },
+          { id: sales, name: "Sales", parentId: root },
+          { id: eng, name: "Engineering", parentId: root },
+          { id: ctr, name: "Contractors", parentId: root }
+        ],
+        users: [
+          { id: "u_ada", name: "Ada Sales", email: "ada@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d1", type: "mobile", ownership: "byod" }], groups: ["g_pilot"] },
+          { id: "u_ben", name: "Ben Eng", email: "ben@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d2", type: "mobile", ownership: "company" }], groups: [] },
+          { id: "u_cara", name: "Cara Contract", email: "cara@exam-demo.example", ouId: ctr, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: [] },
+          { id: "u_dan", name: "Dan Sales", email: "dan@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d3", type: "mobile", ownership: "byod" }], groups: [] },
+          { id: "u_eve", name: "Eve Eng", email: "eve@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: ["g_pilot"] },
+          { id: "u_fin", name: "Fin Root", email: "fin@exam-demo.example", ouId: root, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: [] }
+        ],
+        groups: [
+          { id: "g_pilot", name: "Gemini Pilot", security: true, note: "Cross-OU overlay" },
+          { id: "g_all", name: "All Staff", security: false, note: "Distribution list" }
+        ],
+        settings: {
+          "drive.externalSharing": {
+            ou_root: { value: "OFF" },
+            ou_sales: null,
+            ou_eng: { value: "ON" },
+            ou_ctr: null
+          }
+        },
+        groupOverrides: {
+          "drive.externalSharing": {
+            g_pilot: { value: "OFF", enabled: true }
+          }
+        },
+        dlpRules: [
+          { id: "r1", name: "Block credit cards", detectors: ["credit_card", "keyword:confidential"], action: "block", scopeOuId: root }
+        ],
+        domains: [
+          {
+            id: "dom_primary",
+            name: "exam-demo.example",
+            type: "primary",
+            verified: true,
+            verificationMethod: "TXT",
+            verificationHost: "@",
+            verificationValue: "google-site-verification=examdemo-seed-token",
+            verificationPublished: true,
+            gmailActivated: true,
+            dns: {
+              mx: [{ priority: 1, host: "@", value: "smtp.google.com", published: true }],
+              spf: { published: true, value: "v=spf1 include:_spf.google.com ~all" },
+              dkim: { generated: true, published: true, started: true, selector: "google", host: "google._domainkey", value: "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0seedDKIMdemoKEY" },
+              dmarc: { published: true, policy: "none", host: "_dmarc", value: "v=DMARC1; p=none; rua=mailto:dmarc-reports@exam-demo.example" }
+            }
+          }
+        ],
+        mailLab: {
+          lastInbound: null,
+          lastOutbound: null
+        },
+        vault: { matters: [{ id: "m1", name: "Acme v. Corp", holds: [] }] },
+        gcdsLastDryRun: { at: null, lines: [] },
+        auditLog: [],
+        offboard: { userId: null, step: 0, wipeChoice: null },
+        ui: { route: "ous", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", walkthrough: defaultWalkthrough() }
+      };
+    }
+
+    function defaultWalkthrough() {
+      return {
+        active: false,
+        minimized: false,
+        stepIndex: 0,
+        completed: {},
+        skipped: {},
+        startedAt: null,
+        finishedAt: null
+      };
+    }
+
+
+    function loadState() {
+      try {
+        const raw = simStore.getItem(STORAGE_KEY);
+        if (!raw) return seedState();
+        const data = JSON.parse(raw);
+        if (!data || data.version !== 1 || !Array.isArray(data.ous) || !Array.isArray(data.users)) {
+          toast("Saved sandbox was invalid — reset to seed.");
+          return seedState();
+        }
+        return data;
+      } catch (e) {
+        try { simStore.removeItem(STORAGE_KEY); } catch (e2) {}
+        toast("Corrupt sandbox data cleared.");
+        return seedState();
+      }
+    }
+
+    function saveState() {
+      try {
+        simStore.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        toast("Could not save (storage full or blocked). Working in-memory.");
+      }
+    }
+
+    let state = loadState();
+    if (!state.ui) state.ui = { route: "ous", selectedOuId: "ou_root", selectedUserId: "u_ada" };
+    if (!state.ui.walkthrough) state.ui.walkthrough = defaultWalkthrough();
+    if (!Array.isArray(state.domains) || !state.domains.length) {
+      state.domains = seedState().domains;
+    }
+    if (!state.mailLab) state.mailLab = { lastInbound: null, lastOutbound: null };
+    if (!state.ui.selectedDomainId) state.ui.selectedDomainId = state.domains[0].id;
+    if (!state.ui.gmailTab) state.ui.gmailTab = "setup";
+    state.tenant.domain = (state.domains.find(function (d) { return d.type === "primary"; }) || state.domains[0]).name;
+    const toastEl = document.getElementById("toast");
+    let toastTimer = null;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2600);
+    }
+
+    function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function el(tag, props, kids) {
+      const n = document.createElement(tag);
+      if (props) {
+        Object.keys(props).forEach((k) => {
+          if (k === "className") n.className = props[k];
+          else if (k === "text") n.textContent = props[k];
+          else if (k === "html") { /* forbidden */ }
+          else if (k.startsWith("on") && typeof props[k] === "function") n.addEventListener(k.slice(2).toLowerCase(), props[k]);
+          else if (k === "disabled") n.disabled = !!props[k];
+          else if (props[k] != null) n.setAttribute(k, props[k]);
+        });
+      }
+      (kids || []).forEach((c) => {
+        if (c == null) return;
+        n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+      });
+      return n;
+    }
+
+    function audit(action, target) {
+      state.auditLog.unshift({
+        ts: Date.now(),
+        actor: "you@exam-demo.example",
+        action: action,
+        target: target || ""
+      });
+      if (state.auditLog.length > 80) state.auditLog.length = 80;
+      saveState();
+    }
+
+    function ouById(id) { return state.ous.find((o) => o.id === id); }
+    function userById(id) { return state.users.find((u) => u.id === id); }
+    function childrenOf(id) { return state.ous.filter((o) => o.parentId === id); }
+
+    function ancestors(ouId) {
+      const chain = [];
+      let cur = ouById(ouId);
+      const seen = new Set();
+      while (cur) {
+        if (seen.has(cur.id)) break;
+        seen.add(cur.id);
+        chain.push(cur);
+        cur = cur.parentId ? ouById(cur.parentId) : null;
+      }
+      return chain;
+    }
+
+    function wouldCreateCycle(ouId, newParentId) {
+      if (!newParentId) return false;
+      if (ouId === newParentId) return true;
+      return ancestors(newParentId).some((a) => a.id === ouId);
+    }
+
+    /** Resolve OU setting: nearest local value walking to root */
+    function resolveOuSetting(key, ouId) {
+      const map = state.settings[key] || {};
+      for (const ou of ancestors(ouId)) {
+        const local = map[ou.id];
+        if (local && local.value != null) {
+          return {
+            value: local.value,
+            sourceOuId: ou.id,
+            sourceName: ou.name,
+            mode: ou.id === ouId ? "OVERRIDDEN" : "INHERITED"
+          };
+        }
+      }
+      return { value: "UNSET", sourceOuId: null, sourceName: null, mode: "UNSET" };
+    }
+
+    /** Effective for a user: OU path then group overlay (group wins when enabled) */
+    function resolveUserSetting(key, userId) {
+      const user = userById(userId);
+      if (!user) return null;
+      const ouEff = resolveOuSetting(key, user.ouId);
+      const groupMap = (state.groupOverrides[key] || {});
+      let groupWin = null;
+      (user.groups || []).forEach((gid) => {
+        const g = groupMap[gid];
+        if (g && g.enabled && g.value != null) {
+          const gMeta = state.groups.find((x) => x.id === gid);
+          groupWin = { value: g.value, groupId: gid, groupName: gMeta ? gMeta.name : gid };
+        }
+      });
+      if (groupWin) {
+        return {
+          value: groupWin.value,
+          mode: "GROUP",
+          ouEff: ouEff,
+          group: groupWin
+        };
+      }
+      return { value: ouEff.value, mode: ouEff.mode, ouEff: ouEff, group: null };
+    }
+
+    function setOuSetting(key, ouId, valueOrNull) {
+      if (!state.settings[key]) state.settings[key] = {};
+      if (valueOrNull == null) state.settings[key][ouId] = null;
+      else state.settings[key][ouId] = { value: valueOrNull };
+      audit("Setting changed: " + key + " = " + (valueOrNull == null ? "INHERIT" : valueOrNull), ouById(ouId).name);
+      saveState();
+      render();
+    }
+
+    /* ---------- Nav ---------- */
+    function renderNav() {
+      const nav = document.getElementById("sidebar");
+      clear(nav);
+      let lastSec = null;
+      ROUTES.forEach((r) => {
+        if (r.sec !== lastSec) {
+          nav.appendChild(el("div", { className: "nav-sec", text: r.sec }));
+          lastSec = r.sec;
+        }
+        const btn = el("button", {
+          type: "button",
+          className: "nav-item" + (state.ui.route === r.id ? " active" : ""),
+          onclick: () => { state.ui.route = r.id; saveState(); render(); }
+        });
+        btn.appendChild(document.createTextNode(r.label));
+        if (r.sub) btn.appendChild(el("span", { className: "sub", text: r.sub }));
+        nav.appendChild(btn);
+      });
+    }
+
+    function tipBox(text, href) {
+      const box = el("div", { className: "tip" });
+      box.appendChild(el("strong", { text: "Exam tip · " }));
+      box.appendChild(document.createTextNode(text + " "));
+      if (href) {
+        const a = el("a", { href: href, text: "Open Study Desk →" });
+        box.appendChild(a);
+      }
+      return box;
+    }
+
+    function stubPanel(route) {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: route.label }));
+      wrap.appendChild(el("p", { className: "lede", text: "Simulated stub panel — interactive depth lives in OUs, Drive, DLP, Users, and Scenarios." }));
+      wrap.appendChild(tipBox(route.tip || "Use Study Desk for full notes.", route.href || "./index.html"));
+      return wrap;
+    }
+
+    /* ---------- OUs panel ---------- */
+    function renderOuTree(parentId, ul) {
+      childrenOf(parentId).forEach((ou) => {
+        const li = el("li");
+        const node = el("div", {
+          className: "ou-node" + (state.ui.selectedOuId === ou.id ? " selected" : ""),
+          onclick: () => { state.ui.selectedOuId = ou.id; saveState(); render(); }
+        });
+        node.appendChild(el("span", { text: "📁 " + ou.name }));
+        const eff = resolveOuSetting("drive.externalSharing", ou.id);
+        node.appendChild(el("span", {
+          className: "badge " + (eff.mode === "OVERRIDDEN" ? "override" : "inherited"),
+          text: eff.mode === "OVERRIDDEN" ? "OVERRIDDEN" : "INHERITED"
+        }));
+        li.appendChild(node);
+        const kids = childrenOf(ou.id);
+        if (kids.length) {
+          const sub = el("ul", { className: "ou-tree" });
+          renderOuTree(ou.id, sub);
+          li.appendChild(sub);
+        }
+        ul.appendChild(li);
+      });
+    }
+
+    function panelOUs() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Organizational units" }));
+      wrap.appendChild(el("p", { className: "lede", text: "One user, one OU. Settings inherit down the tree unless a child overrides. Groups are an overlay — when both apply, the group usually wins." }));
+      wrap.appendChild(tipBox("Design OUs for how policies differ, not the org chart.", "./index.html#m0"));
+
+      const grid = el("div", { className: "grid-2" });
+      const left = el("div", { className: "card" });
+      left.appendChild(el("h2", { text: "OU tree" }));
+      const rootUl = el("ul", { className: "ou-tree" });
+      const root = ouById("ou_root") || state.ous.find((o) => !o.parentId);
+      if (root) {
+        const li = el("li");
+        const node = el("div", {
+          className: "ou-node" + (state.ui.selectedOuId === root.id ? " selected" : ""),
+          onclick: () => { state.ui.selectedOuId = root.id; saveState(); render(); }
+        });
+        node.appendChild(el("span", { text: "🏢 " + root.name }));
+        li.appendChild(node);
+        const sub = el("ul", { className: "ou-tree" });
+        renderOuTree(root.id, sub);
+        li.appendChild(sub);
+        rootUl.appendChild(li);
+      }
+      left.appendChild(rootUl);
+
+      const actions = el("div", { className: "row" });
+      const nameIn = el("input", { type: "text", placeholder: "New child OU name", id: "newOuName" });
+      nameIn.style.flex = "1";
+      actions.appendChild(nameIn);
+      actions.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Add child OU",
+        onclick: () => {
+          const name = nameIn.value.trim();
+          if (!name) { toast("Enter an OU name."); return; }
+          if (state.ous.length >= MAX_OUS) { toast("Demo cap: " + MAX_OUS + " OUs."); return; }
+          const parent = state.ui.selectedOuId || "ou_root";
+          const id = uid("ou");
+          state.ous.push({ id: id, name: name, parentId: parent });
+          if (!state.settings["drive.externalSharing"]) state.settings["drive.externalSharing"] = {};
+          state.settings["drive.externalSharing"][id] = null;
+          audit("Created OU", name);
+          saveState(); render();
+          toast("OU created.");
+        }
+      }));
+      left.appendChild(actions);
+
+      const sel = ouById(state.ui.selectedOuId);
+      if (sel && sel.parentId) {
+        left.appendChild(el("button", {
+          type: "button", className: "btn danger", text: "Delete selected OU",
+          onclick: () => {
+            const usersHere = state.users.filter((u) => u.ouId === sel.id && u.status !== "deleted");
+            if (usersHere.length) {
+              toast("Move users out of this OU before deleting.");
+              return;
+            }
+            if (childrenOf(sel.id).length) {
+              toast("Delete or move child OUs first.");
+              return;
+            }
+            state.ous = state.ous.filter((o) => o.id !== sel.id);
+            state.ui.selectedOuId = sel.parentId;
+            audit("Deleted OU", sel.name);
+            saveState(); render();
+          }
+        }));
+      }
+
+      const right = el("div", { className: "card" });
+      right.appendChild(el("h2", { text: "Drive external sharing — inspector" }));
+      if (!sel) {
+        right.appendChild(el("p", { text: "Select an OU." }));
+      } else {
+        right.appendChild(el("p", { text: "Selected: " + sel.name }));
+        const eff = resolveOuSetting("drive.externalSharing", sel.id);
+        const map = state.settings["drive.externalSharing"] || {};
+        const local = map[sel.id];
+
+        const badgeRow = el("div", { className: "row" });
+        badgeRow.appendChild(el("span", {
+          className: "badge " + (eff.mode === "OVERRIDDEN" ? "override" : "inherited"),
+          text: eff.mode
+        }));
+        badgeRow.appendChild(el("span", {
+          text: "Effective: " + eff.value + (eff.mode === "INHERITED" ? " (from " + eff.sourceName + ")" : "")
+        }));
+        right.appendChild(badgeRow);
+
+        right.appendChild(el("p", { className: "muted", text: "Local value: " + (local && local.value != null ? local.value : "— inherit from parent") }));
+
+        const toggles = el("div", { className: "row" });
+        toggles.appendChild(el("button", {
+          type: "button", className: "btn", text: "Set OFF (override)",
+          onclick: () => setOuSetting("drive.externalSharing", sel.id, "OFF")
+        }));
+        toggles.appendChild(el("button", {
+          type: "button", className: "btn", text: "Set ON (override)",
+          onclick: () => setOuSetting("drive.externalSharing", sel.id, "ON")
+        }));
+        if (sel.parentId) {
+          toggles.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Clear → Inherit",
+            onclick: () => setOuSetting("drive.externalSharing", sel.id, null)
+          }));
+        }
+        right.appendChild(toggles);
+        right.appendChild(el("div", { className: "warn", text: "Seed demo: Root=OFF, Engineering overrides ON, Sales/Contractors inherit OFF." }));
+      }
+
+      grid.appendChild(left);
+      grid.appendChild(right);
+      wrap.appendChild(grid);
+      return wrap;
+    }
+
+    /* ---------- Users ---------- */
+    function panelUsers() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Users" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Assign each account to exactly one OU. Holds and offboarding status show as badges." }));
+
+      const table = el("table", { className: "user-table" });
+      const thead = el("thead");
+      const hr = el("tr");
+      ["Name", "Email", "OU", "Status", "Effective Drive sharing", "Actions"].forEach((h) => hr.appendChild(el("th", { text: h })));
+      thead.appendChild(hr);
+      table.appendChild(thead);
+      const tbody = el("tbody");
+
+      state.users.forEach((u) => {
+        if (u.status === "deleted") return;
+        const tr = el("tr");
+        const nameTd = el("td");
+        nameTd.appendChild(document.createTextNode(u.name + " "));
+        if (u.vaultHold) nameTd.appendChild(el("span", { className: "badge hold", text: "Hold" }));
+        if (u.status === "suspended") nameTd.appendChild(el("span", { className: "badge suspended", text: "Suspended" }));
+        if (u.status === "archived") nameTd.appendChild(el("span", { className: "badge aul", text: "AUL" }));
+        tr.appendChild(nameTd);
+        tr.appendChild(el("td", { text: u.email }));
+        tr.appendChild(el("td", { text: (ouById(u.ouId) || {}).name || u.ouId }));
+        tr.appendChild(el("td", { text: u.status }));
+
+        const eff = resolveUserSetting("drive.externalSharing", u.id);
+        const effTd = el("td");
+        effTd.appendChild(document.createTextNode(eff.value + " "));
+        effTd.appendChild(el("span", {
+          className: "badge " + (eff.mode === "GROUP" ? "group" : eff.mode === "OVERRIDDEN" ? "override" : "inherited"),
+          text: eff.mode === "GROUP" ? "GROUP WINS" : eff.mode
+        }));
+        tr.appendChild(effTd);
+
+        const act = el("td");
+        const sel = el("select");
+        state.ous.forEach((o) => {
+          const opt = el("option", { value: o.id, text: o.name });
+          if (o.id === u.ouId) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.addEventListener("change", () => {
+          u.ouId = sel.value;
+          audit("Moved user OU", u.email + " → " + ouById(u.ouId).name);
+          saveState(); render();
+        });
+        act.appendChild(sel);
+        act.appendChild(el("button", {
+          type: "button", className: "btn", text: "Select",
+          onclick: () => { state.ui.selectedUserId = u.id; saveState(); toast("Selected " + u.name); render(); }
+        }));
+        tr.appendChild(act);
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      wrap.appendChild(el("div", { className: "card" }, [table]));
+      wrap.appendChild(tipBox("Suspend → transfer Drive → delete or Archived User License.", "./index.html#m1"));
+      return wrap;
+    }
+
+    /* ---------- Groups ---------- */
+    function panelGroups() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Groups" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Groups overlay the OU tree. Demo: Gemini Pilot security group can override Drive external sharing for its members — group wins over OU." }));
+      wrap.appendChild(tipBox("OU = structural home. Group = cross-cutting access. If both conflict, group usually wins.", "./index.html#m0"));
+
+      state.groups.forEach((g) => {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: g.name + (g.security ? " (Security group)" : "") }));
+        card.appendChild(el("p", { className: "muted", text: g.note }));
+        const members = state.users.filter((u) => (u.groups || []).includes(g.id) && u.status !== "deleted");
+        card.appendChild(el("p", { text: "Members: " + (members.map((m) => m.name).join(", ") || "—") }));
+
+        if (g.id === "g_pilot") {
+          const ov = state.groupOverrides["drive.externalSharing"].g_pilot;
+          const row = el("div", { className: "row" });
+          row.appendChild(el("span", { text: "Drive external sharing overlay:" }));
+          const sel = el("select");
+          ["OFF", "ON"].forEach((v) => {
+            const o = el("option", { value: v, text: v });
+            if (ov.value === v) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.addEventListener("change", () => {
+            ov.value = sel.value;
+            audit("Group overlay set", g.name + " = " + sel.value);
+            saveState(); render();
+          });
+          row.appendChild(sel);
+          const chk = el("input", { type: "checkbox", id: "grpEn" });
+          chk.checked = !!ov.enabled;
+          chk.addEventListener("change", () => {
+            ov.enabled = chk.checked;
+            audit("Group overlay " + (chk.checked ? "enabled" : "disabled"), g.name);
+            saveState(); render();
+          });
+          row.appendChild(chk);
+          row.appendChild(el("label", { for: "grpEn", text: "Apply group overlay (wins over OU)" }));
+          card.appendChild(row);
+
+          const demo = el("div", { className: "eff-box" });
+          demo.appendChild(el("strong", { text: "Effective policy for Ada Sales (in Pilot):" }));
+          const ada = resolveUserSetting("drive.externalSharing", "u_ada");
+          demo.appendChild(el("div", { className: "line", text: "1. OU path (" + ada.ouEff.mode + "): " + ada.ouEff.value + (ada.ouEff.sourceName ? " via " + ada.ouEff.sourceName : "") }));
+          demo.appendChild(el("div", { className: "line", text: ada.group ? ("2. Group overlay wins: " + ada.group.value + " (" + ada.group.groupName + ")") : "2. No group overlay → OU effective value used" }));
+          demo.appendChild(el("div", { className: "line", text: "Final: " + ada.value + " [" + ada.mode + "]" }));
+          card.appendChild(demo);
+        }
+        wrap.appendChild(card);
+      });
+      return wrap;
+    }
+
+    /* ---------- Drive ---------- */
+    function panelDrive() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Drive and Docs" }));
+      wrap.appendChild(el("p", { className: "lede", text: "External sharing is scoped by OU (with inheritance) and can be further restricted by a security group overlay." }));
+      wrap.appendChild(tipBox("Prefer Shared Drives for org content so files survive off-boarding.", "./index.html#m2"));
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Open OU inheritance visualizer",
+        onclick: () => { state.ui.route = "ous"; saveState(); render(); }
+      }));
+      return wrap;
+    }
+
+    /* ---------- DLP ---------- */
+    function panelDlp() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Data protection / DLP" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Simplified detector for study. Advanced Drive/Chat DLP is typically an Enterprise-tier capability." }));
+
+      const edition = state.tenant.edition;
+      if (edition !== "enterprise") {
+        wrap.appendChild(el("div", {
+          className: "warn",
+          text: "Edition gate: Advanced Drive DLP path unavailable on Business Plus in this simulator. Switch Edition (top bar) to Enterprise to run the tester — same habit as the exam."
+        }));
+        wrap.appendChild(tipBox("When a question hinges on DLP, ask whether the stated edition includes it.", "./index.html#m3"));
+        wrap.appendChild(el("button", {
+          type: "button", className: "btn primary", text: "Switch to Enterprise for this sandbox",
+          onclick: () => {
+            state.tenant.edition = "enterprise";
+            document.getElementById("editionSelect").value = "enterprise";
+            audit("Edition changed", "Enterprise");
+            saveState(); render();
+          }
+        }));
+        return wrap;
+      }
+
+      wrap.appendChild(el("div", { className: "ok-box", text: "Enterprise selected — Advanced DLP tester enabled (simplified regex for study)." }));
+      const card = el("div", { className: "card" });
+      card.appendChild(el("h2", { text: "Rule tester" }));
+      card.appendChild(el("p", { className: "muted", text: "Detectors: credit-card-like numbers · keyword confidential. Action: Block." }));
+      const ta = el("textarea", { id: "dlpText", placeholder: "Paste sample text, e.g. Card 4111 1111 1111 1111 or Project confidential notes" });
+      card.appendChild(ta);
+      const result = el("div", { id: "dlpResult" });
+      card.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Test against DLP policy",
+        onclick: () => {
+          const text = ta.value || "";
+          clear(result);
+          const pan = /\b(?:\d[ -]*?){13,19}\b/.test(text.replace(/\s/g, " "));
+          const kw = /confidential/i.test(text);
+          if (pan || kw) {
+            const box = el("div", { className: "danger-box" });
+            box.appendChild(el("strong", { text: "Blocked by DLP Policy" }));
+            box.appendChild(document.createTextNode(" — matched " + (pan && kw ? "credit card + keyword" : pan ? "credit card pattern" : "keyword confidential") + ". (Simplified demo detector.)"));
+            result.appendChild(box);
+            audit("DLP block simulation", pan ? "PAN" : "keyword");
+          } else {
+            result.appendChild(el("div", { className: "ok-box", text: "No detector match — would be allowed (demo)." }));
+            audit("DLP allow simulation", "no match");
+          }
+          saveState();
+        }
+      }));
+      card.appendChild(result);
+      wrap.appendChild(card);
+      wrap.appendChild(tipBox("Labels classify; DLP and trust rules enforce.", "./index.html#m3"));
+      return wrap;
+    }
+
+    /* ---------- Mobile ---------- */
+    function panelMobile() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Mobile & Chrome" }));
+      wrap.appendChild(el("p", { className: "lede", text: "BYOD → account wipe. Company-owned → device wipe OK." }));
+      const card = el("div", { className: "card" });
+      const table = el("table", { className: "user-table" });
+      const head = el("tr");
+      ["User", "Device", "Ownership", "Recommended wipe"].forEach((h) => head.appendChild(el("th", { text: h })));
+      table.appendChild(el("thead", null, [head]));
+      const tb = el("tbody");
+      state.users.forEach((u) => {
+        (u.devices || []).forEach((d) => {
+          const tr = el("tr");
+          tr.appendChild(el("td", { text: u.name }));
+          tr.appendChild(el("td", { text: d.type }));
+          tr.appendChild(el("td", { text: d.ownership }));
+          tr.appendChild(el("td", { text: d.ownership === "byod" ? "Account wipe" : "Device wipe OK" }));
+          tb.appendChild(tr);
+        });
+      });
+      table.appendChild(tb);
+      card.appendChild(table);
+      wrap.appendChild(card);
+      wrap.appendChild(tipBox("Suspending the user also cuts mobile access immediately.", "./index.html#m5"));
+      return wrap;
+    }
+
+    /* ---------- Storage ---------- */
+    function panelStorage() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Storage" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Storage is pooled across the org — not fixed per mailbox." }));
+      const used = 42;
+      const card = el("div", { className: "card" });
+      card.appendChild(el("h2", { text: "Pooled usage (simulated)" }));
+      card.appendChild(el("p", { text: used + "% of org pool used" }));
+      const bar = el("div", { style: "height:10px;background:#e8eaed;border-radius:99px;overflow:hidden" });
+      const fill = el("div", { style: "height:100%;width:" + used + "%;background:#1a73e8" });
+      bar.appendChild(fill);
+      card.appendChild(bar);
+      wrap.appendChild(card);
+      wrap.appendChild(tipBox("Low storage → add licenses, set quotas, or free space.", "./index.html#m0"));
+      return wrap;
+    }
+
+    /* ---------- Reporting ---------- */
+    function panelReporting() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Audit logs" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Simulated admin audit — scenario actions append here. On the exam: setting changes → admin audit log." }));
+      wrap.appendChild(tipBox("Message delivery → Email Log Search. Incidents across services → Investigation tool (Enterprise).", "./index.html#m6"));
+      const card = el("div", { className: "card" });
+      if (!state.auditLog.length) card.appendChild(el("p", { className: "muted", text: "No events yet — change a setting or run a scenario." }));
+      else {
+        const table = el("table", { className: "user-table" });
+        const hr = el("tr");
+        ["Time", "Actor", "Action", "Target"].forEach((h) => hr.appendChild(el("th", { text: h })));
+        table.appendChild(el("thead", null, [hr]));
+        const tb = el("tbody");
+        state.auditLog.forEach((ev) => {
+          const tr = el("tr");
+          tr.appendChild(el("td", { text: new Date(ev.ts).toLocaleString() }));
+          tr.appendChild(el("td", { text: ev.actor }));
+          tr.appendChild(el("td", { text: ev.action }));
+          tr.appendChild(el("td", { text: ev.target }));
+          tb.appendChild(tr);
+        });
+        table.appendChild(tb);
+        card.appendChild(table);
+      }
+      wrap.appendChild(card);
+      return wrap;
+    }
+
+    /* ---------- Scenarios hub ---------- */
+    function panelScenarios() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Scenario hub" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Hands-on drills for the highest-yield exam workflows." }));
+      const grid = el("div", { className: "scenario-grid" });
+      [
+        { id: "gcds", title: "GCDS dry-run", desc: "Simulate AD → Workspace sync preview" },
+        { id: "vault", title: "Vault legal hold", desc: "Hold overrides retention deletion" },
+        { id: "dlp", title: "DLP rule tester", desc: "Edition-gated content block demo" },
+        { id: "offboard", title: "Offboarding wizard", desc: "Suspend → transfer → delete/AUL" }
+      ].forEach((s) => {
+        const c = el("button", {
+          type: "button", className: "scenario-card",
+          onclick: () => { state.ui.route = s.id; saveState(); render(); }
+        });
+        c.appendChild(el("h3", { text: s.title }));
+        c.appendChild(el("p", { text: s.desc }));
+        grid.appendChild(c);
+      });
+      wrap.appendChild(grid);
+      return wrap;
+    }
+
+    /* ---------- GCDS ---------- */
+    function panelGcds() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "GCDS — dry-run sync" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Google Cloud Directory Sync: on-prem LDAP/AD → Workspace (one-way). This dry-run does not apply changes." }));
+      wrap.appendChild(tipBox("Cloud IdP (Entra) → Directory Sync. Email/files from another provider → Data Migration Service — not GCDS.", "./index.html#m1"));
+
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Run Dry-Run Sync",
+        onclick: () => {
+          const lines = [
+            { cls: "add", text: "[ADD]    newhire@exam-demo.example  (exists in AD, missing in Workspace)" },
+            { cls: "upd", text: "[UPDATE] ada@exam-demo.example     (displayName changed in AD)" },
+            { cls: "skip", text: "[SKIP]   fin@exam-demo.example     (already in sync)" },
+            { cls: "del", text: "[WOULD-DELETE] ghost@exam-demo.example (in Workspace, missing in AD — blocked by dry-run)" },
+            { cls: "skip", text: "[INFO]   Direction: AD → Workspace only. Content migration is NOT in scope." }
+          ];
+          state.gcdsLastDryRun = { at: Date.now(), lines: lines };
+          audit("GCDS dry-run", "4 actions previewed");
+          saveState(); render();
+          toast("Dry-run complete — no accounts modified.");
+        }
+      }));
+
+      const card = el("div", { className: "card" });
+      card.appendChild(el("h2", { text: "Last dry-run log" }));
+      if (!state.gcdsLastDryRun.at) {
+        card.appendChild(el("p", { className: "muted", text: "No dry-run yet." }));
+      } else {
+        card.appendChild(el("p", { className: "muted", text: "Ran " + new Date(state.gcdsLastDryRun.at).toLocaleString() }));
+        const log = el("div", { className: "log" });
+        state.gcdsLastDryRun.lines.forEach((ln) => {
+          const line = el("div", { className: ln.cls });
+          line.textContent = ln.text;
+          log.appendChild(line);
+        });
+        card.appendChild(log);
+      }
+      wrap.appendChild(card);
+
+      const compare = el("div", { className: "card" });
+      compare.appendChild(el("h2", { text: "Tool chooser (exam)" }));
+      const table = el("table", { className: "user-table" });
+      const hr = el("tr");
+      ["Need", "Tool"].forEach((h) => hr.appendChild(el("th", { text: h })));
+      table.appendChild(el("thead", null, [hr]));
+      [
+        ["On-prem AD/LDAP identities", "GCDS"],
+        ["Cloud IdP (Entra) identities", "Directory Sync"],
+        ["IdP provisions + SSO", "SCIM + SAML"],
+        ["Move mail/calendar/contacts", "Data Migration Service"]
+      ].forEach((row) => {
+        const tr = el("tr");
+        tr.appendChild(el("td", { text: row[0] }));
+        tr.appendChild(el("td", { text: row[1] }));
+        table.appendChild(tr);
+      });
+      compare.appendChild(table);
+      wrap.appendChild(compare);
+      return wrap;
+    }
+
+    /* ---------- Vault ---------- */
+    function panelVault() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Vault — legal hold" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Holds live inside a Matter. While a hold stands, retention cannot purge that user's data." }));
+      wrap.appendChild(tipBox("Vault is retention / hold / eDiscovery — not a user backup tool. Hold always wins over retention delete.", "./index.html#m3"));
+
+      const matter = state.vault.matters[0];
+      const card = el("div", { className: "card" });
+      card.appendChild(el("h2", { text: "Matter: " + matter.name }));
+
+      const sel = el("select", { id: "holdUser" });
+      state.users.filter((u) => u.status !== "deleted").forEach((u) => {
+        const o = el("option", { value: u.id, text: u.name + " <" + u.email + ">" });
+        if (u.id === state.ui.selectedUserId) o.selected = true;
+        sel.appendChild(o);
+      });
+      card.appendChild(el("div", { className: "field" }, [el("label", { text: "Target user" }), sel]));
+
+      const row = el("div", { className: "row" });
+      row.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Place Legal Hold",
+        onclick: () => {
+          const id = sel.value;
+          const u = userById(id);
+          if (!u) return;
+          u.vaultHold = true;
+          if (!matter.holds.includes(id)) matter.holds.push(id);
+          audit("Vault hold placed", u.email);
+          saveState(); render();
+          toast("Hold active — data preserved (overrides retention).");
+        }
+      }));
+      row.appendChild(el("button", {
+        type: "button", className: "btn", text: "Release Hold",
+        onclick: () => {
+          const id = sel.value;
+          const u = userById(id);
+          if (!u) return;
+          u.vaultHold = false;
+          matter.holds = matter.holds.filter((x) => x !== id);
+          audit("Vault hold released", u.email);
+          saveState(); render();
+          toast("Hold released.");
+        }
+      }));
+      card.appendChild(row);
+
+      const held = state.users.filter((u) => u.vaultHold);
+      if (held.length) {
+        const box = el("div", { className: "ok-box" });
+        box.appendChild(el("strong", { text: "Data Preserved (Overrides Retention)" }));
+        box.appendChild(document.createTextNode(" — " + held.map((u) => u.name).join(", ")));
+        card.appendChild(box);
+      } else {
+        card.appendChild(el("p", { className: "muted", text: "No active holds." }));
+      }
+      wrap.appendChild(card);
+      return wrap;
+    }
+
+    /* ---------- Offboarding ---------- */
+    function panelOffboard() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("h1", { text: "Offboarding wizard" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Exam order: Suspend → reset/sign-out → Transfer My Drive → Delete or Archived User License. Shared Drive files need no ownership transfer." }));
+      wrap.appendChild(tipBox("Deleting before transferring My Drive is the classic data-loss mistake.", "./index.html#m1"));
+
+      const ob = state.offboard;
+      const card = el("div", { className: "card" });
+      const sel = el("select");
+      state.users.filter((u) => u.status !== "deleted").forEach((u) => {
+        const o = el("option", { value: u.id, text: u.name + " (" + u.status + ")" });
+        if (u.id === (ob.userId || state.ui.selectedUserId)) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", () => {
+        state.offboard = { userId: sel.value, step: 0, wipeChoice: null };
+        saveState(); render();
+      });
+      card.appendChild(el("div", { className: "field" }, [el("label", { text: "User to offboard" }), sel]));
+      if (!ob.userId) ob.userId = sel.value;
+
+      const u = userById(ob.userId);
+      if (!u) {
+        wrap.appendChild(card);
+        return wrap;
+      }
+
+      if (u.vaultHold) {
+        card.appendChild(el("div", {
+          className: "danger-box",
+          text: "Legal hold is active — Delete is blocked until the hold is released (Vault scenario)."
+        }));
+      }
+
+      const steps = el("ol", { className: "steps" });
+
+      // Step 0 suspend
+      const s0 = el("li", { className: ob.step > 0 ? "done" : "" });
+      s0.appendChild(el("strong", { text: "Suspend account" }));
+      s0.appendChild(document.createTextNode(" — cut access without destroying data."));
+      s0.appendChild(el("div", { className: "row" }, [
+        el("button", {
+          type: "button", className: "btn primary", text: u.status === "suspended" || u.status === "archived" ? "Already suspended/archived" : "Suspend now",
+          disabled: u.status === "suspended" || u.status === "archived" || u.status === "deleted",
+          onclick: () => {
+            u.status = "suspended";
+            state.offboard.step = Math.max(ob.step, 1);
+            audit("User suspended", u.email);
+            saveState(); render();
+          }
+        })
+      ]));
+      steps.appendChild(s0);
+
+      // Step 1 sessions
+      const s1 = el("li", { className: ob.step > 1 ? "done" : (ob.step < 1 ? "locked" : "") });
+      s1.appendChild(el("strong", { text: "Reset password / sign out sessions" }));
+      s1.appendChild(document.createTextNode(" — Google Session Control ends existing sessions."));
+      s1.appendChild(el("div", { className: "row" }, [
+        el("button", {
+          type: "button", className: "btn", text: "Simulate sign-out all sessions",
+          disabled: ob.step < 1,
+          onclick: () => {
+            state.offboard.step = Math.max(ob.step, 2);
+            audit("Sessions revoked", u.email);
+            saveState(); render();
+            toast("Sessions signed out (simulated).");
+          }
+        })
+      ]));
+      steps.appendChild(s1);
+
+      // Step 2 transfer
+      const s2 = el("li", { className: ob.step > 2 ? "done" : (ob.step < 2 ? "locked" : "") });
+      s2.appendChild(el("strong", { text: "Transfer My Drive ownership" }));
+      s2.appendChild(document.createTextNode(" — Shared Drive content already belongs to the team."));
+      s2.appendChild(el("div", { className: "row" }, [
+        el("button", {
+          type: "button", className: "btn", text: u.driveTransferred ? "Drive transferred ✓" : "Transfer Drive to manager",
+          disabled: ob.step < 2 || u.driveTransferred,
+          onclick: () => {
+            u.driveTransferred = true;
+            state.offboard.step = Math.max(ob.step, 3);
+            audit("Drive transferred", u.email);
+            saveState(); render();
+          }
+        })
+      ]));
+      steps.appendChild(s2);
+
+      // Step 3 wipe
+      const s3 = el("li", { className: ob.step > 3 ? "done" : (ob.step < 3 ? "locked" : "") });
+      s3.appendChild(el("strong", { text: "Mobile wipe (if needed)" }));
+      const wipeRow = el("div", { className: "row" });
+      wipeRow.appendChild(el("button", {
+        type: "button", className: "btn", text: "Account wipe (BYOD)",
+        disabled: ob.step < 3,
+        onclick: () => {
+          state.offboard.wipeChoice = "account";
+          state.offboard.step = Math.max(ob.step, 4);
+          audit("Account wipe", u.email);
+          saveState(); render();
+          toast("Corporate account wiped from BYOD — personal data left alone.");
+        }
+      }));
+      wipeRow.appendChild(el("button", {
+        type: "button", className: "btn", text: "Device wipe (company-owned)",
+        disabled: ob.step < 3,
+        onclick: () => {
+          state.offboard.wipeChoice = "device";
+          state.offboard.step = Math.max(ob.step, 4);
+          audit("Device wipe", u.email);
+          saveState(); render();
+          toast("Full device wipe simulated.");
+        }
+      }));
+      wipeRow.appendChild(el("button", {
+        type: "button", className: "btn ghost", text: "Skip wipe",
+        disabled: ob.step < 3,
+        onclick: () => {
+          state.offboard.step = Math.max(ob.step, 4);
+          saveState(); render();
+        }
+      }));
+      s3.appendChild(wipeRow);
+      steps.appendChild(s3);
+
+      // Step 4 end state
+      const s4 = el("li", { className: ob.step < 4 ? "locked" : "" });
+      s4.appendChild(el("strong", { text: "End state" }));
+      s4.appendChild(document.createTextNode(" — Delete (reclaim license, 20-day restore) or Archived User License (keep data cheap for Vault)."));
+      const endRow = el("div", { className: "row" });
+      endRow.appendChild(el("button", {
+        type: "button", className: "btn danger", text: "Delete user",
+        disabled: ob.step < 4 || u.vaultHold || !u.driveTransferred,
+        onclick: () => {
+          if (u.vaultHold) { toast("Release Vault hold first."); return; }
+          if (!u.driveTransferred) { toast("Transfer Drive first."); return; }
+          u.status = "deleted";
+          audit("User deleted", u.email);
+          state.offboard.step = 5;
+          saveState(); render();
+          toast("User deleted — recoverable ~20 days in a real tenant.");
+        }
+      }));
+      endRow.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Switch to Archived User License",
+        disabled: ob.step < 4,
+        onclick: () => {
+          u.status = "archived";
+          audit("User archived (AUL)", u.email);
+          state.offboard.step = 5;
+          saveState(); render();
+          toast("AUL applied — data retained without a full seat.");
+        }
+      }));
+      s4.appendChild(endRow);
+      if (!u.driveTransferred) {
+        s4.appendChild(el("div", { className: "warn", text: "Delete stays disabled until My Drive is transferred." }));
+      }
+      if (u.vaultHold) {
+        s4.appendChild(el("div", { className: "danger-box", text: "Delete blocked by active Vault hold." }));
+      }
+      steps.appendChild(s4);
+
+      card.appendChild(steps);
+      wrap.appendChild(card);
+      return wrap;
+    }
+
+
+
+    /* ---------- Domains & Gmail mail setup ---------- */
+    function domainById(id) {
+      return (state.domains || []).find(function (d) { return d.id === id; });
+    }
+    function primaryDomain() {
+      return (state.domains || []).find(function (d) { return d.type === "primary"; }) || state.domains[0];
+    }
+    function ensureDns(d) {
+      if (!d.dns) {
+        d.dns = {
+          mx: [{ priority: 1, host: "@", value: "smtp.google.com", published: false }],
+          spf: { published: false, value: "v=spf1 include:_spf.google.com ~all" },
+          dkim: { generated: false, published: false, started: false, selector: "google", host: "google._domainkey", value: "" },
+          dmarc: { published: false, policy: "none", host: "_dmarc", value: "" }
+        };
+      }
+      return d.dns;
+    }
+    function mailHealth(d) {
+      const dns = ensureDns(d);
+      const mxOk = d.verified && d.gmailActivated && dns.mx.every(function (r) { return r.published; });
+      const outOk = dns.spf.published && dns.dkim.started && dns.dmarc.published;
+      return {
+        inbound: !d.verified ? "unverified" : !d.gmailActivated ? "gmail-off" : mxOk ? "ok" : "mx-missing",
+        outbound: !dns.spf.published && !dns.dkim.started ? "missing" : outOk ? "ok" : "partial",
+        mxOk: mxOk,
+        authOk: outOk
+      };
+    }
+    function statusPill(kind, text) {
+      return el("span", { className: "status-pill " + kind, text: text });
+    }
+    function copyCode(label, value) {
+      const wrap = el("div");
+      wrap.appendChild(el("div", { className: "muted", text: label }));
+      const box = el("div", { className: "codebox", text: value });
+      wrap.appendChild(box);
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn", text: "Copy value",
+        onclick: function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(value).then(function () { toast("Copied to clipboard."); }).catch(function () { toast(value); });
+          } else toast(value);
+        }
+      }));
+      return wrap;
+    }
+
+    function panelDomains() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("div", { className: "breadcrumb", text: "Account > Domains > Manage domains" }));
+      wrap.appendChild(el("h1", { text: "Domains" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Add and verify domains like Admin console. Primary = main identity. Secondary = separate user accounts. Alias = extra addresses for existing users (no extra licenses)." }));
+      wrap.appendChild(tipBox("Verify ownership first (TXT), then publish MX so mail can flow. Alias vs secondary is a frequent exam trap.", "./index.html#m1"));
+
+      const addCard = el("div", { className: "card" });
+      addCard.appendChild(el("h2", { text: "Add a domain" }));
+      const nameIn = el("input", { type: "text", id: "newDomainName", placeholder: "e.g. contoso-mail.test" });
+      const typeSel = el("select", { id: "newDomainType" });
+      [["secondary", "Secondary domain (new user accounts)"], ["alias", "Domain alias (extra addresses, no new seats)"]].forEach(function (pair) {
+        typeSel.appendChild(el("option", { value: pair[0], text: pair[1] }));
+      });
+      addCard.appendChild(el("div", { className: "field" }, [el("label", { text: "Domain name" }), nameIn]));
+      addCard.appendChild(el("div", { className: "field" }, [el("label", { text: "Type" }), typeSel]));
+      addCard.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Add domain",
+        onclick: function () {
+          const name = (nameIn.value || "").trim().toLowerCase();
+          if (!name || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(name)) {
+            toast("Enter a valid-looking domain (e.g. acme-demo.test).");
+            return;
+          }
+          if (state.domains.some(function (d) { return d.name === name; })) {
+            toast("That domain is already in the sandbox.");
+            return;
+          }
+          if (state.domains.length >= 12) { toast("Demo cap: 12 domains."); return; }
+          const token = "google-site-verification=" + Math.random().toString(36).slice(2, 12) + "-sim";
+          const id = uid("dom");
+          const d = {
+            id: id,
+            name: name,
+            type: typeSel.value,
+            verified: false,
+            verificationMethod: "TXT",
+            verificationHost: "@",
+            verificationValue: token,
+            verificationPublished: false,
+            gmailActivated: false,
+            dns: {
+              mx: [{ priority: 1, host: "@", value: "smtp.google.com", published: false }],
+              spf: { published: false, value: "v=spf1 include:_spf.google.com ~all" },
+              dkim: { generated: false, published: false, started: false, selector: "google", host: "google._domainkey", value: "" },
+              dmarc: { published: false, policy: "none", host: "_dmarc", value: "v=DMARC1; p=none; rua=mailto:dmarc-reports@" + name }
+            }
+          };
+          state.domains.push(d);
+          state.ui.selectedDomainId = id;
+          audit("Domain added", name + " (" + d.type + ")");
+          saveState(); render();
+          toast("Domain added — publish TXT then Verify.");
+        }
+      }));
+      wrap.appendChild(addCard);
+
+      const list = el("div", { className: "card" });
+      list.appendChild(el("h2", { text: "Your domains" }));
+      const table = el("table", { className: "user-table" });
+      const hr = el("tr");
+      ["Domain", "Type", "Verified", "Gmail", "Actions"].forEach(function (h) { hr.appendChild(el("th", { text: h })); });
+      table.appendChild(el("thead", null, [hr]));
+      const tb = el("tbody");
+      state.domains.forEach(function (d) {
+        const tr = el("tr");
+        tr.appendChild(el("td", { text: d.name }));
+        tr.appendChild(el("td", { text: d.type }));
+        const vtd = el("td");
+        vtd.appendChild(statusPill(d.verified ? "ok" : "warn", d.verified ? "Verified" : "Pending"));
+        tr.appendChild(vtd);
+        const gtd = el("td");
+        gtd.appendChild(statusPill(d.gmailActivated ? "ok" : "muted", d.gmailActivated ? "Activated" : "Not activated"));
+        tr.appendChild(gtd);
+        const act = el("td");
+        act.appendChild(el("button", {
+          type: "button", className: "btn", text: "Manage",
+          onclick: function () {
+            state.ui.selectedDomainId = d.id;
+            state.ui.route = "domains";
+            saveState(); render();
+          }
+        }));
+        act.appendChild(el("button", {
+          type: "button", className: "btn primary", text: "Open in Gmail setup",
+          onclick: function () {
+            state.ui.selectedDomainId = d.id;
+            state.ui.route = "gmail";
+            state.ui.gmailTab = "setup";
+            saveState(); render();
+          }
+        }));
+        if (d.type !== "primary") {
+          act.appendChild(el("button", {
+            type: "button", className: "btn danger", text: "Remove",
+            onclick: function () {
+              if (!confirm("Remove " + d.name + " from sandbox?")) return;
+              state.domains = state.domains.filter(function (x) { return x.id !== d.id; });
+              state.ui.selectedDomainId = primaryDomain().id;
+              audit("Domain removed", d.name);
+              saveState(); render();
+            }
+          }));
+        }
+        tr.appendChild(act);
+        tb.appendChild(tr);
+      });
+      table.appendChild(tb);
+      list.appendChild(table);
+      wrap.appendChild(list);
+
+      const d = domainById(state.ui.selectedDomainId) || primaryDomain();
+      if (d) {
+        const detail = el("div", { className: "card" });
+        detail.appendChild(el("h2", { text: "Verify ownership — " + d.name }));
+        if (d.verified) {
+          detail.appendChild(el("div", { className: "ok-box", text: "Ownership verified. Next: activate Gmail and publish MX (Apps > Gmail)." }));
+        } else {
+          detail.appendChild(el("p", { text: "Publish this TXT record at your DNS host, then click Verify (simulated)." }));
+          detail.appendChild(copyCode("TXT host", d.verificationHost || "@"));
+          detail.appendChild(copyCode("TXT value", d.verificationValue));
+          const row = el("div", { className: "row" });
+          row.appendChild(el("button", {
+            type: "button", className: "btn", text: d.verificationPublished ? "TXT published ✓" : "Simulate: publish TXT at DNS host",
+            disabled: !!d.verificationPublished,
+            onclick: function () {
+              d.verificationPublished = true;
+              audit("DNS TXT published (verification)", d.name);
+              saveState(); render();
+              toast("TXT published (simulated DNS host).");
+            }
+          }));
+          row.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Verify domain",
+            disabled: !d.verificationPublished,
+            onclick: function () {
+              if (!d.verificationPublished) { toast("Publish the TXT record first."); return; }
+              d.verified = true;
+              audit("Domain verified", d.name);
+              saveState(); render();
+              toast("Domain verified.");
+            }
+          }));
+          detail.appendChild(row);
+          detail.appendChild(el("p", { className: "muted", text: "Other real-world methods: CNAME, HTML file, meta tag, or MX — this sandbox uses TXT." }));
+        }
+        wrap.appendChild(detail);
+      }
+      return wrap;
+    }
+
+    function panelGmail() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(el("div", { className: "breadcrumb", text: "Apps > Google Workspace > Gmail" }));
+      wrap.appendChild(el("h1", { text: "Gmail" }));
+      wrap.appendChild(el("p", { className: "lede", text: "Set up mail for a domain like Admin console: activate Gmail, publish MX for inbound, then SPF + DKIM + DMARC for outbound authentication." }));
+
+      // Domain picker
+      const picker = el("div", { className: "row" });
+      picker.appendChild(el("span", { className: "muted", text: "Domain:" }));
+      const sel = el("select", { id: "gmailDomainSel" });
+      state.domains.forEach(function (d) {
+        const o = el("option", { value: d.id, text: d.name + (d.type === "primary" ? " (primary)" : " (" + d.type + ")") });
+        if (d.id === state.ui.selectedDomainId) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () {
+        state.ui.selectedDomainId = sel.value;
+        saveState(); render();
+      });
+      picker.appendChild(sel);
+      picker.appendChild(el("button", {
+        type: "button", className: "btn", text: "Manage domains",
+        onclick: function () { state.ui.route = "domains"; saveState(); render(); }
+      }));
+      wrap.appendChild(picker);
+
+      const d = domainById(state.ui.selectedDomainId) || primaryDomain();
+      if (!d) {
+        wrap.appendChild(el("div", { className: "warn", text: "No domains — add one under Account > Domains." }));
+        return wrap;
+      }
+      const dns = ensureDns(d);
+      const health = mailHealth(d);
+
+      const healthCard = el("div", { className: "card" });
+      healthCard.appendChild(el("h2", { text: "Mail health — " + d.name }));
+      const hrow = el("div", { className: "row" });
+      hrow.appendChild(document.createTextNode("Inbound: "));
+      hrow.appendChild(statusPill(
+        health.inbound === "ok" ? "ok" : health.inbound === "unverified" ? "bad" : "warn",
+        health.inbound === "ok" ? "MX ready" : health.inbound === "unverified" ? "Domain not verified" : health.inbound === "gmail-off" ? "Gmail not activated" : "MX not published"
+      ));
+      hrow.appendChild(document.createTextNode("Outbound auth: "));
+      hrow.appendChild(statusPill(
+        health.outbound === "ok" ? "ok" : health.outbound === "partial" ? "warn" : "bad",
+        health.outbound === "ok" ? "SPF+DKIM+DMARC OK" : health.outbound === "partial" ? "Incomplete trio" : "Not configured"
+      ));
+      healthCard.appendChild(hrow);
+      wrap.appendChild(healthCard);
+
+      // Tabs
+      const tabs = el("div", { className: "tabs", role: "tablist" });
+      [["setup", "Setup"], ["inbound", "Inbound (MX)"], ["outbound", "Outbound (SPF/DKIM/DMARC)"], ["test", "Test mail"], ["routing", "Routing tips"]].forEach(function (pair) {
+        tabs.appendChild(el("button", {
+          type: "button",
+          className: "tab" + (state.ui.gmailTab === pair[0] ? " active" : ""),
+          text: pair[1],
+          onclick: function () { state.ui.gmailTab = pair[0]; saveState(); render(); }
+        }));
+      });
+      wrap.appendChild(tabs);
+
+      const tab = state.ui.gmailTab || "setup";
+
+      if (tab === "setup") {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: "Activate Gmail for this domain" }));
+        const ul = el("ul", { className: "checklist" });
+        ul.appendChild(el("li", null, [
+          statusPill(d.verified ? "ok" : "warn", d.verified ? "Done" : "Todo"),
+          document.createTextNode(" Verify domain ownership (Account > Domains)")
+        ]));
+        ul.appendChild(el("li", null, [
+          statusPill(d.gmailActivated ? "ok" : "warn", d.gmailActivated ? "Done" : "Todo"),
+          document.createTextNode(" Activate Gmail for the domain")
+        ]));
+        ul.appendChild(el("li", null, [
+          statusPill(health.mxOk ? "ok" : "warn", health.mxOk ? "Done" : "Todo"),
+          document.createTextNode(" Publish MX so inbound mail reaches Google")
+        ]));
+        ul.appendChild(el("li", null, [
+          statusPill(health.authOk ? "ok" : "warn", health.authOk ? "Done" : "Todo"),
+          document.createTextNode(" Complete SPF + DKIM + DMARC for outbound")
+        ]));
+        card.appendChild(ul);
+
+        if (!d.verified) {
+          card.appendChild(el("div", { className: "warn", text: "Domain is not verified yet. Finish TXT verification under Domains first." }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Go to Domains",
+            onclick: function () { state.ui.route = "domains"; saveState(); render(); }
+          }));
+        } else if (!d.gmailActivated) {
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Activate Gmail",
+            onclick: function () {
+              d.gmailActivated = true;
+              audit("Gmail activated", d.name);
+              saveState(); render();
+              toast("Gmail activated for " + d.name + ". Publish MX next.");
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok-box", text: "Gmail is activated. Continue with Inbound (MX) and Outbound authentication tabs." }));
+        }
+        wrap.appendChild(card);
+        wrap.appendChild(tipBox("MX only directs inbound mail. Outbound spam at recipients is almost always an SPF/DKIM/DMARC gap.", "./index.html#m2"));
+      }
+
+      if (tab === "inbound") {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: "MX records — inbound routing" }));
+        card.appendChild(el("p", { text: "Modern Google setup uses a single MX: smtp.google.com (priority 1). Older setups used five ASPMX records." }));
+        if (!d.verified || !d.gmailActivated) {
+          card.appendChild(el("div", { className: "warn", text: "Verify the domain and activate Gmail before relying on MX delivery." }));
+        }
+        const table = el("table", { className: "dns-table" });
+        const thr = el("tr");
+        ["Type", "Host", "Priority", "Value", "Published"].forEach(function (h) { thr.appendChild(el("th", { text: h })); });
+        table.appendChild(el("thead", null, [thr]));
+        const tb = el("tbody");
+        dns.mx.forEach(function (r) {
+          const tr = el("tr");
+          tr.appendChild(el("td", { text: "MX" }));
+          tr.appendChild(el("td", { text: r.host }));
+          tr.appendChild(el("td", { text: String(r.priority) }));
+          tr.appendChild(el("td", { text: r.value }));
+          tr.appendChild(el("td", { text: r.published ? "Yes" : "No" }));
+          tb.appendChild(tr);
+        });
+        table.appendChild(tb);
+        card.appendChild(table);
+        const row = el("div", { className: "row" });
+        row.appendChild(el("button", {
+          type: "button", className: "btn primary", text: "Simulate: publish MX at DNS host",
+          disabled: dns.mx.every(function (r) { return r.published; }),
+          onclick: function () {
+            dns.mx.forEach(function (r) { r.published = true; });
+            audit("MX published", d.name);
+            saveState(); render();
+            toast("MX published — inbound mail can route to Google (simulated).");
+          }
+        }));
+        row.appendChild(el("button", {
+          type: "button", className: "btn", text: "Use legacy ASPMX set",
+          onclick: function () {
+            dns.mx = [
+              { priority: 1, host: "@", value: "ASPMX.L.GOOGLE.COM", published: false },
+              { priority: 5, host: "@", value: "ALT1.ASPMX.L.GOOGLE.COM", published: false },
+              { priority: 5, host: "@", value: "ALT2.ASPMX.L.GOOGLE.COM", published: false },
+              { priority: 10, host: "@", value: "ALT3.ASPMX.L.GOOGLE.COM", published: false },
+              { priority: 10, host: "@", value: "ALT4.ASPMX.L.GOOGLE.COM", published: false }
+            ];
+            audit("MX switched to legacy ASPMX", d.name);
+            saveState(); render();
+          }
+        }));
+        row.appendChild(el("button", {
+          type: "button", className: "btn", text: "Use modern smtp.google.com",
+          onclick: function () {
+            dns.mx = [{ priority: 1, host: "@", value: "smtp.google.com", published: false }];
+            audit("MX switched to smtp.google.com", d.name);
+            saveState(); render();
+          }
+        }));
+        card.appendChild(row);
+        card.appendChild(el("p", { className: "muted", text: "Also remove old MX records that still point elsewhere, or mail stays at the legacy host." }));
+        wrap.appendChild(card);
+      }
+
+      if (tab === "outbound") {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: "Authenticate email — SPF, DKIM, DMARC" }));
+        card.appendChild(el("p", { text: "These three DNS records prove outbound mail is yours. Incomplete trio → recipients mark you as spam." }));
+
+        // SPF
+        const spf = el("div", { className: "card" });
+        spf.appendChild(el("h2", { text: "1. SPF (allowed senders)" }));
+        spf.appendChild(copyCode("TXT record", dns.spf.value));
+        spf.appendChild(el("button", {
+          type: "button", className: "btn" + (dns.spf.published ? "" : " primary"),
+          text: dns.spf.published ? "SPF published ✓" : "Simulate: publish SPF TXT",
+          disabled: !!dns.spf.published,
+          onclick: function () {
+            dns.spf.published = true;
+            audit("SPF published", d.name);
+            saveState(); render();
+          }
+        }));
+        card.appendChild(spf);
+
+        // DKIM
+        const dkim = el("div", { className: "card" });
+        dkim.appendChild(el("h2", { text: "2. DKIM (sign outbound mail)" }));
+        dkim.appendChild(el("p", { className: "muted", text: "Admin path: Apps > Gmail > Authenticate email → Generate new record → publish TXT → Start authentication." }));
+        if (!dns.dkim.generated) {
+          dkim.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Generate DKIM record (2048-bit)",
+            onclick: function () {
+              dns.dkim.generated = true;
+              dns.dkim.selector = "google";
+              dns.dkim.host = "google._domainkey";
+              dns.dkim.value = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA" + Math.random().toString(36).slice(2, 18).toUpperCase();
+              dns.dkim.published = false;
+              dns.dkim.started = false;
+              audit("DKIM generated", d.name);
+              saveState(); render();
+            }
+          }));
+        } else {
+          dkim.appendChild(copyCode("TXT host", dns.dkim.host));
+          dkim.appendChild(copyCode("TXT value", dns.dkim.value));
+          const row = el("div", { className: "row" });
+          row.appendChild(el("button", {
+            type: "button", className: "btn" + (dns.dkim.published ? "" : " primary"),
+            text: dns.dkim.published ? "DKIM TXT published ✓" : "Simulate: publish DKIM TXT",
+            disabled: !!dns.dkim.published,
+            onclick: function () {
+              dns.dkim.published = true;
+              audit("DKIM published", d.name);
+              saveState(); render();
+            }
+          }));
+          row.appendChild(el("button", {
+            type: "button", className: "btn primary",
+            text: dns.dkim.started ? "Authentication started ✓" : "Start authentication",
+            disabled: !dns.dkim.published || !!dns.dkim.started,
+            onclick: function () {
+              if (!dns.dkim.published) { toast("Publish DKIM TXT first."); return; }
+              dns.dkim.started = true;
+              audit("DKIM authentication started", d.name);
+              saveState(); render();
+              toast("DKIM authentication started.");
+            }
+          }));
+          dkim.appendChild(row);
+        }
+        card.appendChild(dkim);
+
+        // DMARC
+        const dmarc = el("div", { className: "card" });
+        dmarc.appendChild(el("h2", { text: "3. DMARC (failure policy + reports)" }));
+        dmarc.appendChild(el("p", { text: "Start at p=none (monitor), then quarantine, then reject." }));
+        const pol = el("select");
+        ["none", "quarantine", "reject"].forEach(function (p) {
+          const o = el("option", { value: p, text: "p=" + p });
+          if ((dns.dmarc.policy || "none") === p) o.selected = true;
+          pol.appendChild(o);
+        });
+        pol.addEventListener("change", function () {
+          dns.dmarc.policy = pol.value;
+          dns.dmarc.value = "v=DMARC1; p=" + pol.value + "; rua=mailto:dmarc-reports@" + d.name;
+          dns.dmarc.published = false;
+          saveState(); render();
+        });
+        dmarc.appendChild(el("div", { className: "field" }, [el("label", { text: "Policy" }), pol]));
+        if (!dns.dmarc.value) dns.dmarc.value = "v=DMARC1; p=" + (dns.dmarc.policy || "none") + "; rua=mailto:dmarc-reports@" + d.name;
+        dmarc.appendChild(copyCode("TXT host", dns.dmarc.host || "_dmarc"));
+        dmarc.appendChild(copyCode("TXT value", dns.dmarc.value));
+        dmarc.appendChild(el("button", {
+          type: "button", className: "btn" + (dns.dmarc.published ? "" : " primary"),
+          text: dns.dmarc.published ? "DMARC published ✓" : "Simulate: publish DMARC TXT",
+          disabled: !!dns.dmarc.published,
+          onclick: function () {
+            dns.dmarc.published = true;
+            audit("DMARC published p=" + dns.dmarc.policy, d.name);
+            saveState(); render();
+          }
+        }));
+        card.appendChild(dmarc);
+        wrap.appendChild(card);
+        wrap.appendChild(tipBox("Outbound spam complaints → finish SPF + DKIM + DMARC, not a random Gmail toggle.", "./index.html#dns"));
+      }
+
+      if (tab === "test") {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: "Test inbound / outbound (simulated)" }));
+        card.appendChild(el("p", { className: "muted", text: "This does not send real email — it checks your sandbox DNS/Gmail state the way an exam scenario would reason." }));
+
+        const inBtn = el("button", {
+          type: "button", className: "btn primary", text: "Simulate inbound test message",
+          onclick: function () {
+            const h = mailHealth(d);
+            let result, ok;
+            if (!d.verified) { ok = false; result = "FAIL — domain not verified."; }
+            else if (!d.gmailActivated) { ok = false; result = "FAIL — Gmail not activated for domain."; }
+            else if (!h.mxOk) { ok = false; result = "FAIL — MX not published (or still pointing elsewhere)."; }
+            else { ok = true; result = "DELIVERED — message accepted by Google MX for " + d.name + "."; }
+            state.mailLab.lastInbound = { at: Date.now(), ok: ok, detail: result, domain: d.name };
+            audit("Inbound mail test", result);
+            saveState(); render();
+            toast(ok ? "Inbound OK" : "Inbound failed — check MX/setup");
+          }
+        });
+        const outBtn = el("button", {
+          type: "button", className: "btn", text: "Simulate outbound to external recipient",
+          onclick: function () {
+            const dns2 = ensureDns(d);
+            let result, ok;
+            if (!dns2.spf.published || !dns2.dkim.started || !dns2.dmarc.published) {
+              ok = false;
+              result = "LANDED IN SPAM / UNTRUSTED — incomplete SPF/DKIM/DMARC trio.";
+            } else {
+              ok = true;
+              result = "ACCEPTED — SPF pass, DKIM pass, DMARC aligned (p=" + dns2.dmarc.policy + ").";
+            }
+            state.mailLab.lastOutbound = { at: Date.now(), ok: ok, detail: result, domain: d.name };
+            audit("Outbound mail test", result);
+            saveState(); render();
+            toast(ok ? "Outbound authenticated" : "Outbound looks spammy — finish auth trio");
+          }
+        });
+        card.appendChild(el("div", { className: "row" }, [inBtn, outBtn]));
+
+        if (state.mailLab.lastInbound) {
+          const box = el("div", { className: state.mailLab.lastInbound.ok ? "ok-box" : "danger-box" });
+          box.appendChild(el("strong", { text: "Last inbound: " }));
+          box.appendChild(document.createTextNode(state.mailLab.lastInbound.detail));
+          card.appendChild(box);
+        }
+        if (state.mailLab.lastOutbound) {
+          const box = el("div", { className: state.mailLab.lastOutbound.ok ? "ok-box" : "danger-box" });
+          box.appendChild(el("strong", { text: "Last outbound: " }));
+          box.appendChild(document.createTextNode(state.mailLab.lastOutbound.detail));
+          card.appendChild(box);
+        }
+        wrap.appendChild(card);
+      }
+
+      if (tab === "routing") {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h2", { text: "Routing & compliance (exam map)" }));
+        card.appendChild(el("p", { text: "Full routing rule builders are stubbed here — know where they live and what they do:" }));
+        const table = el("table", { className: "user-table" });
+        const thr = el("tr");
+        ["Need", "Where / tool"].forEach(function (h) { thr.appendChild(el("th", { text: h })); });
+        table.appendChild(el("thead", null, [thr]));
+        [
+          ["Content / attachment compliance", "Apps > Gmail > Compliance / routing rules"],
+          ["Dual or split delivery during migration", "Gmail routing"],
+          ["Inbound/outbound gateway (third-party filter)", "Gmail Advanced settings > Gateways"],
+          ["Disable POP/IMAP / forwarding (exfil control)", "Gmail user settings per OU"],
+          ["Trace one message", "Email Log Search (Reporting) — last ~30 days"]
+        ].forEach(function (row) {
+          const tr = el("tr");
+          tr.appendChild(el("td", { text: row[0] }));
+          tr.appendChild(el("td", { text: row[1] }));
+          table.appendChild(tr);
+        });
+        card.appendChild(table);
+        wrap.appendChild(card);
+        wrap.appendChild(tipBox("Migration of mailbox content uses Data Migration Service — not GCDS.", "./index.html#m2"));
+      }
+
+      return wrap;
+    }
+
+
+    /* ---------- Walkthrough trainer ---------- */
+    const WALKTHROUGH = [
+      { id: "m0-s1", module: "m0", moduleTitle: "Foundations", title: "What Workspace admin is", body: "You don't run mail servers — you configure people, services, and security in the Admin console. Editions unlock features (Business Plus vs Enterprise).", route: "account", doThis: "Read the exam tip on this stub panel (domains, roles, data regions).", why: "Exam questions often hinge on whether an edition includes a feature.", requireMark: true, desk: "./index.html#m0" },
+      { id: "m0-s2", module: "m0", moduleTitle: "Foundations", title: "Edition selector (top bar)", body: "Many advanced tools (DLP, CAA, Investigation) are Enterprise-tier. Practice checking the edition before picking an answer.", route: "account", doThis: "Use the Edition dropdown (top bar) to switch Business Plus ↔ Enterprise once.", why: "First ask: does this capability exist on the stated plan?", check: function (s) { return !!s.ui.walkthrough._editionTouched; }, desk: "./index.html#m0" },
+      { id: "m0-s3", module: "m0", moduleTitle: "Foundations", title: "Storage is pooled", body: "Modern Workspace storage is a shared pool, not a fixed per-mailbox tank. Low storage → licenses, quotas, or free space.", route: "storage", doThis: "Open Storage and look at the pooled usage meter.", why: "Do not upgrade one mailbox as the fix.", requireMark: true, desk: "./index.html#m0" },
+      { id: "m0-s4", module: "m0", moduleTitle: "Foundations", title: "OU tree walk", body: "Every user lives in exactly one OU. Children inherit parent settings unless overridden.", route: "ous", doThis: "Click Root, then Sales, then Engineering. Notice INHERITED vs OVERRIDDEN badges.", why: "OUs answer who is this person structurally.", check: function (s) { return (s.ui.walkthrough._ousVisited || 0) >= 2; }, desk: "./index.html#m0" },
+      { id: "m0-s5", module: "m0", moduleTitle: "Foundations", title: "Inherit vs override", body: "Seed story: Root external sharing OFF; Engineering overrides ON; Sales inherits OFF.", route: "ous", doThis: "Select Sales → Clear → Inherit (or Set OFF). Then select Engineering and confirm it stays OVERRIDDEN ON.", why: "Inheritance is how one Root setting fans out to the org.", requireMark: true, prep: function (s) { s.ui.selectedOuId = "ou_sales"; }, desk: "./index.html#m0" },
+      { id: "m0-s6", module: "m0", moduleTitle: "Foundations", title: "Groups usually win", body: "Groups overlay the OU tree. When OU and group policies conflict, the group-applied setting generally wins.", route: "groups", doThis: "On Gemini Pilot, ensure Apply group overlay is checked. Read Ada effective policy: GROUP WINS.", why: "Fluid / cross-department access → group, not a new OU.", check: function (s) { try { return !!(s.groupOverrides["drive.externalSharing"].g_pilot.enabled); } catch (e) { return false; } }, desk: "./index.html#m0" },
+
+      { id: "m1-s1", module: "m1", moduleTitle: "Users & Directory", title: "Move a user between OUs", body: "OU placement drives inherited policy from the moment the account exists.", route: "users", doThis: "Change Cara's OU with the dropdown, then click Select on Ada.", why: "Wrong OU = wrong policies.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); }, desk: "./index.html#m1" },
+      { id: "m1-s2", module: "m1", moduleTitle: "Users & Directory", title: "GCDS dry-run", body: "GCDS syncs identities from on-prem AD/LDAP into Workspace (one-way). Dry-run previews adds/updates/deletes without applying.", route: "gcds", doThis: "Click Run Dry-Run Sync and read the ADD / UPDATE / WOULD-DELETE lines.", why: "Sync moves identities — not mail content.", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); }, desk: "./index.html#m1" },
+      { id: "m1-s3", module: "m1", moduleTitle: "Users & Directory", title: "Pick the right provisioning tool", body: "On-prem AD → GCDS. Cloud IdP (Entra) → Directory Sync. Content from another provider → Data Migration Service.", route: "gcds", doThis: "Read the Tool chooser table on the GCDS panel.", why: "Don't use a sync tool when the question is about migrating mail.", requireMark: true, desk: "./index.html#m1" },
+      { id: "m1-s4", module: "m1", moduleTitle: "Users & Directory", title: "Offboarding: suspend first", body: "Suspend cuts access immediately and keeps data. Best for leave or while you decide.", route: "offboard", doThis: "Pick Dan Sales and click Suspend now.", why: "Preserve data; don't delete first.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "suspended" || u.status === "archived" || u.status === "deleted"); }, prep: function (s) { s.offboard.userId = "u_dan"; s.offboard.step = 0; }, desk: "./index.html#m1" },
+      { id: "m1-s5", module: "m1", moduleTitle: "Users & Directory", title: "Transfer then Delete or AUL", body: "After sessions + Drive transfer: Delete (reclaim license, ~20-day restore) or Archived User License (keep data cheap for Vault).", route: "offboard", doThis: "Continue Dan's wizard: sessions → Transfer Drive → end with Delete or AUL. (If hold blocks delete, use AUL or release hold first.)", why: "Deleting before Drive transfer is the classic data-loss mistake.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "deleted" || u.status === "archived"); }, desk: "./index.html#m1" },
+
+      { id: "m2-s1", module: "m2", moduleTitle: "Core Services", title: "Gmail setup: inbound vs outbound", body: "MX = inbound routing. Outbound spam at recipients is usually missing SPF + DKIM + DMARC — not a random Gmail toggle.", route: "gmail", doThis: "Open Gmail. Use tabs: Setup → Inbound (MX) → Outbound (SPF/DKIM/DMARC) → Test mail. Try an inbound and outbound simulation.", why: "Match the symptom to authentication vs delivery.", requireMark: true, desk: "./index.html#m2" },
+      { id: "m2-s2", module: "m2", moduleTitle: "Core Services", title: "Drive sharing policy", body: "External sharing is an OU-scoped setting with inheritance — same model as other services.", route: "drive", doThis: "Open Drive and Docs, then click Open OU inheritance visualizer.", why: "Shared Drives keep org files team-owned through off-boarding.", check: function (s) { return s.ui.route === "ous" || !!s.ui.walkthrough.completed["m2-s2"]; }, desk: "./index.html#m2" },
+      { id: "m2-s3", module: "m2", moduleTitle: "Core Services", title: "Confirm seed sharing story", body: "Root OFF, Engineering ON (override), Sales/Contractors inherit OFF.", route: "ous", doThis: "Click through those OUs and confirm the badges match the story.", why: "Scenario questions often describe exactly this pattern.", requireMark: true, desk: "./index.html#m2" },
+      { id: "m2-s4", module: "m2", moduleTitle: "Core Services", title: "Calendar resources", body: "Bookable rooms come from Buildings & resources and become resource calendars.", route: "calendar", doThis: "Read the Calendar stub tip.", why: "Add 200 rooms across sites → CSV bulk, not one-by-one.", requireMark: true, desk: "./index.html#m2" },
+
+      { id: "m3-s1", module: "m3", moduleTitle: "Data & Compliance", title: "Place a Vault hold", body: "Holds live in a Matter. While a hold stands, retention cannot purge that data.", route: "vault", doThis: "Place a Legal Hold on Ada Sales. See the green Data Preserved badge.", why: "Hold always beats retention deletion.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold; }, prep: function (s) { s.ui.selectedUserId = "u_ada"; }, desk: "./index.html#m3" },
+      { id: "m3-s2", module: "m3", moduleTitle: "Data & Compliance", title: "Hold blocks delete", body: "Offboarding must not destroy held data. This simulator disables Delete while a hold is active.", route: "offboard", doThis: "Open Offboarding with Ada selected. Confirm Delete is blocked by the hold message.", why: "Vault ≠ user backup; it is legal hold / eDiscovery.", requireMark: true, prep: function (s) { s.offboard.userId = "u_ada"; }, desk: "./index.html#m3" },
+      { id: "m3-s3", module: "m3", moduleTitle: "Data & Compliance", title: "DLP edition gate", body: "Advanced Drive/Chat DLP is typically Enterprise. On Business Plus the tester stays locked — same habit as the exam.", route: "dlp", doThis: "If you're on Business Plus, read the gate — then Switch to Enterprise (button or top bar).", why: "Capability questions start with edition.", check: function (s) { return s.tenant.edition === "enterprise"; }, desk: "./index.html#m3" },
+      { id: "m3-s4", module: "m3", moduleTitle: "Data & Compliance", title: "DLP block banner", body: "Detectors catch sensitive content; actions block, warn, or audit.", route: "dlp", doThis: "Paste a fake card like 4111 1111 1111 1111 (or the word confidential) and click Test against DLP policy.", why: "Labels classify; DLP enforces.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); }, desk: "./index.html#m3" },
+
+      { id: "m4-s1", module: "m4", moduleTitle: "Security", title: "2SV vs Context-Aware Access", body: "2SV proves who you are. CAA asks whether the situation (device, network, location) is allowed.", route: "access", doThis: "Read the Access and data control stub tip.", why: "Words like managed device / corp network → CAA (often Enterprise).", requireMark: true, desk: "./index.html#m4" },
+      { id: "m4-s2", module: "m4", moduleTitle: "Security", title: "Password management", body: "Org password rules live under Security → Authentication. Reset individuals from the user page.", route: "password", doThis: "Read the Password management stub tip.", why: "Least privilege: Help Desk Admin for resets — not Super Admin.", requireMark: true, desk: "./index.html#m4" },
+      { id: "m4-s3", module: "m4", moduleTitle: "Security", title: "DLP as enforcement", body: "Security is layers: authentication, context, content controls, and app/API access.", route: "dlp", doThis: "Skim DLP again — remember Marketplace allowlist + API controls for shady OAuth apps (Study Desk).", why: "Pick the most specific control for the constraint.", requireMark: true, desk: "./index.html#m4" },
+
+      { id: "m5-s1", module: "m5", moduleTitle: "Browsers & Devices", title: "Chrome / endpoints cue", body: "Chrome Browser Cloud Management enrolls browsers with a token and pushes policies by OU/group.", route: "endpoints", doThis: "Read the Endpoints stub tip.", why: "Force-install extension X for Finance → CBCM on that OU.", requireMark: true, desk: "./index.html#m5" },
+      { id: "m5-s2", module: "m5", moduleTitle: "Browsers & Devices", title: "Account wipe vs device wipe", body: "BYOD → wipe corporate account only. Company-owned → full device wipe is acceptable.", route: "mobile", doThis: "Open Mobile & Chrome and compare Ada (BYOD) vs Ben (company) recommended wipe.", why: "Don't factory-reset a personal phone by default.", requireMark: true, desk: "./index.html#m5" },
+      { id: "m5-s3", module: "m5", moduleTitle: "Browsers & Devices", title: "Suspend cuts mobile too", body: "Suspending a user immediately cuts Workspace access on enrolled devices.", route: "mobile", doThis: "Remember: offboarding often starts with Suspend — including mobile access.", why: "Fast containment without destroying data.", requireMark: true, desk: "./index.html#m5" },
+
+      { id: "m6-s1", module: "m6", moduleTitle: "Monitoring", title: "Generate an audit event", body: "Admin setting changes land in the admin audit log. This sandbox appends to Reporting when you act.", route: "ous", doThis: "If the audit log is empty, change any OU Drive sharing toggle. Otherwise continue.", why: "Who turned off 2SV? → admin audit log.", check: function (s) { return (s.auditLog || []).length > 0; }, desk: "./index.html#m6" },
+      { id: "m6-s2", module: "m6", moduleTitle: "Monitoring", title: "Read the audit log", body: "Match the question to the log: delivery → Email Log Search; multi-service incident → Investigation tool (Enterprise).", route: "reporting", doThis: "Open Audit logs and skim your recent simulator actions.", why: "Status Dashboard first when asking if it is just us.", requireMark: true, desk: "./index.html#m6" },
+
+      { id: "m7-s1", module: "m7", moduleTitle: "Exam Strategy", title: "Scenario hub review", body: "On the exam: read the constraint (cost, preserve data, managed devices, edition) then pick the most specific tool.", route: "scenarios", doThis: "Open Scenario hub and notice the four drills you already practiced.", why: "Least privilege + narrowest scope usually wins.", requireMark: true, desk: "./index.html#m7" },
+      { id: "m7-s2", module: "m7", moduleTitle: "Exam Strategy", title: "Tour complete", body: "You walked Foundations → Users → Services → Compliance → Security → Devices → Monitoring → Strategy inside the sandbox.", route: "scenarios", doThis: "Mark done. Optional: drill Practice arena on Study Desk for MCQs.", why: "Heuristics beat menu memorization.", requireMark: true, desk: "./index.html#practice" }
+    ];
+
+    // fix bad quote in m2-s4 if any - handled in string above carefully
+
+    function currentStep() {
+      const i = state.ui.walkthrough.stepIndex || 0;
+      return WALKTHROUGH[Math.min(i, WALKTHROUGH.length - 1)];
+    }
+
+    function announceCoach(msg) {
+      const live = document.getElementById("coachLive");
+      if (live) live.textContent = msg;
+    }
+
+    function applyPrep(step) {
+      if (step && typeof step.prep === "function") {
+        try { step.prep(state); } catch (e) {}
+      }
+      if (step && step.route) state.ui.route = step.route;
+    }
+
+    function goStep(index, opts) {
+      opts = opts || {};
+      const wt = state.ui.walkthrough;
+      wt.stepIndex = Math.max(0, Math.min(index, WALKTHROUGH.length - 1));
+      if (!wt.startedAt) wt.startedAt = Date.now();
+      const step = currentStep();
+      applyPrep(step);
+      saveState();
+      render();
+      if (!opts.silent) announceCoach("Module " + step.moduleTitle + ": " + step.title);
+    }
+
+    function markStepDone(id) {
+      state.ui.walkthrough.completed[id] = true;
+      const idx = WALKTHROUGH.findIndex(function (s) { return s.id === id; });
+      if (idx === WALKTHROUGH.length - 1) {
+        state.ui.walkthrough.finishedAt = Date.now();
+        toast("Walkthrough complete — nice work.");
+      }
+      if (idx >= 0 && idx < WALKTHROUGH.length - 1) goStep(idx + 1);
+      else { saveState(); renderCoachOnly(); }
+    }
+
+    function stepSatisfied(step) {
+      if (!step) return false;
+      if (state.ui.walkthrough.completed[step.id] || state.ui.walkthrough.skipped[step.id]) return true;
+      if (typeof step.check === "function") {
+        try { return !!step.check(state); } catch (e) { return false; }
+      }
+      return false;
+    }
+
+    function maybeAutoAdvance() {
+      const wt = state.ui.walkthrough;
+      if (!wt.active || wt.minimized) return;
+      const step = currentStep();
+      if (!step || step.requireMark) return;
+      if (stepSatisfied(step) && !wt.completed[step.id]) {
+        wt.completed[step.id] = true;
+        const idx = WALKTHROUGH.findIndex(function (s) { return s.id === step.id; });
+        if (idx >= 0 && idx < WALKTHROUGH.length - 1) {
+          toast("Step complete — advancing.");
+          goStep(idx + 1, { silent: true });
+          announceCoach("Completed " + step.title);
+        } else {
+          wt.finishedAt = Date.now();
+          saveState();
+          renderCoachOnly();
+          toast("Walkthrough complete — nice work.");
+        }
+      }
+    }
+
+    function setCoachOpen(open) {
+      const wt = state.ui.walkthrough;
+      wt.active = !!open;
+      if (open) {
+        wt.minimized = false;
+        if (!wt.startedAt) wt.startedAt = Date.now();
+        applyPrep(currentStep());
+      }
+      document.body.classList.toggle("coach-open", !!open && !wt.minimized);
+      document.body.classList.toggle("coach-minimized", !!open && !!wt.minimized);
+      const btn = document.getElementById("btnWalkthrough");
+      if (btn) btn.setAttribute("aria-expanded", open && !wt.minimized ? "true" : "false");
+      saveState();
+      render();
+      if (open && !wt.minimized) {
+        const coach = document.getElementById("coach");
+        if (coach) coach.focus();
+      }
+    }
+
+    function renderCoachOnly() {
+      document.body.classList.toggle("coach-open", !!state.ui.walkthrough.active && !state.ui.walkthrough.minimized);
+      document.body.classList.toggle("coach-minimized", !!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized);
+      paintCoach();
+      paintFab();
+    }
+
+    function paintFab() {
+      const fab = document.getElementById("coachFab");
+      if (!fab) return;
+      const wt = state.ui.walkthrough;
+      const step = currentStep();
+      clear(fab);
+      fab.appendChild(document.createTextNode("Tour · " + (step ? step.module.toUpperCase() : "?") + " · " + ((wt.stepIndex || 0) + 1) + "/" + WALKTHROUGH.length));
+    }
+
+    function paintCoach() {
+      const coach = document.getElementById("coach");
+      if (!coach) return;
+      clear(coach);
+      const wt = state.ui.walkthrough;
+      if (!wt.active || wt.minimized) return;
+
+      const step = currentStep();
+      const doneCount = Object.keys(wt.completed).length;
+      const pct = Math.round(((wt.stepIndex + 1) / WALKTHROUGH.length) * 100);
+
+      coach.appendChild(el("h2", { text: "Trainer walkthrough" }));
+      coach.appendChild(el("div", { className: "coach-meta", text: "Step " + (wt.stepIndex + 1) + " / " + WALKTHROUGH.length + " · " + doneCount + " marked done" }));
+      const bar = el("div", { className: "coach-progress" });
+      const fill = document.createElement("i");
+      fill.style.width = pct + "%";
+      bar.appendChild(fill);
+      coach.appendChild(bar);
+
+      const modPick = el("div", { className: "field" });
+      modPick.appendChild(el("label", { text: "Jump to module", for: "coachModule" }));
+      const sel = el("select", { id: "coachModule" });
+      const mods = [];
+      WALKTHROUGH.forEach(function (s) {
+        if (mods.indexOf(s.module) === -1) mods.push(s.module);
+      });
+      mods.forEach(function (m) {
+        const first = WALKTHROUGH.find(function (s) { return s.module === m; });
+        const o = el("option", { value: m, text: m.toUpperCase() + " · " + first.moduleTitle });
+        if (step.module === m) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () {
+        const idx = WALKTHROUGH.findIndex(function (s) { return s.module === sel.value; });
+        if (idx >= 0) goStep(idx);
+      });
+      modPick.appendChild(sel);
+      coach.appendChild(modPick);
+
+      coach.appendChild(el("div", { className: "chip blue", text: "Module " + step.module.toUpperCase() + " · " + step.moduleTitle }));
+      coach.appendChild(el("div", { className: "coach-title", text: step.title }));
+      coach.appendChild(el("p", { className: "coach-body", text: step.body }));
+
+      const doBox = el("div", { className: "coach-do" });
+      doBox.appendChild(el("strong", { text: "Do this in the sandbox" }));
+      doBox.appendChild(document.createTextNode(step.doThis));
+      coach.appendChild(doBox);
+
+      if (step.why) coach.appendChild(el("p", { className: "coach-why", text: "Exam: " + step.why }));
+
+      if (step.desk) {
+        const a = el("a", { href: step.desk, text: "Optional deep dive on Study Desk →" });
+        coach.appendChild(a);
+      }
+
+      const satisfied = stepSatisfied(step);
+      if (satisfied && !step.requireMark) {
+        coach.appendChild(el("div", { className: "ok-box", text: "Looks complete — click Next or it may auto-advance." }));
+      }
+
+      const actions = el("div", { className: "coach-actions" });
+      actions.appendChild(el("button", {
+        type: "button", className: "btn", text: "Back",
+        disabled: wt.stepIndex <= 0,
+        onclick: function () { goStep(wt.stepIndex - 1); }
+      }));
+      actions.appendChild(el("button", {
+        type: "button", className: "btn primary", text: step.requireMark ? "Mark done / Next" : "Next",
+        onclick: function () {
+          if (step.requireMark || stepSatisfied(step)) markStepDone(step.id);
+          else toast("Finish the Do this action, or Skip if stuck.");
+        }
+      }));
+      actions.appendChild(el("button", {
+        type: "button", className: "btn ghost", text: "Skip",
+        onclick: function () {
+          wt.skipped[step.id] = true;
+          const idx = wt.stepIndex;
+          if (idx < WALKTHROUGH.length - 1) goStep(idx + 1);
+          else { saveState(); renderCoachOnly(); }
+        }
+      }));
+      actions.appendChild(el("button", {
+        type: "button", className: "btn ghost", text: "Minimize",
+        onclick: function () {
+          wt.minimized = true;
+          saveState();
+          renderCoachOnly();
+        }
+      }));
+      actions.appendChild(el("button", {
+        type: "button", className: "btn ghost", text: "Exit tour",
+        onclick: function () { setCoachOpen(false); }
+      }));
+      actions.appendChild(el("button", {
+        type: "button", className: "btn danger", text: "Reset tour",
+        onclick: function () {
+          if (!confirm("Reset walkthrough progress only? Sandbox data stays.")) return;
+          const wasActive = wt.active;
+          state.ui.walkthrough = defaultWalkthrough();
+          state.ui.walkthrough.active = wasActive;
+          saveState();
+          goStep(0);
+          toast("Tour progress reset.");
+        }
+      }));
+      coach.appendChild(actions);
+    }
+
+
+    /* ---------- Render ---------- */
+    function render() {
+      document.getElementById("editionSelect").value = state.tenant.edition === "enterprise" ? "enterprise" : "business_plus";
+      var prim = (state.domains || []).find(function (d) { return d.type === "primary"; }) || (state.domains || [])[0];
+      if (prim) state.tenant.domain = prim.name;
+      document.getElementById("tenantChip").textContent = state.tenant.domain;
+      renderNav();
+      const main = document.getElementById("main");
+      clear(main);
+      const route = ROUTES.find((r) => r.id === state.ui.route) || ROUTES[0];
+      let panel;
+      switch (route.id) {
+        case "ous": panel = panelOUs(); break;
+        case "users": panel = panelUsers(); break;
+        case "groups": panel = panelGroups(); break;
+        case "drive": panel = panelDrive(); break;
+        case "gmail": panel = panelGmail(); break;
+        case "domains": panel = panelDomains(); break;
+        case "dlp": panel = panelDlp(); break;
+        case "mobile": panel = panelMobile(); break;
+        case "storage": panel = panelStorage(); break;
+        case "reporting": panel = panelReporting(); break;
+        case "scenarios": panel = panelScenarios(); break;
+        case "gcds": panel = panelGcds(); break;
+        case "vault": panel = panelVault(); break;
+        case "offboard": panel = panelOffboard(); break;
+        default: panel = stubPanel(route); break;
+      }
+      main.appendChild(panel);
+      // Track OU visits for walkthrough
+      if (state.ui.route === "ous") {
+        state.ui.walkthrough._ousVisited = (state.ui.walkthrough._ousVisited || 0);
+        // count unique selections via selectedOuId changes tracked lightly
+      }
+      paintCoach();
+      paintFab();
+      document.body.classList.toggle("coach-open", !!state.ui.walkthrough.active && !state.ui.walkthrough.minimized);
+      document.body.classList.toggle("coach-minimized", !!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized);
+      maybeAutoAdvance();
+    }
+
+    document.getElementById("editionSelect").addEventListener("change", (e) => {
+      state.tenant.edition = e.target.value === "enterprise" ? "enterprise" : "business_plus";
+      state.ui.walkthrough._editionTouched = true;
+      audit("Edition changed", state.tenant.edition);
+      saveState(); render();
+    });
+
+    document.getElementById("btnWalkthrough").addEventListener("click", () => {
+      const wt = state.ui.walkthrough;
+      if (wt.active && !wt.minimized) setCoachOpen(false);
+      else setCoachOpen(true);
+    });
+    document.getElementById("coachFab").addEventListener("click", () => {
+      state.ui.walkthrough.minimized = false;
+      setCoachOpen(true);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if (state.ui.walkthrough.active && !state.ui.walkthrough.minimized) {
+        state.ui.walkthrough.minimized = true;
+        saveState();
+        renderCoachOnly();
+      }
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (!confirm("Reset sandbox to seed data? Walkthrough progress is kept unless you also reset the tour.")) return;
+      const keepTour = state.ui.walkthrough;
+      state = seedState();
+      state.ui.walkthrough = keepTour; // preserve tour progress across sandbox reset
+      saveState();
+      render();
+      toast("Sandbox reset (tour progress kept).");
+    });
+
+    // Hash deep links: #ous #gcds #walkthrough
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      if (id === "walkthrough" || id === "wt") {
+        state.ui.walkthrough.active = true;
+        state.ui.walkthrough.minimized = false;
+      } else if (ROUTES.some((r) => r.id === id)) state.ui.route = id;
+    }
+    if (/[?&]wt=1/.test(location.search)) {
+      state.ui.walkthrough.active = true;
+      state.ui.walkthrough.minimized = false;
+    }
+
+    let lastOu = state.ui.selectedOuId;
+    setInterval(function () {
+      if (state.ui.selectedOuId !== lastOu) {
+        lastOu = state.ui.selectedOuId;
+        if (state.ui.route === "ous") {
+          state.ui.walkthrough._ousVisited = (state.ui.walkthrough._ousVisited || 0) + 1;
+        }
+      }
+    }, 400);
+
+    render();
+  })();
+  </script>
+</body>
+</html>
