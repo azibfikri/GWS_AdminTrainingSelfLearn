@@ -329,19 +329,27 @@
         return;
       }
       if (logged) {
-        const row = document.createElement("div");
-        row.className = "account-row";
-        const who = document.createElement("span");
+        const head = document.createElement("div");
+        head.className = "account-head";
+        const av = document.createElement("div");
+        av.className = "account-avatar";
+        av.setAttribute("aria-hidden", "true");
+        av.textContent = (name.charAt(0) || "?").toUpperCase();
+        const meta = document.createElement("div");
+        meta.className = "account-meta";
+        const who = document.createElement("div");
         who.className = "account-email";
         who.textContent = short;
-        row.appendChild(who);
+        meta.appendChild(who);
         if (syncLabel) {
           const st = document.createElement("span");
           st.className = "account-sync";
           st.textContent = syncLabel;
-          row.appendChild(st);
+          meta.appendChild(st);
         }
-        el.appendChild(row);
+        head.appendChild(av);
+        head.appendChild(meta);
+        el.appendChild(head);
         const actions = document.createElement("div");
         actions.className = "account-actions";
         const up = document.createElement("button");
