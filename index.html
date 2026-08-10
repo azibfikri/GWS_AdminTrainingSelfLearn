@@ -96,11 +96,33 @@
     .nav a:hover, .nav a.active { background: #1c3a2f; color: #fff; }
     .nav a .w { float: right; color: #7f9a8e; font-size: .72rem; }
     .progress-box {
-      margin-top: 1.25rem; padding: .85rem; border-radius: 10px; background: #0d1a16; border: 1px solid #2a4a3d;
-      font-size: .82rem; color: #b7cec3;
+      margin-top: 1rem; padding: 1rem; border-radius: var(--radius);
+      background: var(--paper); border: 1px solid var(--line);
+      font-size: .82rem; color: var(--muted);
+      box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
     }
-    .progress-bar { height: 8px; background: #1e3a30; border-radius: 99px; overflow: hidden; margin: .5rem 0; }
-    .progress-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #2f9e78, #5fd0a5); }
+    .progress-box-title {
+      margin: 0 0 .5rem; font-size: .72rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+    }
+    .progress-count { font-size: .88rem; font-weight: 600; color: var(--ink); margin-top: .35rem; }
+    .progress-bar { height: 8px; background: #dce8e2; border-radius: 99px; overflow: hidden; margin: .45rem 0 0; }
+    .progress-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #5fd0a5); transition: width .35s ease; }
+    .profile-stat {
+      margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--line);
+      font-size: .78rem; color: var(--muted); line-height: 1.45;
+    }
+    .profile-stat strong { color: var(--ink); font-weight: 600; }
+    .progress-mobile {
+      display: none;
+      align-items: center; gap: .65rem;
+      padding: .45rem .85rem; padding-top: max(.45rem, env(safe-area-inset-top));
+      background: #eef4f1; border-bottom: 1px solid var(--line);
+      font-size: .75rem; font-weight: 600; color: var(--muted);
+    }
+    .progress-mobile .progress-bar { flex: 1; margin: 0; min-width: 4rem; }
+    .progress-mobile-label { flex: 0 0 auto; color: var(--accent); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; }
+    #progTextMobile { flex: 0 0 auto; color: var(--ink); font-variant-numeric: tabular-nums; }
     .main {
       padding: 0 clamp(1rem, 2.5vw, 1.75rem) 1.25rem;
       max-width: none;
@@ -365,10 +387,6 @@
     .game-feedback.bad { background: var(--danger-bg); border-color: #f0c4c0; }
     .game-feedback a { font-weight: 600; }
     .game-empty { padding: 1rem; background: var(--warn-bg); border: 1px solid #efd59a; border-radius: 10px; }
-    .sidebar-game {
-      margin-top: .75rem; padding-top: .75rem; border-top: 1px solid #2a4a3d; font-size: .78rem; color: #9bb5aa; line-height: 1.45;
-    }
-    .sidebar-game strong { color: #e8f2ed; font-weight: 600; }
 
     /* Study Desk additions */
     .desk-tools {
@@ -379,10 +397,6 @@
       font-size: .72rem; padding: .45rem .35rem; min-height: 38px; line-height: 1.2;
     }
     .desk-tools .game-btn.active-focus { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
-    .sidebar-session {
-      margin-top: .65rem; font-size: .76rem; color: #9bb5aa; line-height: 1.4;
-    }
-    .sidebar-session strong { color: #e8f2ed; }
     .nav a .dot {
       float: right; width: .45rem; height: .45rem; border-radius: 50%; margin-top: .45rem;
       background: transparent; border: 1px solid #3d5c4f;
@@ -736,6 +750,8 @@
     }
     body.style-picking .profile-panel,
     body.style-kinder .profile-panel,
+    body.style-picking .progress-mobile,
+    body.style-kinder .progress-mobile,
     body.auth-gate .profile-panel { display: none !important; }
     @media (min-width: 901px) {
       body.style-adult #fabStyle {
@@ -774,6 +790,7 @@
     body.auth-gate .mobile-topbar,
     body.auth-gate .nav-backdrop,
     body.auth-gate #accountMobile { display: none !important; }
+    body.auth-gate .progress-mobile { display: none !important; }
     body.auth-gate .auth-modal { display: grid; }
     body.auth-gate .auth-modal .auth-backdrop { cursor: default; pointer-events: none; }
     .auth-modal.auth-required .auth-close { display: none; }
@@ -837,6 +854,10 @@
       .mobile-topbar { display: flex; }
       .layout { grid-template-columns: 1fr; }
       .profile-panel { display: none !important; }
+      .progress-mobile { display: flex; }
+      body.style-picking .progress-mobile,
+      body.style-kinder .progress-mobile,
+      body.auth-gate .progress-mobile { display: none !important; }
       .sidebar {
         display: none;
         position: fixed; top: 0; left: 0; bottom: 0;
@@ -1025,6 +1046,11 @@
       <button type="button" class="mt-btn" id="btnNavToggle" aria-expanded="false" aria-controls="sidebarNav">Menu</button>
     </div>
   </div>
+  <div class="progress-mobile" id="progressMobile" aria-label="Study checklist progress">
+    <span class="progress-mobile-label">Checklist</span>
+    <div class="progress-bar" aria-hidden="true"><i id="progBarMobile"></i></div>
+    <span id="progTextMobile">0</span>
+  </div>
 
   <!-- Auth modal -->
   <div class="auth-modal" id="authModal" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
@@ -1098,13 +1124,6 @@
         <a href="#tools">Tool → use-case</a>
         <a href="#dns">DNS cheat-sheet</a>
       </nav>
-      <div class="progress-box">
-        <div>Study checklist progress</div>
-        <div class="progress-bar"><i id="progBar"></i></div>
-        <div><span id="progText">0</span> items checked</div>
-        <div class="sidebar-game" id="sidebarGame">Game: Lv <strong>1</strong> · <strong>0</strong> XP · streak <strong>0</strong></div>
-        <div class="sidebar-session" id="sidebarSession">Today: <strong>not started</strong></div>
-      </div>
     </aside>
 
     <main class="main desk-shell" id="content">
@@ -1967,13 +1986,20 @@
       </p>
     </main>
 
-    <aside class="profile-panel" id="accountRail" aria-label="Your profile">
+    <aside class="profile-panel" id="accountRail" aria-label="Profile and study progress">
       <div class="profile-panel-inner">
         <header class="profile-panel-head">
           <h2 class="profile-panel-title">Profile</h2>
           <p class="profile-panel-sub">Cloud sync &amp; account</p>
         </header>
         <div id="accountBar" aria-live="polite"></div>
+        <div class="progress-box" aria-labelledby="checklistTitle">
+          <h3 class="progress-box-title" id="checklistTitle">Study checklist</h3>
+          <div class="progress-bar" aria-hidden="true"><i id="progBar"></i></div>
+          <p class="progress-count"><span id="progText">0</span> checked</p>
+          <div class="profile-stat" id="sidebarGame">Game: Lv <strong>1</strong> · <strong>0</strong> XP · streak <strong>0</strong></div>
+          <div class="profile-stat" id="sidebarSession">Today: <strong>not started</strong></div>
+        </div>
       </div>
     </aside>
   </div>
@@ -2013,6 +2039,8 @@
       const boxes = [...document.querySelectorAll("input[data-check]")];
       const bar = document.getElementById("progBar");
       const text = document.getElementById("progText");
+      const barMobile = document.getElementById("progBarMobile");
+      const textMobile = document.getElementById("progTextMobile");
 
       function paintChecks() {
         let n = 0;
@@ -2023,8 +2051,11 @@
           if (b.checked) n++;
         });
         const pct = boxes.length ? (n / boxes.length) * 100 : 0;
-        bar.style.width = pct + "%";
-        text.textContent = n + " / " + boxes.length;
+        const label = n + " / " + boxes.length;
+        if (bar) bar.style.width = pct + "%";
+        if (barMobile) barMobile.style.width = pct + "%";
+        if (text) text.textContent = label;
+        if (textMobile) textMobile.textContent = label;
       }
 
       boxes.forEach((b) => {
