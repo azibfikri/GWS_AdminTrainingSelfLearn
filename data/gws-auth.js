@@ -76,33 +76,35 @@
     return { keys };
   }
 
+  function localMatchesPayload(payload) {
+    const keys = (payload && payload.keys) || {};
+    for (let i = 0; i < SYNC_KEYS.length; i += 1) {
+      const k = SYNC_KEYS[i];
+      const want = typeof keys[k] === "string" ? keys[k] : null;
+      let cur = null;
+      try { cur = localStorage.getItem(k); } catch (e) { /* ignore */ }
+      if (cur !== want) return false;
+    }
+    return true;
+  }
+
   function applyPayloadToLocal(payload, replaceAll) {
     if (!payload || !payload.keys || typeof payload.keys !== "object") return false;
-    let changed = false;
+    if (localMatchesPayload(payload)) return false;
+
     if (replaceAll) {
       SYNC_KEYS.forEach((k) => {
-        try {
-          if (localStorage.getItem(k) != null) {
-            localStorage.removeItem(k);
-            changed = true;
-          }
-        } catch (e) { /* ignore */ }
+        try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
       });
     }
     Object.keys(payload.keys).forEach((k) => {
       if (SYNC_KEYS.indexOf(k) === -1) return;
       const val = payload.keys[k];
       if (typeof val === "string") {
-        try {
-          const cur = localStorage.getItem(k);
-          if (cur !== val) {
-            localStorage.setItem(k, val);
-            changed = true;
-          }
-        } catch (e) { /* ignore */ }
+        try { localStorage.setItem(k, val); } catch (e) { /* ignore */ }
       }
     });
-    return changed;
+    return true;
   }
 
   async function api(path, options) {
@@ -191,7 +193,7 @@
       return;
     }
     if (clearedLocal || pulledChanged) {
-      window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: true } }));
+      window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: pulledChanged } }));
     } else {
       window.dispatchEvent(new CustomEvent("gws-auth-signed-in"));
     }
