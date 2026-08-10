@@ -96,7 +96,63 @@
     }
     .progress-bar { height: 8px; background: #1e3a30; border-radius: 99px; overflow: hidden; margin: .5rem 0; }
     .progress-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #2f9e78, #5fd0a5); }
-    .main { padding: 1.5rem 1.75rem 4rem; max-width: 980px; transition: max-width .35s ease; }
+    .main {
+      padding: 0 1.75rem 1.25rem;
+      max-width: 920px;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      transition: max-width .35s ease;
+    }
+    .desk-chrome {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      padding: 1.15rem 0 .85rem;
+      margin: 0 -0.15rem .75rem;
+      padding-left: 0.15rem;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(238,243,239,.98) 75%, rgba(238,243,239,0));
+      backdrop-filter: blur(6px);
+    }
+    .desk-kicker {
+      margin: 0 0 .25rem;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .desk-title {
+      font-family: var(--serif);
+      font-size: clamp(1.25rem, 2.5vw, 1.55rem);
+      margin: 0;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+    .desk-sub {
+      margin: .35rem 0 0;
+      font-size: .88rem;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+    .desk-shell > header[id],
+    .desk-shell > section[id] {
+      display: none;
+      margin-bottom: 1rem;
+      scroll-margin-top: 0;
+    }
+    .desk-shell > header[id].desk-show,
+    .desk-shell > section[id].desk-show {
+      display: block;
+      animation: deskIn .28s ease both;
+    }
+    @keyframes deskIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+    body.desk-pages .layout { height: 100vh; overflow: hidden; }
     .hero {
       position: relative; overflow: hidden;
       background:
@@ -563,7 +619,7 @@
       background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 1.15rem 1.25rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
     }
-    #adultPathHub.hidden-path { display: none; }
+    #adultPathHub.hidden-path { display: none !important; }
     #adultPathHub h2 { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 .35rem; }
     #adultPathHub .path-lede { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
     .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
@@ -809,7 +865,10 @@
       .mobile-topbar, .nav-backdrop { display: none !important; }
       .layout { display: block !important; }
       .module { break-inside: avoid; box-shadow: none; opacity: 1 !important; filter: none !important; }
-      #practice { display: none !important; }
+      .desk-chrome { display: none !important; }
+      .desk-shell > header[id],
+      .desk-shell > section[id],
+      .desk-shell > p[data-desk-page] { display: block !important; }
       body, body::before, body::after { background: #fff !important; animation: none !important; }
       body::before, body::after { display: none !important; }
     }
@@ -962,9 +1021,14 @@
       </div>
     </aside>
 
-    <main class="main" id="content">
+    <main class="main desk-shell" id="content">
+      <div class="desk-chrome" id="deskChrome">
+        <p class="desk-kicker">Study desk</p>
+        <h2 class="desk-title" id="deskPageTitle">Home</h2>
+        <p class="desk-sub" id="deskPageSub">Overview and today’s session</p>
+      </div>
       <!-- Adult path picker: Sandbox journey vs Focus -->
-      <section id="adultPathHub" aria-label="Adult learning paths">
+      <section id="adultPathHub" data-desk-page="home" aria-label="Adult learning paths">
         <h2>Adult style — pick your path</h2>
         <p class="path-lede">Two ways to study like a grown-up admin. You can reopen this from the sidebar anytime.</p>
         <div class="path-grid">
@@ -1009,7 +1073,7 @@
         </div>
       </section>
 
-      <header class="hero" id="overview">
+      <header class="hero" id="overview" data-desk-page="home">
         <div class="hero-kicker">Your study desk</div>
         <h1>Google Workspace Admin — explained simply</h1>
         <p class="lede">
@@ -1047,7 +1111,7 @@
         </div>
       </header>
 
-      <section class="study-session module" id="studySession" data-search="session timer pomodoro today focus study ritual">
+      <section class="study-session module" id="studySession" data-desk-page="home" data-search="session timer pomodoro today focus study ritual">
         <h2>Today’s study session</h2>
         <p class="goal" id="sessionGoalText">A calm 25-minute block: read one module, tick a checklist item, then drill the Practice arena.</p>
         <div class="session-row">
@@ -1068,7 +1132,7 @@
         <p class="kbd-hint">Timer pauses when this tab is hidden. Progress saves as <code>gws-study-session-v1</code>.</p>
       </section>
 
-      <section class="module" id="how-to-study" data-search="study method checklist">
+      <section class="module" id="how-to-study" data-desk-page="home" data-search="study method checklist">
         <h2>How to use this guide</h2>
         <ol>
           <li>Read each module’s <em>plain English</em> box first — get the idea before the details.</li>
@@ -1087,7 +1151,7 @@
       </section>
 
       <!-- LAST-MINUTE REVIEW -->
-      <section class="module" id="lastMinute" data-search="last minute cram review night before memorize recovery windows vault dlp mock">
+      <section class="module" id="lastMinute" data-desk-page="practice" data-search="last minute cram review night before memorize recovery windows vault dlp mock">
         <h2>Last-minute review</h2>
         <p class="goal">Cram sheet from your last-minute notes + mock-exam patterns. Read once the night before; drill Mock 50 timed when awake.</p>
 
@@ -1122,7 +1186,7 @@
       </section>
 
       <!-- PRACTICE ARENA -->
-      <section class="module" id="practice" data-search="practice game quiz scenario xp streak drill arena exam mix heuristics mock">
+      <section class="module" id="practice" data-desk-page="practice" data-search="practice game quiz scenario xp streak drill arena exam mix heuristics mock">
         <h2>Practice arena</h2>
         <p class="goal">Learn by playing: curated drills + your full 246-question mock bank. Practice aid only — not affiliated with Google or the official exam.</p>
 
@@ -1179,7 +1243,7 @@
       </section>
 
       <!-- MODULE 0 -->
-      <section class="module" id="m0" data-search="foundations editions OU group inheritance admin console pooled storage cloud identity">
+      <section class="module" id="m0" data-desk-page="module" data-search="foundations editions OU group inheritance admin console pooled storage cloud identity">
         <h2>Module 0 · Foundations</h2>
         <p class="goal">Goal: build the mental model everything else hangs on.</p>
 
@@ -1294,7 +1358,7 @@
       </section>
 
       <!-- MODULE 1 -->
-      <section class="module" id="m1" data-search="users domains directory lifecycle suspend delete archive AUL GCDS SCIM SAML alias OU groups buildings">
+      <section class="module" id="m1" data-desk-page="module" data-search="users domains directory lifecycle suspend delete archive AUL GCDS SCIM SAML alias OU groups buildings">
         <h2>Module 1 · Users, Domains &amp; Directory <span class="pct">~20%</span></h2>
         <p class="goal">Goal: manage the full life of an account — create, change, suspend, delete, archive — plus domains, groups, and rooms.</p>
 
@@ -1403,7 +1467,7 @@
       </section>
 
       <!-- MODULE 2 -->
-      <section class="module" id="m2" data-search="gmail drive calendar meet chat gemini MX SPF DKIM DMARC shared drive DMS migration routing quarantine">
+      <section class="module" id="m2" data-desk-page="module" data-search="gmail drive calendar meet chat gemini MX SPF DKIM DMARC shared drive DMS migration routing quarantine">
         <h2>Module 2 · Core Workspace Services <span class="pct">~23%</span></h2>
         <p class="goal">Goal: configure Gmail, Drive, Calendar, Meet, Chat, Gemini — and know where each toggle lives.</p>
 
@@ -1502,7 +1566,7 @@
       </section>
 
       <!-- MODULE 3 -->
-      <section class="module" id="m3" data-search="vault retention hold matter DLP labels takeout data export data regions trust rules eDiscovery">
+      <section class="module" id="m3" data-desk-page="module" data-search="vault retention hold matter DLP labels takeout data export data regions trust rules eDiscovery">
         <h2>Module 3 · Data Governance &amp; Compliance <span class="pct">~15%</span></h2>
         <p class="goal">Goal: retain, protect, classify, and export data — and know which tool does which job.</p>
 
@@ -1558,7 +1622,7 @@
       </section>
 
       <!-- MODULE 4 -->
-      <section class="module" id="m4" data-search="2SV CAA context-aware access admin roles least privilege session control security center investigation marketplace OAuth API">
+      <section class="module" id="m4" data-desk-page="module" data-search="2SV CAA context-aware access admin roles least privilege session control security center investigation marketplace OAuth API">
         <h2>Module 4 · Security Policies &amp; Access <span class="pct">~20%</span></h2>
         <p class="goal">Goal: protect sign-in, delegate admin power safely, watch threats, control which apps touch data.</p>
 
@@ -1637,7 +1701,7 @@
       </section>
 
       <!-- MODULE 5 -->
-      <section class="module" id="m5" data-search="mobile MDM chrome CBCM account wipe device wipe BYOD extension force install">
+      <section class="module" id="m5" data-desk-page="module" data-search="mobile MDM chrome CBCM account wipe device wipe BYOD extension force install">
         <h2>Module 5 · Browsers &amp; Endpoints <span class="pct">~10%</span></h2>
         <p class="goal">Goal: keep company data safe on phones, laptops, browsers — and off-board cleanly.</p>
 
@@ -1669,7 +1733,7 @@
       </section>
 
       <!-- MODULE 6 -->
-      <section class="module" id="m6" data-search="email log search audit logs investigation status dashboard HAR toolbox recovery trash 20 days 25 days 30 days">
+      <section class="module" id="m6" data-desk-page="module" data-search="email log search audit logs investigation status dashboard HAR toolbox recovery trash 20 days 25 days 30 days">
         <h2>Module 6 · Monitoring &amp; Troubleshooting <span class="pct">~13%</span></h2>
         <p class="goal">Goal: find the right log fast, recover data, escalate cleanly.</p>
 
@@ -1712,7 +1776,7 @@
       </section>
 
       <!-- MODULE 7 -->
-      <section class="module" id="m7" data-search="exam strategy pacing multiple select scenario distractors">
+      <section class="module" id="m7" data-desk-page="module" data-search="exam strategy pacing multiple select scenario distractors">
         <h2>Module 7 · Exam Strategy</h2>
         <ul>
           <li>~2 minutes per question; flag and move on; review flagged at end.</li>
@@ -1724,7 +1788,7 @@
       </section>
 
       <!-- HEURISTICS -->
-      <section class="module" id="heuristics" data-search="decision heuristics if then cheat sheet">
+      <section class="module" id="heuristics" data-desk-page="reference" data-search="decision heuristics if then cheat sheet">
         <h2>Decision heuristics (drill daily)</h2>
         <p class="goal">If you only memorize one page, make it this one.</p>
 
@@ -1748,7 +1812,7 @@
       </section>
 
       <!-- GLOSSARY -->
-      <section class="module" id="glossary" data-search="acronym glossary OU GCDS IdP SP SAML SCIM 2SV CAA DLP AUL DMS ELS HAR MX MDM CBCM">
+      <section class="module" id="glossary" data-desk-page="reference" data-search="acronym glossary OU GCDS IdP SP SAML SCIM 2SV CAA DLP AUL DMS ELS HAR MX MDM CBCM">
         <h2>Appendix A · Acronym glossary</h2>
         <table>
           <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
@@ -1777,7 +1841,7 @@
       </section>
 
       <!-- TOOLS -->
-      <section class="module" id="tools" data-search="tool use case quick reference vault dlp investigation">
+      <section class="module" id="tools" data-desk-page="reference" data-search="tool use case quick reference vault dlp investigation">
         <h2>Appendix B · Tool → use-case</h2>
         <table>
           <thead><tr><th>Tool</th><th>Use it when…</th></tr></thead>
@@ -1797,7 +1861,7 @@
       </section>
 
       <!-- DNS -->
-      <section class="module" id="dns" data-search="DNS MX SPF DKIM DMARC verification TXT">
+      <section class="module" id="dns" data-desk-page="reference" data-search="DNS MX SPF DKIM DMARC verification TXT">
         <h2>Appendix C · DNS cheat-sheet</h2>
         <table>
           <thead><tr><th>Record</th><th>Purpose</th><th>Notes</th></tr></thead>
@@ -1811,7 +1875,7 @@
         </table>
       </section>
 
-      <p class="footer note">
+      <p class="footer note" id="deskFooter" data-desk-page="home">
         Built from your <em>Google Workspace Administration — Notes &amp; Manuals (Expanded)</em> for Associate GWS Admin prep.
         Open this file in any browser. Progress saves on this device; use <strong>Log in / Sign up</strong> to sync with a username and password.
       </p>
@@ -1884,35 +1948,130 @@
       search.addEventListener("input", () => {
         const q = search.value.trim().toLowerCase();
         modules.forEach((m) => {
-          if (!q) { m.classList.remove("hidden"); return; }
-          if (inRound && m.id === "practice") { m.classList.remove("hidden"); return; }
+          if (!q) { m.classList.remove("hidden"); paintDeskVisibility(); return; }
+          if (inRound && m.id === "practice") { m.classList.remove("hidden"); paintDeskVisibility(); return; }
           const hay = (m.id + " " + m.textContent + " " + (m.dataset.search || "")).toLowerCase();
           m.classList.toggle("hidden", !hay.includes(q));
         });
+        paintDeskVisibility();
       });
 
-      const links = [...document.querySelectorAll(".nav a")];
-      // Only hash links are valid querySelector targets (skip ./gws-admin-console.html etc.)
-      const map = links
-        .map((a) => {
-          const href = a.getAttribute("href") || "";
-          if (!href.startsWith("#") || href.length < 2) return null;
-          try {
-            const el = document.querySelector(href);
-            return el ? { a, el } : null;
-          } catch (e) {
-            return null;
+      const MODULE_IDS = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"];
+      const REF_IDS = ["heuristics", "glossary", "tools", "dns"];
+      const HOME_IDS = new Set(["adultPathHub", "overview", "studySession", "how-to-study", "deskFooter"]);
+      const PRACTICE_IDS = new Set(["lastMinute", "practice"]);
+
+      const contentEl = document.getElementById("content");
+      let deskPage = "home";
+      let deskModuleId = "m0";
+      let deskRefId = "heuristics";
+
+      function deskBlocks() {
+        if (!contentEl) return [];
+        return [...contentEl.querySelectorAll(":scope > header[id], :scope > section[id], :scope > p[data-desk-page]")];
+      }
+
+      function syncDeskChrome() {
+        const titleEl = document.getElementById("deskPageTitle");
+        const subEl = document.getElementById("deskPageSub");
+        if (!titleEl || !subEl) return;
+        if (deskPage === "home") {
+          titleEl.textContent = "Home";
+          subEl.textContent = "Overview, session timer, and how to use this desk";
+        } else if (deskPage === "practice") {
+          titleEl.textContent = "Practice";
+          subEl.textContent = "Last-minute review, mock bank, and drills";
+        } else if (deskPage === "module") {
+          const mod = document.getElementById(deskModuleId);
+          const h2 = mod?.querySelector("h2");
+          titleEl.textContent = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : deskModuleId;
+          subEl.textContent = "Read → check → drill this module";
+        } else if (deskPage === "reference") {
+          const ref = document.getElementById(deskRefId);
+          const h2 = ref?.querySelector("h2");
+          titleEl.textContent = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : "Reference";
+          subEl.textContent = "Exam cheat sheet";
+        }
+      }
+
+      function paintDeskVisibility() {
+        const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+        const hub = document.getElementById("adultPathHub");
+        deskBlocks().forEach((el) => {
+          if (q) {
+            const hay = (el.id + " " + el.textContent + " " + (el.dataset.search || "")).toLowerCase();
+            el.classList.toggle("desk-show", hay.includes(q) && !el.classList.contains("hidden"));
+            return;
           }
-        })
-        .filter(Boolean);
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          const id = "#" + e.target.id;
-          links.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === id));
+          let show = false;
+          const id = el.id;
+          if (deskPage === "home" && HOME_IDS.has(id)) {
+            show = true;
+            if (id === "adultPathHub" && hub?.classList.contains("hidden-path")) show = false;
+          } else if (deskPage === "practice" && PRACTICE_IDS.has(id)) {
+            show = true;
+          } else if (deskPage === "module" && MODULE_IDS.includes(id)) {
+            show = id === deskModuleId;
+          } else if (deskPage === "reference" && REF_IDS.includes(id)) {
+            show = id === deskRefId;
+          }
+          el.classList.toggle("desk-show", show && !el.classList.contains("hidden"));
         });
-      }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
-      map.forEach(({ el }) => io.observe(el));
+        syncDeskChrome();
+      }
+
+      function setDeskNavActive(hash) {
+        document.querySelectorAll("#nav a").forEach((a) => {
+          a.classList.toggle("active", (a.getAttribute("href") || "") === hash);
+        });
+      }
+
+      function showDesk(page, opts) {
+        opts = opts || {};
+        deskPage = page;
+        if (opts.moduleId) deskModuleId = opts.moduleId;
+        if (opts.refId) deskRefId = opts.refId;
+        contentEl?.setAttribute("data-desk", page);
+        paintDeskVisibility();
+        let hash = "#overview";
+        if (page === "practice") hash = "#practice";
+        else if (page === "module") hash = "#" + deskModuleId;
+        else if (page === "reference") hash = "#" + deskRefId;
+        setDeskNavActive(hash);
+        if (!opts.skipHash && location.hash !== hash) {
+          history.pushState(null, "", hash);
+        }
+        if (contentEl) contentEl.scrollTop = 0;
+        window.dispatchEvent(new CustomEvent("gws-desk-change", { detail: { page, hash } }));
+      }
+
+      function deskFromHash(skipHash) {
+        const id = (location.hash || "#overview").slice(1);
+        if (MODULE_IDS.includes(id)) return showDesk("module", { moduleId: id, skipHash: !!skipHash });
+        if (PRACTICE_IDS.has(id)) return showDesk("practice", { skipHash: !!skipHash });
+        if (REF_IDS.includes(id)) return showDesk("reference", { refId: id, skipHash: !!skipHash });
+        if (id === "studySession" || id === "how-to-study") return showDesk("home", { skipHash: !!skipHash });
+        return showDesk("home", { skipHash: !!skipHash });
+      }
+
+      document.body.classList.add("desk-pages");
+      window.gwsDesk = { show: showDesk, refresh: paintDeskVisibility, fromHash: deskFromHash };
+
+      document.getElementById("nav")?.addEventListener("click", (e) => {
+        const a = e.target.closest("a");
+        if (!a) return;
+        const href = a.getAttribute("href") || "";
+        if (!href.startsWith("#") || href.length < 2) return;
+        e.preventDefault();
+        const id = href.slice(1);
+        if (MODULE_IDS.includes(id)) showDesk("module", { moduleId: id });
+        else if (PRACTICE_IDS.has(id)) showDesk("practice");
+        else if (REF_IDS.includes(id)) showDesk("reference", { refId: id });
+        else showDesk("home");
+      }, true);
+
+      window.addEventListener("hashchange", () => deskFromHash(true));
+      deskFromHash(true);
 
       /* ========== Scenario Drill Game ========== */
       const GAME_KEY = "gws-study-game-v1";
@@ -2726,13 +2885,12 @@
       /* Reading progress */
       const bar = document.getElementById("readingBar");
       function paintReading() {
-        if (!bar) return;
-        const doc = document.documentElement;
-        const max = doc.scrollHeight - window.innerHeight;
-        const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+        if (!bar || !contentEl) return;
+        const max = contentEl.scrollHeight - contentEl.clientHeight;
+        const pct = max > 0 ? Math.min(100, (contentEl.scrollTop / max) * 100) : 0;
         bar.style.width = pct + "%";
       }
-      window.addEventListener("scroll", paintReading, { passive: true });
+      contentEl?.addEventListener("scroll", paintReading, { passive: true });
       paintReading();
 
       /* Module arrive animation + focus active tracking */
@@ -2772,9 +2930,8 @@
           select.dispatchEvent(new Event("change", { bubbles: true }));
         }
         location.hash = "#practice";
-        setTimeout(() => {
-          document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-        }, 30);
+        showDesk("practice");
+        setTimeout(() => document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 30);
       }
 
       ["m0","m1","m2","m3","m4","m5","m6","m7"].forEach((id) => {
@@ -2788,7 +2945,7 @@
         const bRead = document.createElement("button");
         bRead.type = "button"; bRead.className = "game-btn"; bRead.textContent = "1 · Read";
         bRead.addEventListener("click", () => {
-          mod.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          showDesk("module", { moduleId: id });
           setFocus(true);
           mod.classList.add("is-focus-active");
         });
@@ -2925,14 +3082,17 @@
       document.getElementById("btnStartSession")?.addEventListener("click", () => {
         session.focusModule = pickFocusModule();
         paintSession();
-        document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        showDesk("home");
         startTimer();
         setTimeout(() => {
-          document.getElementById(session.focusModule)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-        }, 400);
+          document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }, 80);
       });
       document.getElementById("btnJumpSession")?.addEventListener("click", () => {
-        document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        showDesk("home");
+        setTimeout(() => {
+          document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }, 80);
       });
 
       document.addEventListener("visibilitychange", () => {
@@ -2961,13 +3121,15 @@
         if (k === "f") { e.preventDefault(); setFocus(!document.body.classList.contains("is-focus")); }
         else if (k === "t") {
           e.preventDefault();
-          document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+          showDesk("home");
+          setTimeout(() => {
+            document.getElementById("studySession")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          }, 60);
           if (!session.running) startTimer();
         }
         else if (k === "p") {
           e.preventDefault();
-          location.hash = "#practice";
-          document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+          showDesk("practice");
         }
       });
     })();
@@ -3177,13 +3339,13 @@
         if (!hub) return;
         if (state.style !== "adult") return;
         if (!state.adultPath) {
-          hub.classList.remove("hidden-path");
+          hub.classList.add("hidden-path");
           if (journey) journey.classList.remove("show");
         } else {
-          // Keep hub visible but compact journey if sandbox
           hub.classList.remove("hidden-path");
           if (journey) journey.classList.toggle("show", state.adultPath === "sandbox");
         }
+        paintDeskVisibility();
       }
 
       function applyStyle(style, opts) {
@@ -3204,8 +3366,7 @@
         if (style === "adult") {
           paintAdultPathUI();
           if (!opts.skipScroll) {
-            const target = !state.adultPath ? hub : document.getElementById("overview");
-            setTimeout(() => target && target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 40);
+            window.gwsDesk?.show("home", { skipHash: false });
           }
         }
       }
@@ -3240,14 +3401,13 @@
       document.getElementById("pathSandbox")?.addEventListener("click", () => setAdultPath("sandbox"));
       document.getElementById("pathFocus")?.addEventListener("click", () => setAdultPath("focus"));
       document.getElementById("btnAdultPaths")?.addEventListener("click", () => {
-        state.adultPath = null;
-        saveStyle(state);
-        paintAdultPathUI();
-        hub?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        hub?.classList.remove("hidden-path");
+        paintDeskVisibility();
+        showDesk("home");
+        setTimeout(() => hub?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 20);
       });
-      document.getElementById("btnSandboxExam")?.addEventListener("click", (e) => {
-        // hash navigation; ensure practice visible
-        setTimeout(() => document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 10);
+      document.getElementById("btnSandboxExam")?.addEventListener("click", () => {
+        showDesk("practice");
       });
 
       fabMain?.addEventListener("click", () => {
@@ -3295,16 +3455,6 @@
         const a = e.target.closest("a");
         if (!a) return;
         setNavOpen(false);
-        const href = a.getAttribute("href") || "";
-        if (href.startsWith("#") && href.length > 1) {
-          const target = document.getElementById(href.slice(1));
-          if (target) {
-            e.preventDefault();
-            const top = target.getBoundingClientRect().top + window.scrollY - 72;
-            window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
-            history.pushState(null, "", href);
-          }
-        }
       });
       window.addEventListener("resize", () => {
         if (window.matchMedia("(min-width: 901px)").matches) setNavOpen(false);
