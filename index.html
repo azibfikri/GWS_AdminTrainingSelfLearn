@@ -41,7 +41,7 @@
       --ok: #0d6e56;
       --ok-bg: #e3f5ee;
       --sidebar-w: 288px;
-      --profile-w: 272px;
+      --profile-w: 292px;
       --radius: 14px;
       --shadow: 0 1px 2px rgba(21,36,30,.05), 0 12px 32px rgba(21,36,30,.07);
       --font: "IBM Plex Sans", system-ui, sans-serif;
@@ -107,23 +107,49 @@
     .nav a:hover, .nav a.active { background: #1c3a2f; color: #fff; }
     .nav a .w { float: right; color: #7f9a8e; font-size: .72rem; }
     .progress-box {
-      margin-top: 1rem; padding: 1rem; border-radius: var(--radius);
-      background: var(--paper); border: 1px solid var(--line);
-      font-size: .82rem; color: var(--muted);
-      box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+      margin-top: auto; padding: .75rem .8rem; border-radius: 10px;
+      background: rgba(255,255,255,.72); border: 1px solid var(--line);
+      font-size: .78rem; color: var(--muted);
     }
     .progress-box-title {
-      margin: 0 0 .5rem; font-size: .72rem; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+      margin: 0 0 .35rem; font-size: .65rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
     }
-    .progress-count { font-size: .88rem; font-weight: 600; color: var(--ink); margin-top: .35rem; }
-    .progress-bar { height: 8px; background: #dce8e2; border-radius: 99px; overflow: hidden; margin: .45rem 0 0; }
+    .progress-count { font-size: .78rem; font-weight: 600; color: var(--ink); margin: .25rem 0 0; }
+    .progress-bar { height: 6px; background: #dce8e2; border-radius: 99px; overflow: hidden; margin: .35rem 0 0; }
     .progress-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #5fd0a5); transition: width .35s ease; }
     .profile-stat {
-      margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--line);
-      font-size: .78rem; color: var(--muted); line-height: 1.45;
+      margin-top: .45rem; padding-top: .45rem; border-top: 1px solid var(--line);
+      font-size: .72rem; color: var(--muted); line-height: 1.35;
     }
     .profile-stat strong { color: var(--ink); font-weight: 600; }
+    .look-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      padding: .85rem .85rem .7rem; margin-bottom: .75rem;
+    }
+    .look-you {
+      margin: 0 0 .35rem; font-size: .65rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase; color: var(--accent);
+    }
+    .look-card h3 {
+      margin: 0 0 .55rem; font-family: var(--serif); font-size: 1.02rem; font-weight: 600;
+    }
+    .look-row {
+      padding: .45rem 0; border-top: 1px dashed var(--line); font-size: .78rem; line-height: 1.4;
+    }
+    .look-row:first-of-type { border-top: 0; padding-top: 0; }
+    .look-row b { display: block; font-size: .68rem; color: var(--ink); margin-bottom: .1rem; }
+    .look-row span { color: var(--muted); }
+    .look-more { display: inline-block; margin-top: .45rem; font-size: .75rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .look-more:hover { text-decoration: underline; }
+    .manual {
+      background: #f7f3e8; border: 1px solid #ead9a8; border-radius: 10px;
+      padding: .75rem .9rem; margin: .7rem 0; font-size: .86rem;
+    }
+    .manual h4 { margin: 0 0 .35rem; font-size: .84rem; }
+    .manual ol { margin: .25rem 0 0; padding-left: 1.15rem; }
+    .manual li { margin: .2rem 0; }
+    .manual .path { font-family: ui-monospace, Menlo, monospace; font-size: .78rem; color: #5a4a18; }
     .progress-mobile {
       display: none;
       align-items: center; gap: .65rem;
@@ -740,10 +766,12 @@
     }
     .account-hint { font-size: .78rem; color: var(--muted); margin: 0; line-height: 1.45; }
     #accountBar {
-      padding: 1rem; border-radius: var(--radius);
-      background: var(--paper); border: 1px solid var(--line);
-      box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+      padding: .65rem .7rem; border-radius: 10px;
+      background: rgba(255,255,255,.72); border: 1px solid var(--line);
+      margin-top: .55rem;
     }
+    #accountBar .account-actions { margin-top: .45rem; }
+    #accountBar .game-btn { font-size: .72rem; padding: .3rem .5rem; min-height: 34px; }
     .profile-panel {
       position: sticky; top: 0; height: 100vh; overflow: auto;
       padding: 1.15rem 1rem 1.5rem;
@@ -1125,35 +1153,29 @@
       <p class="brand">GWS Admin Study Desk<span>Associate Google Workspace Administrator</span></p>
       <p class="adult-path-badge" id="adultPathBadge">Adult style</p>
       <div class="desk-tools">
-        <button type="button" class="game-btn" id="btnFocusMode" title="Hide sidebar, widen reading">Focus mode</button>
+        <button type="button" class="game-btn" id="btnFocusMode" title="Hide sidebar, widen reading">Focus</button>
         <button type="button" class="game-btn" id="btnJumpSession" title="Jump to today’s session">Today</button>
-        <button type="button" class="game-btn" id="btnAdultPaths" title="Sandbox or Focus path">Adult paths</button>
       </div>
       <input class="search" id="search" type="search" placeholder="Search topics…" autocomplete="off" />
       <nav class="nav" id="nav">
-        <div class="nav-sec">Start here</div>
-        <a href="#overview">Exam overview</a>
-        <a href="#studySession">Today’s session</a>
-        <a href="#how-to-study">How to use this guide</a>
-        <div class="nav-sec">Practice</div>
-        <a href="#lastMinute">Last-minute review</a>
-        <a href="#practice">Practice arena</a>
-        <a href="#practice">Mock exam (246)</a>
+        <div class="nav-sec">Study</div>
+        <a href="#overview">Home</a>
+        <a href="#lastMinute">Last-minute cram</a>
+        <a href="#practice">Practice &amp; mock</a>
         <a href="./gws-admin-console.html#labs">Admin labs</a>
         <div class="nav-sec">Modules</div>
         <a href="#m0">0 · Foundations</a>
-        <a href="#m1">1 · Users &amp; Directory <span class="w">~20%</span></a>
-        <a href="#m2">2 · Core Services <span class="w">~23%</span></a>
-        <a href="#m3">3 · Data &amp; Compliance <span class="w">~15%</span></a>
-        <a href="#m4">4 · Security <span class="w">~20%</span></a>
-        <a href="#m5">5 · Browsers &amp; Devices <span class="w">~10%</span></a>
-        <a href="#m6">6 · Monitoring <span class="w">~13%</span></a>
-        <a href="#m7">7 · Exam Strategy</a>
+        <a href="#m1">1 · Users <span class="w">20%</span></a>
+        <a href="#m2">2 · Services <span class="w">23%</span></a>
+        <a href="#m3">3 · Compliance <span class="w">15%</span></a>
+        <a href="#m4">4 · Security <span class="w">20%</span></a>
+        <a href="#m5">5 · Devices <span class="w">10%</span></a>
+        <a href="#m6">6 · Monitoring <span class="w">13%</span></a>
+        <a href="#m7">7 · Strategy</a>
         <div class="nav-sec">Cheat sheets</div>
-        <a href="#heuristics">Decision heuristics</a>
-        <a href="#glossary">Acronym glossary</a>
-        <a href="#tools">Tool → use-case</a>
-        <a href="#dns">DNS cheat-sheet</a>
+        <a href="#heuristics">Heuristics</a>
+        <a href="#glossary">Glossary</a>
+        <a href="#dns">DNS</a>
       </nav>
     </aside>
 
@@ -1287,36 +1309,79 @@
       </section>
 
       <!-- LAST-MINUTE REVIEW -->
-      <section class="module" id="lastMinute" data-desk-page="practice" data-search="last minute cram review night before memorize recovery windows vault dlp mock">
+      <section class="module" id="lastMinute" data-desk-page="practice" data-search="last minute cram review night before memorize recovery windows vault dlp mock manuals where to look status dashboard">
         <h2>Last-minute review</h2>
-        <p class="goal">Cram sheet from your last-minute notes + mock-exam patterns. Read once the night before; drill Mock 50 timed when awake.</p>
+        <p class="goal">Full cram from your <em>Notes &amp; Manuals</em> PDF (20 pages). Read once the night before; the right rail always shows “where to click” for the page you are on.</p>
 
         <div class="plain">
-          <strong>Night-before ritual (45–60 min)</strong><br />
-          1) Skim this page · 2) Re-read Decision heuristics · 3) Run <em>Mock 50 (timed)</em> closed-book · 4) Review every miss explanation · 5) Sleep.
+          <strong>Exam logistics</strong><br />
+          50–60 questions · 120 minutes · multiple-choice &amp; multiple-select · scenario-based · about $125 · online-proctored or test center · valid 3 years.<br />
+          <strong>Night-before (45–60 min)</strong> — this page → Heuristics → Mock 50 timed → review misses → sleep.
         </div>
+
+        <h3>Where to look first (Module 6)</h3>
+        <table>
+          <thead><tr><th>Question</th><th>Go to</th></tr></thead>
+          <tbody>
+            <tr><td>Is Google down for everyone?</td><td>Workspace Status Dashboard</td></tr>
+            <tr><td>Did this email get delivered?</td><td>Email Log Search (last 30 days)</td></tr>
+            <tr><td>Who changed an admin setting?</td><td>Admin audit log</td></tr>
+            <tr><td>Suspicious sign-in?</td><td>Login audit + Investigation tool</td></tr>
+            <tr><td>How is a file being shared?</td><td>Drive log events</td></tr>
+            <tr><td>Group membership changes?</td><td>Groups audit log</td></tr>
+            <tr><td>Which app got data access?</td><td>OAuth / Token audit</td></tr>
+            <tr><td>Device enrollments?</td><td>Devices audit log</td></tr>
+            <tr><td>Headers / SPF-DKIM fail?</td><td>Admin Toolbox Messageheader</td></tr>
+            <tr><td>Support wants a capture?</td><td>HAR: DevTools → Network → Preserve log (sensitive)</td></tr>
+          </tbody>
+        </table>
 
         <h3>Must-lock facts</h3>
         <table>
           <thead><tr><th>Topic</th><th>Lock this in</th></tr></thead>
           <tbody>
-            <tr><td>OU vs Group</td><td>OU = one structural home, service on/off. Group = cross-cutting overlay / fluid membership.</td></tr>
-            <tr><td>Provisioning</td><td>On-prem AD → GCDS · Cloud IdP (Entra) → Directory Sync · One-off → manual/CSV · Content → DMS (not sync).</td></tr>
-            <tr><td>Domains</td><td>Alias = same users get extra addresses · Secondary = separate accounts (licensed) · Always MX after verify.</td></tr>
-            <tr><td>Outbound spam</td><td>SPF + DKIM + DMARC — not a random Gmail toggle.</td></tr>
-            <tr><td>Vault “big three”</td><td>Hold beats retention delete · AUL keeps leavers’ data cheap · Vault ≠ DLP (retention/eDiscovery vs prevent leaks).</td></tr>
-            <tr><td>Security tools</td><td>Dashboard/health = broad posture · Investigation tool = one incident · Alert center = notifications.</td></tr>
-            <tr><td>Away from PC</td><td>Suspend / reset password → Google Admin mobile app.</td></tr>
-            <tr><td>Recovery windows</td><td>Deleted user ~20 days · Drive/Gmail restore windows (often ~25 / ~30 — confirm wording on question) · Know which log to open.</td></tr>
-            <tr><td>Wipe types</td><td>Account wipe = Workspace data off device · Device wipe = full factory reset (company-owned).</td></tr>
-            <tr><td>Edition gate</td><td>If scenario names Starter/Standard, ask: does this edition include DLP / CAA / Investigation?</td></tr>
+            <tr><td>OU vs Group</td><td>One person, one OU. Service on/off that mirrors structure → OU. Fluid / cross-department → group (group usually wins).</td></tr>
+            <tr><td>Edition gate</td><td>DLP, CAA, Investigation, data regions, S/MIME → often Enterprise. Plus = Vault + advanced endpoint.</td></tr>
+            <tr><td>Provisioning</td><td>On-prem AD → GCDS · Entra → Directory Sync · IdP owns accounts → SCIM + SAML · one-off → CSV · mail content → DMS.</td></tr>
+            <tr><td>Life cycle</td><td>Suspend = keep data + license, reversible. Delete = 20-day restore, transfer Drive first. AUL = cheap Vault keep.</td></tr>
+            <tr><td>Domains</td><td>Alias = extra addresses, no new seats. Secondary = new accounts, each licensed. Verify then MX.</td></tr>
+            <tr><td>Outbound spam</td><td>Finish SPF + DKIM + DMARC. Start DMARC at p=none. Not a random Gmail toggle.</td></tr>
+            <tr><td>Vault big three</td><td>Hold beats retention delete · AUL for leavers · Vault ≠ user backup and ≠ DLP.</td></tr>
+            <tr><td>Labels vs DLP vs trust</td><td>Labels classify. DLP blocks content. Trust rules = who may share with whom.</td></tr>
+            <tr><td>2SV vs CAA</td><td>2SV = who you are (allow → date → grace). CAA = device / network / geo.</td></tr>
+            <tr><td>Security tools</td><td>Dashboard/health = posture. Investigation = remediate. Alert center = notify.</td></tr>
+            <tr><td>Wipe</td><td>BYOD → account wipe. Company phone → device wipe OK. Suspend cuts mobile now.</td></tr>
+            <tr><td>Recovery clocks</td><td>Deleted user 20 days · Trash 30 days · admin restore ~25 days after that.</td></tr>
+            <tr><td>Away from PC</td><td>Google Admin mobile app — suspend / reset password / alerts.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Console path cheat (the manuals)</h3>
+        <table>
+          <thead><tr><th>Job</th><th>Click path</th></tr></thead>
+          <tbody>
+            <tr><td>Find any setting</td><td>admin.google.com → top search · then check the OU/group selector</td></tr>
+            <tr><td>Add / CSV users</td><td>Directory → Users → Add new user / Bulk update</td></tr>
+            <tr><td>Alias / rename / reset pw</td><td>Open the user → Alternate email · Reset password</td></tr>
+            <tr><td>Off-board</td><td>Suspend → Transfer data → Delete or AUL</td></tr>
+            <tr><td>OU / group / room</td><td>Directory → Organizational units · Groups · Buildings and resources</td></tr>
+            <tr><td>Add a domain</td><td>Account → Domains → Add → verify TXT → then MX</td></tr>
+            <tr><td>Point mail at Google</td><td>DNS MX smtp.google.com · activate Gmail</td></tr>
+            <tr><td>Turn on DKIM</td><td>Apps → Gmail → Authenticate email → Generate → publish TXT → Start</td></tr>
+            <tr><td>Shared Drive</td><td>Drive and Docs → Manage Shared Drives · roles: Manager … Viewer</td></tr>
+            <tr><td>Retention / hold</td><td>vault.google.com → Retention · Matters → Holds</td></tr>
+            <tr><td>Block card numbers</td><td>Security → Data protection → Drive share + Credit Card detector → Block</td></tr>
+            <tr><td>Enforce 2SV</td><td>Security → 2-step verification → Allow → Enforcement date → grace period</td></tr>
+            <tr><td>Custom admin role</td><td>Account → Admin roles → Create → only the privileges needed → assign / scope OU</td></tr>
+            <tr><td>Advanced MDM</td><td>Devices → Mobile &amp; endpoints → Settings → OU → Advanced</td></tr>
+            <tr><td>Force-install extension</td><td>Devices → Chrome → Apps &amp; extensions → OU → Force install</td></tr>
+            <tr><td>Trace a message</td><td>Reporting → Email Log Search (30 days)</td></tr>
           </tbody>
         </table>
 
         <div class="tip">
           <strong>Mock exam loaded</strong><br />
-          <span id="mockBankCount">246</span> scenario questions from your mock PDF are in Practice arena modes
-          <strong>Mock 10</strong>, <strong>Mock by domain</strong>, <strong>Mock 50 (timed ~90 min)</strong>, <strong>Mock Full (all)</strong>, and <strong>Answer key</strong>.
+          <span id="mockBankCount">246</span> scenario questions are in <strong>Mock 10</strong>, <strong>Mock by domain</strong>, <strong>Mock 50 (timed)</strong>, <strong>Mock Full</strong>, and <strong>Answer key</strong>.
           Practice aid only — not Google’s official exam.
         </div>
       </section>
@@ -1489,6 +1554,17 @@
           <li>Most changes take minutes; some up to 24 hours. “Nothing happened” = wrong scope or waiting for propagation.</li>
         </ol>
 
+        <div class="manual" id="m0-manuals">
+          <h4>Manual 0A · Find any setting and confirm who it applies to</h4>
+          <ol>
+            <li>Go to <span class="path">admin.google.com</span> as an admin.</li>
+            <li>Type the setting in the <strong>top search bar</strong> (faster than menus).</li>
+            <li>On the page, use the <strong>Organizational units / groups</strong> selector on the left — that is whose settings you are editing.</li>
+            <li>Pick the top org (everyone), a child OU, or a group overlay → Save.</li>
+            <li>Propagation is often minutes, sometimes up to 24 hours. “Nothing happened” = wrong scope or still waiting.</li>
+          </ol>
+        </div>
+
         <div class="check-row"><label><input type="checkbox" data-check="m0a" /> I understand OU vs Group and when group overrides OU.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m0b" /> I know storage is pooled and editions gate features.</label></div>
       </section>
@@ -1597,6 +1673,82 @@
         <p>Rooms/equipment under Directory → Buildings and resources. Become bookable calendars.
         “Add 200 rooms across 10 sites” → <strong>CSV bulk upload</strong>, not one-by-one.</p>
 
+        <div id="m1-manuals">
+          <h3>Where to click · Manuals 1A–1L</h3>
+          <div class="manual">
+            <h4>1A · Create a single user</h4>
+            <p class="path">Directory → Users → Add new user</p>
+            <ol>
+              <li>First/last name and primary email; pick the correct <strong>OU</strong> (this drives every inherited policy).</li>
+              <li>Auto-generate or set a password; tick “Ask for a password change at next sign-in.”</li>
+              <li>Add new user, then share sign-in details securely.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1B · Bulk-create from CSV</h4>
+            <p class="path">Directory → Users → Bulk update / Import users</p>
+            <ol>
+              <li>Download the CSV template so headers match exactly.</li>
+              <li>One row per user: first name, last name, email, password, org unit path.</li>
+              <li>Upload → fix flagged rows → confirm. Tens to a few hundred users. Larger / ongoing → GCDS, Directory Sync, or SCIM.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1C · Add an email alias</h4>
+            <p class="path">Directory → Users → user → User information → Alternate email addresses</p>
+            <ol>
+              <li>Add an alias on a domain you own and save. Mail lands in the <em>same</em> mailbox. No extra license.</li>
+              <li>Rename primary keeps the old address as an alias so mail still flows.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1D–1F · Suspend, transfer, delete (20-day window)</h4>
+            <p class="path">Directory → Users → More options → Suspend · Transfer data · Delete · Deleted users</p>
+            <ol>
+              <li>Suspend (or toggle Suspended) to cut access instantly; Reactivate to restore.</li>
+              <li>Transfer Drive (and Sites etc.) to a manager <em>before</em> delete — skip this and My Drive can be lost.</li>
+              <li>Delete user → restore within <strong>20 days</strong> from Deleted users. Or use Archived User License to keep data cheap for Vault.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1H · Reset a password</h4>
+            <p class="path">Directory → Users → user → Reset password</p>
+            <ol>
+              <li>Auto-generate or type a temporary password.</li>
+              <li>Enable “Ask for a password change at the next sign-in.” Org rules live under Security → Authentication → Password management.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1I · Create an OU and move users</h4>
+            <p class="path">Directory → Organizational units → Create · then Users → Change organizational unit</p>
+          </div>
+          <div class="manual">
+            <h4>1J · Create a group</h4>
+            <p class="path">Directory → Groups → Create group</p>
+            <ol>
+              <li>Name, group email, owner; optionally flag as a Security group.</li>
+              <li>Access settings: who can join, post, view members, whether outsiders can post.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1K · Add and verify a domain</h4>
+            <p class="path">Account → Domains → Manage domains → Add a domain</p>
+            <ol>
+              <li>Choose secondary vs alias.</li>
+              <li>Publish the TXT (or other) verification → Verify.</li>
+              <li>Then add MX so mail can flow (Module 2).</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>1L · Create a bookable room</h4>
+            <p class="path">Directory → Buildings and resources → Add building → Add resource (Meeting space)</p>
+            <ol>
+              <li>Name, building/floor, capacity, features (video, whiteboard). It becomes a resource calendar.</li>
+              <li>“200 rooms across 10 sites” → CSV bulk, not one-by-one.</li>
+            </ol>
+          </div>
+        </div>
+
         <div class="check-row"><label><input type="checkbox" data-check="m1a" /> I can pick Suspend vs Delete vs Archive for a scenario.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m1b" /> I can match GCDS / Directory Sync / SCIM+SAML / DMS.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m1c" /> I know alias domain vs secondary domain.</label></div>
@@ -1632,8 +1784,11 @@
           <li>Content / attachment compliance — match words/patterns/types → quarantine, reject, modify, BCC, footer.</li>
           <li>Dual / split delivery — copy to another system or split Google vs legacy during migration.</li>
           <li>Inbound/outbound gateways — relay through a third-party filter.</li>
-          <li>Security Sandbox — detonates attachments before delivery.</li>
-          <li>Attachments: send up to ~25 MB (bigger → Drive link). Disable POP/IMAP/forwarding to reduce data leak risk.</li>
+          <li>Spam / phishing / malware — allowlists, denylists / blocked senders, approved senders.</li>
+          <li>Security Sandbox — detonates attachments before delivery (unknown malware).</li>
+          <li>Attachments: send up to ~25 MB (bigger → Drive link). You can block specific file types.</li>
+          <li>Access — toggle automatic forwarding and POP/IMAP per OU (turn off to reduce leak risk).</li>
+          <li>Compliance footer &amp; admin quarantine — disclaimer on outbound; suspicious mail for review.</li>
           <li>Delegation — assistant reads/sends on someone’s behalf.</li>
         </ul>
 
@@ -1666,6 +1821,8 @@
           <li><strong>Target audiences</strong> — safer “share with All of Company”-style suggestions.</li>
           <li><strong>Trust rules</strong> — precise who-can-share-with-whom (Module 3).</li>
           <li>Pooled storage + per-OU quotas.</li>
+          <li><strong>Drive for desktop</strong> — allow or block the sync client per OU.</li>
+          <li>Offline access — enable/disable per OU; labels classify (Module 3).</li>
         </ul>
 
         <h3 id="m2-calendar">2.3 Calendar</h3>
@@ -1695,6 +1852,36 @@
 
         <h3 id="m2-appsheet">2.7 AppSheet vs Apps Script</h3>
         <p>No-code app from Sheets/Drive → <strong>AppSheet</strong>. Custom JavaScript glue → <strong>Apps Script</strong>.</p>
+
+        <div id="m2-manuals">
+          <h3>Where to click · Manuals 2A–2C</h3>
+          <div class="manual">
+            <h4>2A · Point a domain’s mail to Google</h4>
+            <p class="path">DNS host → MX · then activate Gmail in the Admin console</p>
+            <ol>
+              <li>Remove old MX records.</li>
+              <li>Add Google MX — modern <code>smtp.google.com</code> priority 1, or the legacy ASPMX set if instructed.</li>
+              <li>Save DNS; allow propagation; activate Gmail for the domain; send a test in and out.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>2B · Turn on DKIM</h4>
+            <p class="path">Apps → Google Workspace → Gmail → Authenticate email</p>
+            <ol>
+              <li>Select the domain → Generate new record (2048-bit if DNS allows).</li>
+              <li>Publish host/value as a TXT at your DNS host.</li>
+              <li>Back in the console → <strong>Start authentication</strong>. Then publish SPF and a DMARC policy (start <code>p=none</code>).</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>2C · Create a Shared Drive and add members</h4>
+            <p class="path">Apps → Drive and Docs → Manage Shared Drives → Create</p>
+            <ol>
+              <li>Name it; add members: Manager, Content manager, Contributor, Commenter, Viewer.</li>
+              <li>Files are team-owned — they survive off-boarding. My Drive files do not.</li>
+            </ol>
+          </div>
+        </div>
 
         <div class="check-row"><label><input type="checkbox" data-check="m2a" /> I can explain SPF / DKIM / DMARC in one sentence each.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m2b" /> I know Shared Drive vs My Drive for off-boarding.</label></div>
@@ -1752,6 +1939,35 @@
         <h3 id="m3-labels">3.5 Labels</h3>
         <p>Tags like Public / Internal / Confidential. User-applied, default, DLP-driven, or AI classification.
         Labels bridge classification → enforcement: label “Confidential” then DLP/trust rules act on it.</p>
+
+        <div id="m3-manuals">
+          <h3>Where to click · Manuals 3A–3C</h3>
+          <div class="manual">
+            <h4>3A · Create a Gmail retention rule</h4>
+            <p class="path">vault.google.com → Retention → Custom rules → Create</p>
+            <ol>
+              <li>Choose service (Gmail) and scope (org, OU, or accounts).</li>
+              <li>Set duration and what happens after (keep or purge). A default rule covers everything; custom rules target subsets.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>3B · Place a hold for an investigation</h4>
+            <p class="path">Vault → Matters → Create a matter → Holds → Create hold</p>
+            <ol>
+              <li>Pick the service and accounts/OU; optional search terms / date range.</li>
+              <li>Save. Held data is never purged while the hold stands — even if retention would delete it.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>3C · Block external sharing of credit-card numbers</h4>
+            <p class="path">Security → Access and data control → Data protection → Manage rules → Add</p>
+            <ol>
+              <li>Scope to OU/group; Drive trigger = file shared.</li>
+              <li>Condition: predefined Credit Card Number detector (set a match threshold).</li>
+              <li>Action: Block external sharing (or Warn); customize the user message; save. Advanced Drive/Chat DLP is typically Enterprise.</li>
+            </ol>
+          </div>
+        </div>
 
         <div class="check-row"><label><input type="checkbox" data-check="m3a" /> Hold overrides retention — locked in.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m3b" /> I can choose Vault vs DLP vs Trust rules vs Takeout.</label></div>
@@ -1832,6 +2048,29 @@
           Stop new junk installs → Marketplace allowlist.
         </div>
 
+        <p>Also control <strong>Additional Google services</strong> (YouTube, Maps, AdSense) per OU — not the same as Marketplace allowlist.</p>
+
+        <div id="m4-manuals">
+          <h3>Where to click · Manuals 4A–4B</h3>
+          <div class="manual">
+            <h4>4A · Enforce 2SV for an OU</h4>
+            <p class="path">Security → Authentication → 2-step verification</p>
+            <ol>
+              <li>Select the OU/group.</li>
+              <li>Allow users to turn on 2SV, then set <strong>Enforcement</strong> with a start date and a new-user enrollment grace period.</li>
+              <li>Optionally restrict sensitive groups to security keys only. Never enforce with zero enrollment window.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>4B · Create and assign a custom admin role</h4>
+            <p class="path">Account → Admin roles → Create new role</p>
+            <ol>
+              <li>Name it and select <em>only</em> the privileges required.</li>
+              <li>Assign users (or service accounts), optionally scoped to an OU. Help desk resets → Help Desk Admin, not Super Admin.</li>
+            </ol>
+          </div>
+        </div>
+
         <div class="check-row"><label><input type="checkbox" data-check="m4a" /> 2SV vs CAA is clear.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m4b" /> Least privilege admin roles — I won’t pick Super Admin by habit.</label></div>
       </section>
@@ -1863,6 +2102,26 @@
           <strong>Exam tip</strong><br />
           Finance must have extension X and can’t remove it → <strong>Force install</strong> on Finance OU/group.<br />
           Stop random extensions → block all, allow approved list.
+        </div>
+
+        <div id="m5-manuals">
+          <h3>Where to click · Manuals 5A–5B</h3>
+          <div class="manual">
+            <h4>5A · Turn on advanced mobile management</h4>
+            <p class="path">Devices → Mobile &amp; endpoints → Settings → Universal (and platform) settings</p>
+            <ol>
+              <li>Select the OU → set management level to <strong>Advanced</strong>.</li>
+              <li>Configure passcode, encryption, app management → Save. New enrollments in that OU follow the policy.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>5B · Force-install an extension for a team</h4>
+            <p class="path">Devices → Chrome → Apps &amp; extensions → Users &amp; browsers</p>
+            <ol>
+              <li>Select the OU/group → find or add the extension by ID/URL.</li>
+              <li>Installation policy: <strong>Force install</strong> (or Allow / Block). Stop junk → block all + allowlist.</li>
+            </ol>
+          </div>
         </div>
 
         <div class="check-row"><label><input type="checkbox" data-check="m5a" /> Account wipe vs device wipe — automatic.</label></div>
@@ -1903,9 +2162,37 @@
           </tbody>
         </table>
 
+        <h3 id="m6-issues">Calendar, Drive and Meet troubleshooting</h3>
+        <ul>
+          <li><strong>Calendar</strong> — Apple/Outlook sync, missing free/busy, or sharing problems are usually sharing defaults or account state — not a new product.</li>
+          <li><strong>Drive</strong> — sharing permissions, Drive for desktop sync errors, offline access. Trash auto-purges after 30 days; admins can restore deleted Drive/Gmail for about 25 days after that.</li>
+          <li><strong>Meet</strong> — bad A/V → Meet quality tool. Can’t join / random guests → Meet safety (Module 2), not the quality tool.</li>
+        </ul>
+
+        <div id="m6-manuals">
+          <h3>Where to click · Manuals 6A–6B</h3>
+          <div class="manual">
+            <h4>6A · Trace a message with Email Log Search</h4>
+            <p class="path">Reporting (or Apps → Gmail) → Email Log Search</p>
+            <ol>
+              <li>Filter by sender, recipient, subject, or date (last <strong>30 days</strong>).</li>
+              <li>Open a result for the delivery path: delivered / rejected / quarantined / in transit.</li>
+              <li>Authentication failures → Admin Toolbox Messageheader (<code>toolbox.googleapps.com</code>) for SPF/DKIM/DMARC on the real headers.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>6B · Generate a HAR file for support</h4>
+            <p class="path">Chrome DevTools → Network</p>
+            <ol>
+              <li>Tick <strong>Preserve log</strong>, reproduce the problem.</li>
+              <li>Right-click the request list → Save all as HAR with content. Treat as sensitive — share only with Google Support.</li>
+            </ol>
+          </div>
+        </div>
+
         <h3 id="m6-reports">6.4 Reports &amp; support</h3>
         <p>Reporting → usage, storage, account/device activity for trends.
-        Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Google Support case.</p>
+        Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Workspace Updates / release calendar, then a Google Support case.</p>
 
         <div class="check-row"><label><input type="checkbox" data-check="m6a" /> I match questions to the right log instinctively.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m6b" /> Recovery windows 20 / 25 / 30 memorized.</label></div>
@@ -1914,6 +2201,10 @@
       <!-- MODULE 7 -->
       <section class="module" id="m7" data-desk-page="module" data-search="exam strategy pacing multiple select scenario distractors">
         <h2 id="m7-strategy">Module 7 · Exam Strategy</h2>
+        <div class="plain">
+          <strong>From the notes</strong><br />
+          50–60 multiple-choice &amp; multiple-select questions · 120 minutes · scenario-based · about $125 (plus tax) · online-proctored or a test center · certification valid <strong>3 years</strong>.
+        </div>
         <ul>
           <li>~2 minutes per question; flag and move on; review flagged at end.</li>
           <li>Multiple-select tells you how many — pick exactly that many.</li>
@@ -1967,6 +2258,7 @@
             <tr><td>ELS</td><td>Email Log Search (30 days)</td></tr>
             <tr><td>HAR</td><td>HTTP Archive for support diagnostics</td></tr>
             <tr><td>MX / SPF / DKIM / DMARC</td><td>Mail routing + authentication trio</td></tr>
+            <tr><td>POP / IMAP</td><td>Client mail access protocols — often disabled to reduce leak risk</td></tr>
             <tr><td>MDM</td><td>Mobile Device Management</td></tr>
             <tr><td>CBCM</td><td>Chrome Browser Cloud Management</td></tr>
             <tr><td>OAuth</td><td>Token-based app authorization with scopes</td></tr>
@@ -2017,20 +2309,26 @@
       </p>
     </main>
 
-    <aside class="profile-panel" id="accountRail" aria-label="Profile and study progress">
+    <aside class="profile-panel" id="accountRail" aria-label="Where to look">
       <div class="profile-panel-inner">
         <header class="profile-panel-head">
-          <h2 class="profile-panel-title">Profile</h2>
-          <p class="profile-panel-sub">Cloud sync &amp; account</p>
+          <h2 class="profile-panel-title">Where to look</h2>
+          <p class="profile-panel-sub">Console path for this page</p>
         </header>
-        <div id="accountBar" aria-live="polite"></div>
+        <div class="look-card" id="lookCard">
+          <p class="look-you" id="lookYou">You are here</p>
+          <h3 id="lookTitle">Open a module</h3>
+          <div id="lookList"></div>
+          <a class="look-more" id="lookMore" href="#lastMinute">Full cram sheet →</a>
+        </div>
         <div class="progress-box" aria-labelledby="checklistTitle">
-          <h3 class="progress-box-title" id="checklistTitle">Study checklist</h3>
+          <h3 class="progress-box-title" id="checklistTitle">Progress</h3>
           <div class="progress-bar" aria-hidden="true"><i id="progBar"></i></div>
           <p class="progress-count"><span id="progText">0</span> checked</p>
-          <div class="profile-stat" id="sidebarGame">Game: Lv <strong>1</strong> · <strong>0</strong> XP · streak <strong>0</strong></div>
           <div class="profile-stat" id="sidebarSession">Today: <strong>not started</strong></div>
+          <div class="profile-stat" id="sidebarGame">Practice: Lv <strong>1</strong></div>
         </div>
+        <div id="accountBar" aria-live="polite"></div>
       </div>
     </aside>
   </div>
@@ -2132,6 +2430,198 @@
         return [...contentEl.querySelectorAll(":scope > header[id], :scope > section[id], :scope > p[data-desk-page]")];
       }
 
+      const LOOK = {
+        home: {
+          here: "Home",
+          title: "Start in this order",
+          more: { href: "#lastMinute", label: "Night-before cram →" },
+          rows: [
+            { q: "Exam shape", a: "50–60 questions · 120 min · $125 · valid 3 years" },
+            { q: "Tonight", a: "Last-minute cram → Heuristics → Mock 50 timed" },
+            { q: "Hands-on", a: "Admin labs — one ticket per module section" },
+            { q: "Any setting", a: "admin.google.com → top search bar" }
+          ]
+        },
+        practice: {
+          here: "Practice",
+          title: "Where to drill",
+          more: { href: "#heuristics", label: "Heuristics sheet →" },
+          rows: [
+            { q: "Night before", a: "Read Last-minute cram once, then Mock 50 timed" },
+            { q: "Weak module", a: "Practice → By module, then that Admin lab" },
+            { q: "Tool picker", a: "Heuristics page — if/then only" }
+          ]
+        },
+        m0: {
+          here: "Module 0 · Foundations",
+          title: "Where to click",
+          more: { href: "#m0-console", label: "Console map in notes →" },
+          rows: [
+            { q: "Any setting", a: "admin.google.com → search (DKIM, retention, 2SV)" },
+            { q: "Whose setting?", a: "OU / groups selector on the left of the service page" },
+            { q: "Away from a PC", a: "Google Admin mobile app — suspend / reset password" },
+            { q: "Edition gate", a: "DLP / CAA / Investigation / data regions → often Enterprise" }
+          ]
+        },
+        m1: {
+          here: "Module 1 · Users & Directory",
+          title: "Where to click",
+          more: { href: "#m1-manuals", label: "All manuals 1A–1L →" },
+          rows: [
+            { q: "Create / CSV / move OU", a: "Directory → Users" },
+            { q: "Suspend / delete / restore", a: "Directory → Users → More · Deleted users (20 days)" },
+            { q: "Transfer Drive", a: "User → More options → Transfer data" },
+            { q: "Licenses", a: "Billing → Subscriptions or the user’s Licenses card" },
+            { q: "Password rules", a: "Security → Authentication → Password management" },
+            { q: "Groups / rooms / domains", a: "Directory → Groups · Buildings · Account → Domains" }
+          ]
+        },
+        m2: {
+          here: "Module 2 · Core services",
+          title: "Where to click",
+          more: { href: "#m2-manuals", label: "Manuals 2A–2C →" },
+          rows: [
+            { q: "MX / routing / spam", a: "Apps → Gmail → Routing · Spam · Authenticate email" },
+            { q: "DKIM", a: "Gmail → Authenticate email → Generate → publish TXT → Start" },
+            { q: "Sharing / Shared Drives", a: "Apps → Drive and Docs → Sharing · Manage Shared Drives" },
+            { q: "Meet / Chat / Gemini", a: "Apps → Google Workspace → that service" },
+            { q: "Mail content in", a: "Data Migration Service — not GCDS" }
+          ]
+        },
+        m3: {
+          here: "Module 3 · Compliance",
+          title: "Where to click",
+          more: { href: "#m3-manuals", label: "Manuals 3A–3C →" },
+          rows: [
+            { q: "Retention / hold", a: "vault.google.com → Retention · Matters → Holds" },
+            { q: "DLP", a: "Security → Access and data control → Data protection" },
+            { q: "Trust rules", a: "Drive sharing / trust rules — who can share with whom" },
+            { q: "Export / regions", a: "Account settings · Data Export (Super Admin) · Data regions" }
+          ]
+        },
+        m4: {
+          here: "Module 4 · Security",
+          title: "Where to click",
+          more: { href: "#m4-manuals", label: "Manuals 4A–4B →" },
+          rows: [
+            { q: "2SV", a: "Security → Authentication → 2-step verification" },
+            { q: "CAA / sessions", a: "Security → Access and data control" },
+            { q: "Admin roles", a: "Account → Admin roles (least privilege, scope to OU)" },
+            { q: "Incident vs health", a: "Investigation tool vs Security dashboard / health page" },
+            { q: "Shady app", a: "API controls + Connected apps · Marketplace allowlist for new installs" }
+          ]
+        },
+        m5: {
+          here: "Module 5 · Devices",
+          title: "Where to click",
+          more: { href: "#m5-manuals", label: "Manuals 5A–5B →" },
+          rows: [
+            { q: "Phone MDM", a: "Devices → Mobile & endpoints → Settings" },
+            { q: "BYOD leaving", a: "Account wipe — not factory reset" },
+            { q: "Company phone", a: "Device wipe OK" },
+            { q: "Chrome extension", a: "Devices → Chrome → Apps & extensions → Force install on that OU" }
+          ]
+        },
+        m6: {
+          here: "Module 6 · Monitoring",
+          title: "Where to look first",
+          more: { href: "#m6-logs", label: "Full log table →" },
+          rows: [
+            { q: "Google down?", a: "Workspace Status Dashboard first" },
+            { q: "This one email?", a: "Email Log Search (last 30 days)" },
+            { q: "Who changed a setting?", a: "Admin audit log" },
+            { q: "Suspicious sign-in", a: "Login audit + Investigation tool" },
+            { q: "Headers / HAR", a: "Admin Toolbox Messageheader · Chrome Network → Preserve log" }
+          ]
+        },
+        m7: {
+          here: "Module 7 · Strategy",
+          title: "How to pick",
+          more: { href: "#heuristics", label: "Heuristics →" },
+          rows: [
+            { q: "Pace", a: "~2 min / question · flag · review at the end" },
+            { q: "Constraint words", a: "only some users · cheap · managed devices · preserve data" },
+            { q: "Two answers work", a: "Pick the most specific / least privilege tool" }
+          ]
+        },
+        heuristics: {
+          here: "Heuristics",
+          title: "If you only memorize one page",
+          more: { href: "#lastMinute", label: "Cram sheet →" },
+          rows: [
+            { q: "Structure / on-off", a: "OU" },
+            { q: "Cross-team / fluid", a: "Group" },
+            { q: "Keep leaver data cheap", a: "Archived User License" },
+            { q: "Device / network / country", a: "Context-Aware Access" }
+          ]
+        },
+        glossary: {
+          here: "Glossary",
+          title: "Jump",
+          more: { href: "#tools", label: "Tool → use-case →" },
+          rows: [
+            { q: "Sync vs migrate", a: "GCDS / Directory Sync / SCIM = identities · DMS = content" },
+            { q: "Hold vs DLP", a: "Vault hold keeps · DLP blocks leaks" },
+            { q: "DNS trio", a: "Open DNS cheat-sheet" }
+          ]
+        },
+        tools: {
+          here: "Tool picker",
+          title: "Match the job",
+          more: { href: "#heuristics", label: "Heuristics →" },
+          rows: [
+            { q: "Identities", a: "GCDS / Directory Sync / SCIM" },
+            { q: "Mailbox content", a: "Data Migration Service" },
+            { q: "Legal keep", a: "Vault" },
+            { q: "Stop a leak", a: "DLP" }
+          ]
+        },
+        dns: {
+          here: "DNS",
+          title: "Which record",
+          more: { href: "#m2-gmail", label: "Gmail notes →" },
+          rows: [
+            { q: "Inbound mail", a: "MX → smtp.google.com" },
+            { q: "Who may send", a: "SPF TXT" },
+            { q: "Signature", a: "DKIM TXT" },
+            { q: "Fail policy", a: "DMARC _dmarc · start p=none" }
+          ]
+        }
+      };
+
+      function paintLookGuide() {
+        const key = deskPage === "module" ? deskModuleId
+          : deskPage === "reference" ? deskRefId
+          : deskPage === "practice" ? "practice"
+          : "home";
+        const pack = LOOK[key] || LOOK.home;
+        const you = document.getElementById("lookYou");
+        const title = document.getElementById("lookTitle");
+        const list = document.getElementById("lookList");
+        const more = document.getElementById("lookMore");
+        if (you) you.textContent = "You are here · " + pack.here;
+        if (title) title.textContent = pack.title;
+        if (list) {
+          while (list.firstChild) list.removeChild(list.firstChild);
+          pack.rows.forEach((r) => {
+            const row = document.createElement("div");
+            row.className = "look-row";
+            const b = document.createElement("b");
+            b.textContent = r.q;
+            const s = document.createElement("span");
+            s.textContent = r.a;
+            row.appendChild(b);
+            row.appendChild(s);
+            list.appendChild(row);
+          });
+        }
+        if (more && pack.more) {
+          more.href = pack.more.href;
+          more.textContent = pack.more.label;
+          more.hidden = false;
+        } else if (more) more.hidden = true;
+      }
+
       function syncDeskChrome() {
         const titleEl = document.getElementById("deskPageTitle");
         const subEl = document.getElementById("deskPageSub");
@@ -2146,13 +2636,14 @@
           const mod = document.getElementById(deskModuleId);
           const h2 = mod?.querySelector("h2");
           titleEl.textContent = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : deskModuleId;
-          subEl.textContent = "Read → check → drill this module";
+          subEl.textContent = "Read the notes → use Where to look → tick the checklist";
         } else if (deskPage === "reference") {
           const ref = document.getElementById(deskRefId);
           const h2 = ref?.querySelector("h2");
           titleEl.textContent = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : "Reference";
           subEl.textContent = "Exam cheat sheet";
         }
+        paintLookGuide();
       }
 
       function paintDeskVisibility() {
@@ -2195,7 +2686,7 @@
         contentEl?.setAttribute("data-desk", page);
         paintDeskVisibility();
         let hash = "#overview";
-        if (page === "practice") hash = "#practice";
+        if (page === "practice") hash = opts.hash || "#practice";
         else if (page === "module") hash = "#" + deskModuleId;
         else if (page === "reference") hash = "#" + deskRefId;
         setDeskNavActive(hash);
@@ -2219,7 +2710,13 @@
           });
           return;
         }
-        if (PRACTICE_IDS.has(id)) return showDesk("practice", { skipHash: !!skipHash });
+        if (PRACTICE_IDS.has(id)) {
+          showDesk("practice", { skipHash: !!skipHash, hash: "#" + id });
+          if (id === "lastMinute") {
+            requestAnimationFrame(() => document.getElementById("lastMinute")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+          }
+          return;
+        }
         if (REF_IDS.includes(id)) return showDesk("reference", { refId: id, skipHash: !!skipHash });
         if (id === "studySession" || id === "how-to-study") return showDesk("home", { skipHash: !!skipHash });
         return showDesk("home", { skipHash: !!skipHash });
@@ -2236,7 +2733,12 @@
         e.preventDefault();
         const id = href.slice(1);
         if (MODULE_IDS.includes(id)) showDesk("module", { moduleId: id });
-        else if (PRACTICE_IDS.has(id)) showDesk("practice");
+        else if (PRACTICE_IDS.has(id)) {
+          showDesk("practice", { hash: "#" + id });
+          if (id === "lastMinute") {
+            requestAnimationFrame(() => document.getElementById("lastMinute")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+          }
+        }
         else if (REF_IDS.includes(id)) showDesk("reference", { refId: id });
         else showDesk("home");
       }, true);
