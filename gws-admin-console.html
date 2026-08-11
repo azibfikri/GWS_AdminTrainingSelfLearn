@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GWS Admin Console Simulator — Exam Sandbox</title>
+  <title>Associate Admin Labs — Google Workspace practice tenant</title>
   <link rel="icon" href="./favicon.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,10 +45,12 @@
     button, input, select, textarea { font: inherit; }
     a { color: var(--blue); }
     .banner {
-      background: #fef7e0; border-bottom: 1px solid #f9e3a0; color: #3c4043;
+      background: #e8f0fe; border-bottom: 1px solid #c2d7fc; color: #174ea6;
       padding: .55rem 1rem; font-size: .85rem; text-align: center;
     }
-    .banner strong { color: #b06000; }
+    .banner strong { color: #174ea6; }
+    body.lab-mode .banner { background: #e6f4ea; border-bottom-color: #a8dab5; color: #0d652d; }
+    body.lab-mode .banner strong { color: #0d652d; }
     .topbar {
       height: var(--top-h); background: var(--surface); border-bottom: 1px solid var(--line);
       display: flex; align-items: center; gap: .75rem; padding: 0 1rem; position: sticky; top: 0; z-index: 20;
@@ -180,6 +182,33 @@
       font-size: .88rem; transition: transform .25s ease; max-width: 90vw; text-align: center;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
+    .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .85rem; }
+    .lab-card {
+      text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 10px;
+      padding: 1rem 1.05rem; cursor: pointer; display: flex; flex-direction: column; gap: .35rem;
+      min-height: 168px;
+    }
+    .lab-card:hover { border-color: var(--blue); box-shadow: var(--shadow); }
+    .lab-card.done { border-color: #a8dab5; background: #f7fbf8; }
+    .lab-card h3 { margin: 0; font-size: 1rem; font-family: var(--display); }
+    .lab-card p { margin: 0; color: var(--muted); font-size: .84rem; flex: 1; }
+    .lab-card-meta { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+    .lab-id { font-size: .72rem; font-weight: 700; letter-spacing: .04em; color: var(--blue-dark); }
+    .lab-hero {
+      background: linear-gradient(135deg, #e8f0fe 0%, #fff 55%, #e6f4ea 100%);
+      border: 1px solid var(--line); border-radius: 12px; padding: 1.15rem 1.2rem; margin-bottom: 1.1rem;
+    }
+    .lab-hero h1 { margin: 0 0 .35rem; }
+    .lab-live {
+      display: none; align-items: center; gap: .45rem;
+      padding: .2rem .55rem .2rem .65rem; border-radius: 999px;
+      background: #e6f4ea; border: 1px solid #a8dab5; font-size: .78rem; font-weight: 500;
+    }
+    body.lab-mode .lab-live { display: inline-flex; }
+    .lab-task { display: flex; gap: .55rem; align-items: flex-start; padding: .45rem 0; border-bottom: 1px dashed var(--line); font-size: .85rem; }
+    .lab-task .mark { flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); margin-top: .1rem; }
+    .lab-task.pass .mark { background: var(--green); border-color: var(--green); }
+    .lab-task.fail .mark { background: transparent; }
     .scenario-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
     .scenario-card {
       border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; background: #fff; cursor: pointer; text-align: left;
@@ -261,17 +290,22 @@
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { border-right: 0; border-bottom: 1px solid var(--line); max-height: 220px; }
-      .grid-2, .grid-3, .scenario-grid { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .scenario-grid, .lab-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="banner">
-    <strong>Educational simulator</strong> — not the real Google Admin Console and not affiliated with Google.
-    Pair with your <a href="./index.html">Study Desk</a>.
+  <div class="banner" id="labBanner">
+    <strong>Associate Admin Labs</strong> — a practice tenant for the Associate Google Workspace Administrator exam. Not Google, not a real Admin console.
+    <a href="./index.html">Study Desk</a>
   </div>
   <header class="topbar">
-    <a class="logo" href="./gws-admin-console.html"><span class="mark">G</span> Admin console <span class="chip">Simulator</span></a>
+    <a class="logo" href="./gws-admin-console.html#labs"><span class="mark">L</span> Admin Labs <span class="chip">Practice tenant</span></a>
+    <div class="lab-live" id="labLive" aria-live="polite">
+      <span id="labLiveId">LAB</span>
+      <span id="labLiveTime">00:00</span>
+      <button type="button" class="btn ghost" id="btnEndLab" style="border:0;padding:.15rem .4rem;font-size:.75rem">End lab</button>
+    </div>
     <div class="top-spacer"></div>
     <label class="chip" for="editionSelect">Edition
       <select id="editionSelect" style="border:0;background:transparent;font:inherit;font-weight:500">
@@ -280,9 +314,10 @@
       </select>
     </label>
     <span class="chip blue" id="tenantChip">exam-demo.example</span>
-    <span class="chip">Super Admin</span>
-    <button type="button" class="btn primary" id="btnWalkthrough" aria-expanded="false" aria-controls="coach">Walkthrough</button>
-    <button type="button" class="btn ghost" id="btnReset">Reset sandbox</button>
+    <span class="chip">Lab Super Admin</span>
+    <button type="button" class="btn primary" id="btnLabs">Lab catalog</button>
+    <button type="button" class="btn" id="btnWalkthrough" aria-expanded="false" aria-controls="coach">Guided tour</button>
+    <button type="button" class="btn ghost" id="btnReset">Reset tenant</button>
     <a class="btn" href="./index.html">Study Desk</a>
   </header>
 
@@ -310,6 +345,7 @@
     const MAX_USERS = 200;
 
     const ROUTES = [
+      { sec: "Labs", id: "labs", label: "Lab catalog", sub: "Associate-level practice labs" },
       { sec: "Directory", id: "users", label: "Users", sub: "Accounts & OU placement" },
       { sec: "Directory", id: "groups", label: "Groups", sub: "Security group overlay demo" },
       { sec: "Directory", id: "ous", label: "Organizational units", sub: "Inheritance visualizer" },
@@ -404,7 +440,7 @@
         gcdsLastDryRun: { at: null, lines: [] },
         auditLog: [],
         offboard: { userId: null, step: 0, wipeChoice: null },
-        ui: { route: "ous", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", walkthrough: defaultWalkthrough() }
+        ui: { route: "labs", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", walkthrough: defaultWalkthrough(), labs: defaultLabs() }
       };
     }
 
@@ -418,6 +454,10 @@
         startedAt: null,
         finishedAt: null
       };
+    }
+
+    function defaultLabs() {
+      return { activeId: null, startedAt: null, minimized: false, completed: {} };
     }
 
 
@@ -449,6 +489,7 @@
     let state = loadState();
     if (!state.ui) state.ui = { route: "ous", selectedOuId: "ou_root", selectedUserId: "u_ada" };
     if (!state.ui.walkthrough) state.ui.walkthrough = defaultWalkthrough();
+    if (!state.ui.labs) state.ui.labs = defaultLabs();
     if (!Array.isArray(state.domains) || !state.domains.length) {
       state.domains = seedState().domains;
     }
@@ -1012,6 +1053,206 @@
         card.appendChild(table);
       }
       wrap.appendChild(card);
+      return wrap;
+    }
+
+    /* ---------- Associate lab catalog ---------- */
+    const LABS = [
+      {
+        id: "lab-ou", code: "LAB-01", minutes: 15, level: "Associate", domain: "0 · Foundations",
+        title: "OU inheritance lab",
+        brief: "Northwind just hired you. Root sharing is OFF. Engineering asked for an exception. Prove you can read inherited vs overridden policy before you touch production.",
+        startRoute: "ous",
+        tasks: [
+          { id: "visit", doThis: "Open Organizational units and click at least two OUs (Sales and Engineering).", check: function (s) { return (s.ui.walkthrough._ousVisited || 0) >= 2; } },
+          { id: "read", doThis: "Select the Engineering OU and confirm it is OVERRIDDEN (external sharing ON).", check: function (s) { return s.ui.selectedOuId === "ou_eng"; } }
+        ]
+      },
+      {
+        id: "lab-users", code: "LAB-02", minutes: 15, level: "Associate", domain: "1 · Users & Directory",
+        title: "Move a user, pick the right home",
+        brief: "Cara is a contractor sitting in Contractors. Facilities wants her under Engineering for a 2-week project. Wrong OU = wrong Chat/Drive policy.",
+        startRoute: "users",
+        tasks: [
+          { id: "move", doThis: "On Users, change Cara Contract’s OU with the dropdown.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); } }
+        ]
+      },
+      {
+        id: "lab-gcds", code: "LAB-03", minutes: 12, level: "Associate", domain: "1 · Users & Directory",
+        title: "GCDS dry-run (identities, not mail)",
+        brief: "HR swears Active Directory is source of truth. Leadership wants a preview before you sync. Do not migrate mailboxes with GCDS.",
+        startRoute: "gcds",
+        tasks: [
+          { id: "dry", doThis: "Run Dry-Run Sync and read ADD / UPDATE / WOULD-DELETE. Dry-run must not change accounts.", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); } }
+        ]
+      },
+      {
+        id: "lab-mail", code: "LAB-04", minutes: 20, level: "Associate", domain: "2 · Core Services",
+        title: "Mail lab — inbound vs outbound",
+        brief: "Recipients say Northwind mail is spam. Inbound still has to land in Gmail. Separate MX (inbound) from SPF/DKIM/DMARC (outbound).",
+        startRoute: "gmail",
+        tasks: [
+          { id: "in", doThis: "Open Gmail → Test mail and run an inbound simulation.", check: function (s) { return !!(s.mailLab && s.mailLab.lastInbound); } },
+          { id: "out", doThis: "Run an outbound simulation (SPF + DKIM + DMARC).", check: function (s) { return !!(s.mailLab && s.mailLab.lastOutbound); } }
+        ]
+      },
+      {
+        id: "lab-drive", code: "LAB-05", minutes: 12, level: "Associate", domain: "2 · Core Services",
+        title: "Drive sharing + group overlay",
+        brief: "Root blocks external Drive. A Gemini pilot group crosses Sales and Engineering. Groups usually win over the OU.",
+        startRoute: "groups",
+        tasks: [
+          { id: "grp", doThis: "On Groups, keep Apply group overlay checked on Gemini Pilot.", check: function (s) { try { return !!(s.groupOverrides["drive.externalSharing"].g_pilot.enabled); } catch (e) { return false; } } },
+          { id: "viz", doThis: "Open Drive and Docs, then open the OU inheritance visualizer.", check: function (s) { return s.ui.route === "ous" || s.ui.route === "drive"; } }
+        ]
+      },
+      {
+        id: "lab-vault", code: "LAB-06", minutes: 15, level: "Associate", domain: "3 · Compliance",
+        title: "Vault hold beats delete",
+        brief: "Legal opened Acme v. Corp. Ada’s mail must survive even if HR offboards her today. Hold always beats retention deletion.",
+        startRoute: "vault",
+        prep: function (s) { s.ui.selectedUserId = "u_ada"; },
+        tasks: [
+          { id: "hold", doThis: "Place a Legal Hold on Ada Sales.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold; } },
+          { id: "block", doThis: "Open Offboarding with Ada — Delete must stay blocked by the hold.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold && s.ui.route === "offboard"; } }
+        ]
+      },
+      {
+        id: "lab-dlp", code: "LAB-07", minutes: 15, level: "Associate", domain: "3 · Compliance",
+        title: "DLP lab (edition gate)",
+        brief: "Finance wants to block credit-card numbers leaving Drive. Advanced DLP is typically Enterprise — check the plan first, like the exam.",
+        startRoute: "dlp",
+        tasks: [
+          { id: "ed", doThis: "Switch Edition (top bar) to Enterprise so the tester unlocks.", check: function (s) { return s.tenant.edition === "enterprise"; } },
+          { id: "test", doThis: "Paste 4111 1111 1111 1111 (or confidential) and Test against DLP policy.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); } }
+        ]
+      },
+      {
+        id: "lab-offboard", code: "LAB-08", minutes: 20, level: "Associate", domain: "1 · Users",
+        title: "Offboarding lab — suspend first",
+        brief: "Dan Sales resigned. Cut access now, keep data, transfer My Drive, then AUL or delete. Never delete first.",
+        startRoute: "offboard",
+        prep: function (s) { s.offboard.userId = "u_dan"; s.offboard.step = 0; },
+        tasks: [
+          { id: "sus", doThis: "Pick Dan Sales and click Suspend now.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "suspended" || u.status === "archived" || u.status === "deleted"); } },
+          { id: "end", doThis: "Finish the wizard: sessions → Transfer Drive → Delete or Archived User License.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "deleted" || u.status === "archived"); } }
+        ]
+      },
+      {
+        id: "lab-wipe", code: "LAB-09", minutes: 10, level: "Associate", domain: "5 · Devices",
+        title: "Wipe lab — BYOD vs company phone",
+        brief: "Ada’s phone is personal (BYOD). Ben’s is company-owned. Account wipe vs device wipe is a classic Associate trap.",
+        startRoute: "mobile",
+        tasks: [
+          { id: "read", doThis: "Open Mobile & Chrome and compare Ada (BYOD → account wipe) vs Ben (company → device wipe OK).", check: function (s) { return s.ui.route === "mobile"; } }
+        ]
+      },
+      {
+        id: "lab-edition", code: "LAB-10", minutes: 8, level: "Associate", domain: "0 · Foundations",
+        title: "Edition gate drill",
+        brief: "A scenario asks for advanced Drive DLP and the investigation tool on Business Plus. First question: does this edition even include it?",
+        startRoute: "account",
+        tasks: [
+          { id: "flip", doThis: "Use the Edition dropdown and switch Business Plus ↔ Enterprise at least once.", check: function (s) { return !!s.ui.walkthrough._editionTouched; } }
+        ]
+      }
+    ];
+
+    function labById(id) {
+      return LABS.find(function (l) { return l.id === id; });
+    }
+
+    function labTasksPassed(lab) {
+      if (!lab) return [];
+      return lab.tasks.map(function (t) {
+        var ok = false;
+        try { ok = !!t.check(state); } catch (e) { ok = false; }
+        return { id: t.id, doThis: t.doThis, ok: ok };
+      });
+    }
+
+    function startLab(id) {
+      var lab = labById(id);
+      if (!lab) return;
+      state.ui.walkthrough.active = false;
+      state.ui.walkthrough.minimized = true;
+      state.ui.labs.activeId = lab.id;
+      state.ui.labs.startedAt = Date.now();
+      state.ui.labs.minimized = false;
+      if (typeof lab.prep === "function") {
+        try { lab.prep(state); } catch (e) {}
+      }
+      state.ui.route = lab.startRoute || "labs";
+      saveState();
+      render();
+      toast("Lab started — " + lab.code + " · " + lab.title);
+    }
+
+    function endLab(opts) {
+      opts = opts || {};
+      state.ui.labs.activeId = null;
+      state.ui.labs.startedAt = null;
+      state.ui.labs.minimized = false;
+      if (!opts.keepRoute) state.ui.route = "labs";
+      saveState();
+      render();
+      if (!opts.silent) toast("Lab ended. Tenant data stays until you reset.");
+    }
+
+    function completeActiveLab() {
+      var lab = labById(state.ui.labs.activeId);
+      if (!lab) return;
+      var results = labTasksPassed(lab);
+      if (results.some(function (r) { return !r.ok; })) {
+        toast("Not yet — finish the remaining tasks.");
+        paintLabCoach();
+        return;
+      }
+      state.ui.labs.completed[lab.id] = Date.now();
+      toast("Lab complete — " + lab.code);
+      endLab({ keepRoute: true, silent: true });
+      state.ui.route = "labs";
+      saveState();
+      render();
+    }
+
+    function panelLabs() {
+      const wrap = el("div", { className: "panel active" });
+      const hero = el("div", { className: "lab-hero" });
+      hero.appendChild(el("p", { className: "chip blue", text: "Associate Google Workspace Administrator" }));
+      hero.appendChild(el("h1", { text: "Practice labs" }));
+      hero.appendChild(el("p", { className: "lede", text: "Each lab is a short ticket from a fake company. Start it, do the work in this practice tenant, then Check my work. Same decisions as the exam — OUs, Vault, DLP, GCDS, offboarding — without a real Google tenant." }));
+      const doneN = Object.keys(state.ui.labs.completed || {}).length;
+      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed on this device." }));
+      wrap.appendChild(hero);
+
+      const grid = el("div", { className: "lab-grid" });
+      LABS.forEach(function (lab) {
+        const done = !!(state.ui.labs.completed && state.ui.labs.completed[lab.id]);
+        const card = el("button", { type: "button", className: "lab-card" + (done ? " done" : "") });
+        card.appendChild(el("div", { className: "lab-card-meta" }, [
+          el("span", { className: "lab-id", text: lab.code }),
+          el("span", { className: "badge", text: lab.minutes + " min" }),
+          el("span", { className: "badge inherited", text: lab.level })
+        ]));
+        card.appendChild(el("h3", { text: lab.title }));
+        card.appendChild(el("p", { text: lab.brief }));
+        card.appendChild(el("div", { className: "muted", text: (done ? "Completed · " : "") + lab.domain }));
+        card.addEventListener("click", function () { startLab(lab.id); });
+        grid.appendChild(card);
+      });
+      wrap.appendChild(grid);
+
+      const tour = el("div", { className: "card" });
+      tour.appendChild(el("h2", { text: "Prefer a linear tour?" }));
+      tour.appendChild(el("p", { className: "muted", text: "Guided tour walks modules 0–7 in order. Labs are better when you want exam-style tickets." }));
+      tour.appendChild(el("button", { type: "button", className: "btn", text: "Start guided tour", onclick: function () {
+        state.ui.walkthrough.active = true;
+        state.ui.walkthrough.minimized = false;
+        saveState();
+        setCoachOpen(true);
+      } }));
+      wrap.appendChild(tour);
       return wrap;
     }
 
@@ -2024,25 +2265,118 @@
       }
     }
 
+    function labDockOpen() {
+      return !!(state.ui.labs && state.ui.labs.activeId && !state.ui.labs.minimized);
+    }
+    function wtDockOpen() {
+      return !!state.ui.walkthrough.active && !state.ui.walkthrough.minimized && !(state.ui.labs && state.ui.labs.activeId);
+    }
+
+    function paintLabLive() {
+      const live = document.getElementById("labLive");
+      const idEl = document.getElementById("labLiveId");
+      const timeEl = document.getElementById("labLiveTime");
+      const lab = labById(state.ui.labs && state.ui.labs.activeId);
+      document.body.classList.toggle("lab-mode", !!lab);
+      const banner = document.getElementById("labBanner");
+      if (banner) {
+        banner.innerHTML = "";
+        const st = document.createElement("strong");
+        if (lab) {
+          st.textContent = "Lab in progress — " + lab.code;
+          banner.appendChild(st);
+          banner.appendChild(document.createTextNode(" · " + lab.title + " · practice tenant, not Google. "));
+        } else {
+          st.textContent = "Associate Admin Labs";
+          banner.appendChild(st);
+          banner.appendChild(document.createTextNode(" — a practice tenant for the Associate Google Workspace Administrator exam. Not Google, not a real Admin console. "));
+        }
+        const a = document.createElement("a");
+        a.href = "./index.html";
+        a.textContent = "Study Desk";
+        banner.appendChild(a);
+      }
+      if (idEl) idEl.textContent = lab ? lab.code : "LAB";
+      if (timeEl && lab && state.ui.labs.startedAt) {
+        const sec = Math.max(0, Math.floor((Date.now() - state.ui.labs.startedAt) / 1000));
+        const m = String(Math.floor(sec / 60)).padStart(2, "0");
+        const r = String(sec % 60).padStart(2, "0");
+        timeEl.textContent = m + ":" + r;
+      }
+    }
+
     function renderCoachOnly() {
-      document.body.classList.toggle("coach-open", !!state.ui.walkthrough.active && !state.ui.walkthrough.minimized);
-      document.body.classList.toggle("coach-minimized", !!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized);
+      document.body.classList.toggle("coach-open", labDockOpen() || wtDockOpen());
+      document.body.classList.toggle("coach-minimized", !!(state.ui.labs && state.ui.labs.activeId && state.ui.labs.minimized) || (!!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized && !labDockOpen()));
       paintCoach();
       paintFab();
+      paintLabLive();
     }
 
     function paintFab() {
       const fab = document.getElementById("coachFab");
       if (!fab) return;
+      clear(fab);
+      if (state.ui.labs && state.ui.labs.activeId) {
+        const lab = labById(state.ui.labs.activeId);
+        fab.appendChild(document.createTextNode("Lab brief · " + (lab ? lab.code : "LAB")));
+        return;
+      }
       const wt = state.ui.walkthrough;
       const step = currentStep();
-      clear(fab);
       fab.appendChild(document.createTextNode("Tour · " + (step ? step.module.toUpperCase() : "?") + " · " + ((wt.stepIndex || 0) + 1) + "/" + WALKTHROUGH.length));
+    }
+
+    function paintLabCoach() {
+      const coach = document.getElementById("coach");
+      if (!coach) return;
+      clear(coach);
+      const lab = labById(state.ui.labs.activeId);
+      if (!lab) return;
+      const results = labTasksPassed(lab);
+      const passN = results.filter(function (r) { return r.ok; }).length;
+      coach.appendChild(el("h2", { text: "Lab brief" }));
+      coach.appendChild(el("div", { className: "lab-id", text: lab.code + " · " + lab.minutes + " min · " + lab.domain }));
+      coach.appendChild(el("div", { className: "coach-title", text: lab.title }));
+      coach.appendChild(el("p", { className: "coach-body", text: lab.brief }));
+      const bar = el("div", { className: "coach-progress" });
+      const fill = document.createElement("i");
+      fill.style.width = Math.round((passN / Math.max(1, results.length)) * 100) + "%";
+      bar.appendChild(fill);
+      coach.appendChild(bar);
+      coach.appendChild(el("div", { className: "coach-meta", text: passN + " / " + results.length + " tasks passing" }));
+      results.forEach(function (r) {
+        const row = el("div", { className: "lab-task " + (r.ok ? "pass" : "fail") });
+        row.appendChild(el("span", { className: "mark" }));
+        row.appendChild(el("div", { text: r.doThis }));
+        coach.appendChild(row);
+      });
+      const actions = el("div", { className: "coach-actions" });
+      actions.appendChild(el("button", { type: "button", className: "btn primary", text: "Check my work", onclick: function () {
+        const now = labTasksPassed(lab);
+        if (now.every(function (t) { return t.ok; })) completeActiveLab();
+        else {
+          toast((now.filter(function (t) { return t.ok; }).length) + " / " + now.length + " tasks done — keep going.");
+          paintLabCoach();
+        }
+      } }));
+      actions.appendChild(el("button", { type: "button", className: "btn", text: "Minimize brief", onclick: function () {
+        state.ui.labs.minimized = true;
+        saveState();
+        renderCoachOnly();
+      } }));
+      actions.appendChild(el("button", { type: "button", className: "btn ghost", text: "End lab", onclick: function () { endLab(); } }));
+      coach.appendChild(actions);
+      coach.appendChild(el("p", { className: "coach-why", text: "Exam habit: read the constraint, pick the narrowest correct tool, then act in the tenant." }));
     }
 
     function paintCoach() {
       const coach = document.getElementById("coach");
       if (!coach) return;
+      if (state.ui.labs && state.ui.labs.activeId && !state.ui.labs.minimized) {
+        paintLabCoach();
+        return;
+      }
       clear(coach);
       const wt = state.ui.walkthrough;
       if (!wt.active || wt.minimized) return;
@@ -2172,6 +2506,7 @@
         case "mobile": panel = panelMobile(); break;
         case "storage": panel = panelStorage(); break;
         case "reporting": panel = panelReporting(); break;
+        case "labs": panel = panelLabs(); break;
         case "scenarios": panel = panelScenarios(); break;
         case "gcds": panel = panelGcds(); break;
         case "vault": panel = panelVault(); break;
@@ -2186,8 +2521,9 @@
       }
       paintCoach();
       paintFab();
-      document.body.classList.toggle("coach-open", !!state.ui.walkthrough.active && !state.ui.walkthrough.minimized);
-      document.body.classList.toggle("coach-minimized", !!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized);
+      paintLabLive();
+      document.body.classList.toggle("coach-open", labDockOpen() || wtDockOpen());
+      document.body.classList.toggle("coach-minimized", !!(state.ui.labs && state.ui.labs.activeId && state.ui.labs.minimized) || (!!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized && !labDockOpen()));
       maybeAutoAdvance();
     }
 
@@ -2199,11 +2535,26 @@
     });
 
     document.getElementById("btnWalkthrough").addEventListener("click", () => {
+      if (state.ui.labs && state.ui.labs.activeId) {
+        endLab({ silent: true, keepRoute: true });
+      }
       const wt = state.ui.walkthrough;
       if (wt.active && !wt.minimized) setCoachOpen(false);
       else setCoachOpen(true);
     });
+    document.getElementById("btnLabs").addEventListener("click", () => {
+      state.ui.route = "labs";
+      saveState();
+      render();
+    });
+    document.getElementById("btnEndLab").addEventListener("click", () => endLab());
     document.getElementById("coachFab").addEventListener("click", () => {
+      if (state.ui.labs && state.ui.labs.activeId) {
+        state.ui.labs.minimized = false;
+        saveState();
+        renderCoachOnly();
+        return;
+      }
       state.ui.walkthrough.minimized = false;
       setCoachOpen(true);
     });
@@ -2211,6 +2562,12 @@
       if (e.key !== "Escape") return;
       const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
       if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if (state.ui.labs && state.ui.labs.activeId && !state.ui.labs.minimized) {
+        state.ui.labs.minimized = true;
+        saveState();
+        renderCoachOnly();
+        return;
+      }
       if (state.ui.walkthrough.active && !state.ui.walkthrough.minimized) {
         state.ui.walkthrough.minimized = true;
         saveState();
@@ -2228,18 +2585,30 @@
       toast("Sandbox reset (tour progress kept).");
     });
 
-    // Hash deep links: #ous #gcds #walkthrough
+    // Hash / query: #labs #ous ?wt=1 ?lab=lab-ou
     if (location.hash) {
       const id = location.hash.slice(1);
       if (id === "walkthrough" || id === "wt") {
         state.ui.walkthrough.active = true;
         state.ui.walkthrough.minimized = false;
+      } else if (id === "labs") {
+        state.ui.route = "labs";
       } else if (ROUTES.some((r) => r.id === id)) state.ui.route = id;
+    } else if (!state.ui.labs.activeId) {
+      state.ui.route = "labs";
     }
     if (/[?&]wt=1/.test(location.search)) {
       state.ui.walkthrough.active = true;
       state.ui.walkthrough.minimized = false;
     }
+    const labMatch = location.search.match(/[?&]lab=([a-z0-9-]+)/i);
+    if (labMatch && labById(labMatch[1])) {
+      startLab(labMatch[1]);
+    }
+
+    setInterval(function () {
+      if (state.ui.labs && state.ui.labs.activeId) paintLabLive();
+    }, 1000);
 
     let lastOu = state.ui.selectedOuId;
     setInterval(function () {
