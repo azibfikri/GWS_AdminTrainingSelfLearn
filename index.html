@@ -393,6 +393,12 @@
     .answer-key-explain strong { display: block; margin-bottom: .25rem; }
     .game-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
     .game-btn.ghost { background: transparent; }
+    #modulePractice {
+      background: linear-gradient(180deg, #f7faf8 0%, #fff 48%);
+      border: 1px solid var(--line);
+    }
+    #modulePractice h2 { margin-top: 0; }
+    #modulePractice .goal { margin-bottom: .45rem; }
     .game-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
     .module-pick { margin: .35rem 0 1rem; }
     .module-pick select {
@@ -469,8 +475,9 @@
     body.is-focus .sidebar { display: none; }
     body.is-focus .profile-panel { display: none; }
     body.is-focus .main { max-width: 820px; margin: 0 auto; width: 100%; }
-    body.is-focus .module:not(.is-focus-active):not(#practice) { opacity: .42; filter: saturate(.85); }
-    body.is-focus #practice { opacity: 1; filter: none; }
+    body.is-focus .module:not(.is-focus-active):not(#practice):not(#modulePractice) { opacity: .42; filter: saturate(.85); }
+    body.is-focus #practice,
+    body.is-focus #modulePractice { opacity: 1; filter: none; }
     .module-rail {
       display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1rem; padding: .55rem .65rem;
       background: rgba(13,110,86,.06); border: 1px dashed var(--line); border-radius: 10px;
@@ -2214,6 +2221,21 @@
         </ul>
       </section>
 
+      <section class="module" id="modulePractice" data-desk-page="module" data-search="practice arena quiz drill this module only questions">
+        <h2 id="modulePracticeTitle">Practice this module</h2>
+        <p class="goal" id="modulePracticeGoal">Questions from this module only — not a mixed exam.</p>
+        <div id="modulePracticeLobby">
+          <p class="game-rules" id="modulePracticeCount">Loading questions…</p>
+          <div class="game-actions">
+            <button type="button" class="game-btn primary" id="btnModulePractice">Start module drill</button>
+            <button type="button" class="game-btn" id="btnModulePracticeKey">Browse this module’s answer key</button>
+          </div>
+          <p class="memo" style="margin-top:1rem">Every item is tagged to this module. Mixed Quick 10 / Mock 50 / Exam Mix stay on the Practice page.</p>
+        </div>
+        <div id="modulePracticeStage" class="hidden" aria-live="polite"></div>
+        <div id="modulePracticeSummary" class="hidden"></div>
+      </section>
+
       <!-- HEURISTICS -->
       <section class="module" id="heuristics" data-desk-page="reference" data-search="decision heuristics if then cheat sheet">
         <h2>Decision heuristics (drill daily)</h2>
@@ -2408,7 +2430,7 @@
         const q = search.value.trim().toLowerCase();
         modules.forEach((m) => {
           if (!q) { m.classList.remove("hidden"); paintDeskVisibility(); return; }
-          if (inRound && m.id === "practice") { m.classList.remove("hidden"); paintDeskVisibility(); return; }
+          if (inRound && (m.id === "practice" || m.id === "modulePractice")) { m.classList.remove("hidden"); paintDeskVisibility(); return; }
           const hay = (m.id + " " + m.textContent + " " + (m.dataset.search || "")).toLowerCase();
           m.classList.toggle("hidden", !hay.includes(q));
         });
@@ -2448,7 +2470,7 @@
           more: { href: "#heuristics", label: "Heuristics sheet →" },
           rows: [
             { q: "Night before", a: "Read Last-minute cram once, then Mock 50 timed" },
-            { q: "Weak module", a: "Practice → By module, then that Admin lab" },
+            { q: "Weak module", a: "Open that module → arena at the bottom (this module only)" },
             { q: "Tool picker", a: "Heuristics page — if/then only" }
           ]
         },
@@ -2460,7 +2482,8 @@
             { q: "Any setting", a: "admin.google.com → search (DKIM, retention, 2SV)" },
             { q: "Whose setting?", a: "OU / groups selector on the left of the service page" },
             { q: "Away from a PC", a: "Google Admin mobile app — suspend / reset password" },
-            { q: "Edition gate", a: "DLP / CAA / Investigation / data regions → often Enterprise" }
+            { q: "Edition gate", a: "DLP / CAA / Investigation / data regions → often Enterprise" },
+            { q: "Practice", a: "Arena at the bottom — Foundations questions only" }
           ]
         },
         m1: {
@@ -2473,7 +2496,8 @@
             { q: "Transfer Drive", a: "User → More options → Transfer data" },
             { q: "Licenses", a: "Billing → Subscriptions or the user’s Licenses card" },
             { q: "Password rules", a: "Security → Authentication → Password management" },
-            { q: "Groups / rooms / domains", a: "Directory → Groups · Buildings · Account → Domains" }
+            { q: "Groups / rooms / domains", a: "Directory → Groups · Buildings · Account → Domains" },
+            { q: "Practice", a: "Arena at the bottom — Directory questions only" }
           ]
         },
         m2: {
@@ -2485,7 +2509,8 @@
             { q: "DKIM", a: "Gmail → Authenticate email → Generate → publish TXT → Start" },
             { q: "Sharing / Shared Drives", a: "Apps → Drive and Docs → Sharing · Manage Shared Drives" },
             { q: "Meet / Chat / Gemini", a: "Apps → Google Workspace → that service" },
-            { q: "Mail content in", a: "Data Migration Service — not GCDS" }
+            { q: "Mail content in", a: "Data Migration Service — not GCDS" },
+            { q: "Practice", a: "Arena at the bottom — Core services questions only" }
           ]
         },
         m3: {
@@ -2496,7 +2521,8 @@
             { q: "Retention / hold", a: "vault.google.com → Retention · Matters → Holds" },
             { q: "DLP", a: "Security → Access and data control → Data protection" },
             { q: "Trust rules", a: "Drive sharing / trust rules — who can share with whom" },
-            { q: "Export / regions", a: "Account settings · Data Export (Super Admin) · Data regions" }
+            { q: "Export / regions", a: "Account settings · Data Export (Super Admin) · Data regions" },
+            { q: "Practice", a: "Arena at the bottom — Compliance questions only" }
           ]
         },
         m4: {
@@ -2508,7 +2534,8 @@
             { q: "CAA / sessions", a: "Security → Access and data control" },
             { q: "Admin roles", a: "Account → Admin roles (least privilege, scope to OU)" },
             { q: "Incident vs health", a: "Investigation tool vs Security dashboard / health page" },
-            { q: "Shady app", a: "API controls + Connected apps · Marketplace allowlist for new installs" }
+            { q: "Shady app", a: "API controls + Connected apps · Marketplace allowlist for new installs" },
+            { q: "Practice", a: "Arena at the bottom — Security questions only" }
           ]
         },
         m5: {
@@ -2519,7 +2546,8 @@
             { q: "Phone MDM", a: "Devices → Mobile & endpoints → Settings" },
             { q: "BYOD leaving", a: "Account wipe — not factory reset" },
             { q: "Company phone", a: "Device wipe OK" },
-            { q: "Chrome extension", a: "Devices → Chrome → Apps & extensions → Force install on that OU" }
+            { q: "Chrome extension", a: "Devices → Chrome → Apps & extensions → Force install on that OU" },
+            { q: "Practice", a: "Arena at the bottom — Device questions only" }
           ]
         },
         m6: {
@@ -2531,7 +2559,8 @@
             { q: "This one email?", a: "Email Log Search (last 30 days)" },
             { q: "Who changed a setting?", a: "Admin audit log" },
             { q: "Suspicious sign-in", a: "Login audit + Investigation tool" },
-            { q: "Headers / HAR", a: "Admin Toolbox Messageheader · Chrome Network → Preserve log" }
+            { q: "Headers / HAR", a: "Admin Toolbox Messageheader · Chrome Network → Preserve log" },
+            { q: "Practice", a: "Arena at the bottom — Monitoring questions only" }
           ]
         },
         m7: {
@@ -2541,7 +2570,8 @@
           rows: [
             { q: "Pace", a: "~2 min / question · flag · review at the end" },
             { q: "Constraint words", a: "only some users · cheap · managed devices · preserve data" },
-            { q: "Two answers work", a: "Pick the most specific / least privilege tool" }
+            { q: "Two answers work", a: "Pick the most specific / least privilege tool" },
+            { q: "Practice", a: "Arena at the bottom — strategy questions only" }
           ]
         },
         heuristics: {
@@ -2636,7 +2666,7 @@
           const mod = document.getElementById(deskModuleId);
           const h2 = mod?.querySelector("h2");
           titleEl.textContent = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : deskModuleId;
-          subEl.textContent = "Read the notes → use Where to look → tick the checklist";
+          subEl.textContent = "Read the notes → drill this module’s arena at the bottom → tick the checklist";
         } else if (deskPage === "reference") {
           const ref = document.getElementById(deskRefId);
           const h2 = ref?.querySelector("h2");
@@ -2662,8 +2692,8 @@
             if (id === "adultPathHub" && hub?.classList.contains("hidden-path")) show = false;
           } else if (deskPage === "practice" && PRACTICE_IDS.has(id)) {
             show = true;
-          } else if (deskPage === "module" && MODULE_IDS.includes(id)) {
-            show = id === deskModuleId;
+          } else if (deskPage === "module" && (id === deskModuleId || id === "modulePractice")) {
+            show = true;
           } else if (deskPage === "reference" && REF_IDS.includes(id)) {
             show = id === deskRefId;
           }
@@ -2707,6 +2737,14 @@
           requestAnimationFrame(() => {
             const target = document.getElementById(id);
             if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          return;
+        }
+        if (id === "modulePractice") {
+          showDesk("module", { moduleId: deskModuleId, skipHash: true });
+          setDeskNavActive("#" + deskModuleId);
+          requestAnimationFrame(() => {
+            document.getElementById("modulePractice")?.scrollIntoView({ behavior: "smooth", block: "start" });
           });
           return;
         }
@@ -2757,13 +2795,21 @@
         { id: "m0-pool-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "The company is low on Drive storage. One power user is huge, but storage is pooled. First correct mental model?", constraints: [], choices: [{ id: "a", text: "Upgrade only that one mailbox’s private allotment" }, { id: "b", text: "Add licenses, set quotas, or free space — pool is shared" }, { id: "c", text: "Turn off Gmail to free Drive" }, { id: "d", text: "Delete the primary domain" }], answer: ["b"], explain: "Modern Workspace storage is pooled org-wide. Fix pool capacity or quotas — not a single mailbox ‘upgrade’ myth.", guideHref: "#m0" },
         { id: "m0-ed-01", module: "m0", difficulty: 2, type: "single", selectCount: 1, stem: "A scenario on Business Starter asks you to enable advanced Drive DLP and the investigation tool. What should you check first?", constraints: ["edition"], choices: [{ id: "a", text: "Whether those capabilities exist on the stated edition" }, { id: "b", text: "Only DNS MX records" }, { id: "c", text: "Whether Chat history is off" }, { id: "d", text: "Whether buildings are created" }], answer: ["a"], explain: "Many advanced security/compliance tools are Enterprise-tier. Always ask: does this edition include it?", guideHref: "#m0", editionNote: "Advanced DLP / investigation tool are typically Enterprise-tier." },
         { id: "m0-mobile-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "You’re away from your computer and must suspend a compromised user. Best answer?", constraints: ["away from computer"], choices: [{ id: "a", text: "Wait until Monday" }, { id: "b", text: "Google Admin mobile app" }, { id: "c", text: "Email Log Search" }, { id: "d", text: "Vault matter" }], answer: ["b"], explain: "On-the-go admin tasks (suspend, reset password, alerts) → Admin mobile app.", guideHref: "#m0" },
+        { id: "m0-ci-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "A vendor needs SSO and 2SV but must not consume a Gmail/Drive seat. Which license family?", constraints: ["identity only"], choices: [{ id: "a", text: "Business Plus for every vendor" }, { id: "b", text: "Cloud Identity" }, { id: "c", text: "Frontline (they need a light mailbox)" }, { id: "d", text: "Archived User License" }], answer: ["b"], explain: "Cloud Identity = users, groups, SSO, 2SV, devices — no Workspace mailbox/Drive seat. Frontline is a light Workspace seat for deskless workers.", guideHref: "#m0" },
+        { id: "m0-front-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "Warehouse pickers never open Gmail but need a cheap Workspace-style seat. Best fit?", constraints: [], choices: [{ id: "a", text: "Cloud Identity only" }, { id: "b", text: "Frontline" }, { id: "c", text: "Enterprise for each picker" }, { id: "d", text: "No license — use a group" }], answer: ["b"], explain: "Frontline is the lightweight Workspace SKU for shift / deskless workers. Cloud Identity is identity-only (no Workspace apps).", guideHref: "#m0" },
+        { id: "m0-inh-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "You changed a setting on the top organization. A child OU still shows the old value with an override badge. Why?", constraints: [], choices: [{ id: "a", text: "Child OUs never inherit" }, { id: "b", text: "The child has an override — inheritance stops until you clear it" }, { id: "c", text: "Groups always block OU settings" }, { id: "d", text: "You must delete the child OU" }], answer: ["b"], explain: "Parent settings flow down unless a child overrides. Clear the override to inherit again.", guideHref: "#m0" },
+        { id: "m0-win-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "An OU setting and a security-group overlay disagree for the same user. What usually wins?", constraints: [], choices: [{ id: "a", text: "The OU always wins" }, { id: "b", text: "The group overlay usually wins" }, { id: "c", text: "Neither applies" }, { id: "d", text: "The primary domain wins" }], answer: ["b"], explain: "Groups are a cross-cutting overlay. When OU + group conflict, the group-applied setting generally wins.", guideHref: "#m0" },
+        { id: "m0-prop-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "You saved a setting and “nothing happened.” First two checks from Foundations?", constraints: [], choices: [{ id: "a", text: "Wrong scope (OU/group) or still propagating (minutes, sometimes 24h)" }, { id: "b", text: "Delete the primary domain" }, { id: "c", text: "Turn off all inheritance forever" }, { id: "d", text: "Wipe every device" }], answer: ["a"], explain: "Most changes take minutes; some up to 24 hours. Confirm you edited the intended OU or group.", guideHref: "#m0" },
+        { id: "m0-search-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "Fastest way to find a setting in the Admin console?", constraints: [], choices: [{ id: "a", text: "Memorize every left-nav path only" }, { id: "b", text: "Type it in the top search bar (users, settings, features)" }, { id: "c", text: "Open Vault first" }, { id: "d", text: "Create a new domain" }], answer: ["b"], explain: "The Admin console search bar finds users, groups, and settings faster than hunting menus.", guideHref: "#m0" },
+        { id: "m0-oneou-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "How many organizational units can one user sit in at the same time?", constraints: [], choices: [{ id: "a", text: "As many as you want" }, { id: "b", text: "Exactly one" }, { id: "c", text: "Two — home and work" }, { id: "d", text: "None — users only live in groups" }], answer: ["b"], explain: "One person, one OU. Groups are the overlay for cross-department access.", guideHref: "#m0" },
+        { id: "m0-map-01", module: "m0", difficulty: 1, type: "single", selectCount: 1, stem: "In the Admin console map, where do licenses / subscriptions live?", constraints: [], choices: [{ id: "a", text: "Directory" }, { id: "b", text: "Billing" }, { id: "c", text: "Meet safety" }, { id: "d", text: "Buildings & resources" }], answer: ["b"], explain: "Directory = people/OUs/rooms. Apps = services. Security = 2SV/DLP. Billing = licenses. Account = company/domains.", guideHref: "#m0" },
 
         { id: "m1-aul-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "An employee left. Legal needs their data retained cheaply without a full Workspace seat. What do you use?", constraints: ["minimise cost", "preserve data"], choices: [{ id: "a", text: "Keep them Active forever" }, { id: "b", text: "Archived User License (AUL)" }, { id: "c", text: "Delete immediately with no transfer" }, { id: "d", text: "Domain alias" }], answer: ["b"], explain: "AUL keeps data for Vault/retention without a full active seat — the cost-preserving end state.", guideHref: "#m1" },
         { id: "m1-sus-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "HR puts someone on leave for two weeks and may reinstate them. You must cut access now without destroying data. First action?", constraints: ["preserve data"], choices: [{ id: "a", text: "Delete the user" }, { id: "b", text: "Suspend the account" }, { id: "c", text: "Remove the primary domain" }, { id: "d", text: "Wipe their Shared Drive" }], answer: ["b"], explain: "Suspend cuts sign-in, keeps data, still uses a license, and is instantly reversible.", guideHref: "#m1" },
         { id: "m1-del-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "You deleted a user by mistake. How long do you typically have to restore the account?", constraints: [], choices: [{ id: "a", text: "2 days" }, { id: "b", text: "20 days" }, { id: "c", text: "90 days" }, { id: "d", text: "Forever" }], answer: ["b"], explain: "Deleted users are recoverable for about 20 days, then permanent. Transfer Drive before deleting when planned.", guideHref: "#m1" },
         { id: "m1-gcds-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Identities live in on-prem Active Directory and must sync into Workspace. Which tool?", constraints: ["on-prem AD"], choices: [{ id: "a", text: "Data Migration Service" }, { id: "b", text: "GCDS (Google Cloud Directory Sync)" }, { id: "c", text: "Email Log Search" }, { id: "d", text: "Drive trust rules" }], answer: ["b"], explain: "On-prem LDAP/AD → GCDS (one-way into Workspace). DMS moves content, not identities.", guideHref: "#m1" },
         { id: "m1-dirsync-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Source of truth is Microsoft Entra ID (cloud). Best Google-hosted identity sync?", constraints: ["cloud IdP"], choices: [{ id: "a", text: "GCDS on a PC under a desk" }, { id: "b", text: "Directory Sync" }, { id: "c", text: "Vault hold" }, { id: "d", text: "CBCM" }], answer: ["b"], explain: "Cloud IdP such as Entra → Directory Sync (Google-hosted cousin of GCDS).", guideHref: "#m1" },
-        { id: "m1-mig-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "You’re moving mailboxes from Microsoft 365 into Gmail. Sync or migrate?", constraints: ["email content"], choices: [{ id: "a", text: "GCDS only" }, { id: "b", text: "Data Migration Service (or migration tooling)" }, { id: "c", text: "SPF record alone" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Content (mail/calendar/contacts) → migration tools. Sync tools move identities.", guideHref: "#m2" },
+        { id: "m1-mig-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "You’re moving mailboxes from Microsoft 365 into Gmail. Sync or migrate?", constraints: ["email content"], choices: [{ id: "a", text: "GCDS only" }, { id: "b", text: "Data Migration Service (or migration tooling)" }, { id: "c", text: "SPF record alone" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Content (mail/calendar/contacts) → migration tools. Sync tools move identities.", guideHref: "#m1" },
         { id: "m1-alias-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "Every existing user needs an extra address at newsite.com without new accounts or licenses. Choose:", constraints: [], choices: [{ id: "a", text: "Secondary domain" }, { id: "b", text: "Domain alias" }, { id: "c", text: "Frontline licenses for everyone" }, { id: "d", text: "Cloud Identity Premium only" }], answer: ["b"], explain: "Domain alias = same users get extra addresses. Secondary domain = separate accounts (each licensed).", guideHref: "#m1" },
         { id: "m1-xfer-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "Before deleting a leavers’ account, what should you do with My Drive files they own?", constraints: ["preserve data"], choices: [{ id: "a", text: "Nothing — Shared Drive rules auto-apply to My Drive" }, { id: "b", text: "Transfer Drive ownership to a successor/manager" }, { id: "c", text: "Only reset their password" }, { id: "d", text: "Publish a DMARC reject policy" }], answer: ["b"], explain: "My Drive is person-owned — transfer before delete. Shared Drive content already belongs to the team.", guideHref: "#m1" },
         { id: "m1-sso-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "You configure SAML SSO with Okta. What should you keep so you’re not locked out if Okta is down?", constraints: ["break-glass"], choices: [{ id: "a", text: "A Super Admin that bypasses SSO" }, { id: "b", text: "No admins at all" }, { id: "c", text: "Only SMS 2SV for everyone" }, { id: "d", text: "Disable all domains" }], answer: ["a"], explain: "Keep a break-glass Super Admin excluded from SSO / recoverable independently.", guideHref: "#m1" },
@@ -2773,7 +2819,7 @@
         { id: "m2-mx-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "What do MX records primarily control?", constraints: [], choices: [{ id: "a", text: "Outbound DKIM signing keys" }, { id: "b", text: "Where inbound mail is delivered" }, { id: "c", text: "Drive sharing defaults" }, { id: "d", text: "Chrome extensions" }], answer: ["b"], explain: "MX directs inbound mail to Google (e.g. smtp.google.com). Auth trio handles outbound legitimacy.", guideHref: "#m2" },
         { id: "m2-sd-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Why put org project files in a Shared Drive instead of one person’s My Drive?", constraints: ["off-boarding"], choices: [{ id: "a", text: "Shared Drive files are owned by the team and survive off-boarding" }, { id: "b", text: "Shared Drives ignore all permissions" }, { id: "c", text: "My Drive cannot store Docs" }, { id: "d", text: "Vault cannot see Shared Drives" }], answer: ["a"], explain: "Team ownership avoids transfer-or-lose drama when someone leaves.", guideHref: "#m2" },
         { id: "m2-meet-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Unwanted guests keep joining Meet. Where do you look first?", constraints: [], choices: [{ id: "a", text: "Meet quality tool" }, { id: "b", text: "Meet safety settings (host controls, knocking, org-only)" }, { id: "c", text: "SPF record" }, { id: "d", text: "Buildings CSV" }], answer: ["b"], explain: "Join/safety problems → Meet safety. Audio/video quality → Meet quality tool.", guideHref: "#m2" },
-        { id: "m2-meetq-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Users complain Meet audio/video is choppy. Best diagnostic tool?", constraints: [], choices: [{ id: "a", text: "Meet safety settings only" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Performance/quality ≠ safety lockdown.", guideHref: "#m6" },
+        { id: "m2-meetq-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Users complain Meet audio/video is choppy. Best diagnostic tool?", constraints: [], choices: [{ id: "a", text: "Meet safety settings only" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Collaborative Inbox" }], answer: ["b"], explain: "Performance/quality ≠ safety lockdown. Unwanted guests → Meet safety; choppy A/V → quality tool.", guideHref: "#m2" },
         { id: "m2-att-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Gmail send size limit for attachments is roughly…", constraints: [], choices: [{ id: "a", text: "2 MB (then fails forever)" }, { id: "b", text: "25 MB (larger often becomes a Drive link)" }, { id: "c", text: "2 GB always inline" }, { id: "d", text: "Unlimited with no Drive" }], answer: ["b"], explain: "About 25 MB send limit; oversize typically uploads to Drive and sends as a link.", guideHref: "#m2" },
         { id: "m2-gem-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Leadership asks: does Gemini use our prompts to train Google’s foundation models?", constraints: [], choices: [{ id: "a", text: "Yes, always, for all editions" }, { id: "b", text: "Org prompts/content stay in your protections and are not used to train foundation models" }, { id: "c", text: "Only if Chat history is on" }, { id: "d", text: "Only if you disable 2SV" }], answer: ["b"], explain: "Privacy reassurance answer for Workspace Gemini: not used to train foundation models.", guideHref: "#m2" },
         { id: "m2-appsheet-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Business wants a no-code app from Sheets data. Match the tool:", constraints: [], choices: [{ id: "a", text: "Apps Script only" }, { id: "b", text: "AppSheet" }, { id: "c", text: "GCDS" }, { id: "d", text: "Vault" }], answer: ["b"], explain: "No-code → AppSheet. Custom JS glue → Apps Script.", guideHref: "#m2" },
@@ -2811,6 +2857,13 @@
         { id: "m7-multi-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "A multiple-select question says ‘select TWO’. You should…", constraints: [], choices: [{ id: "a", text: "Pick as many as feel right" }, { id: "b", text: "Pick exactly two" }, { id: "c", text: "Always pick all options" }, { id: "d", text: "Skip every multi-select" }], answer: ["b"], explain: "Read the count — pick exactly that many.", guideHref: "#m7" },
         { id: "m7-pace-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "Rough pacing for a 120-minute exam with ~60 questions?", constraints: [], choices: [{ id: "a", text: "~2 minutes per question; flag and move on" }, { id: "b", text: "30 minutes per question" }, { id: "c", text: "No time limit exists" }, { id: "d", text: "Answer only Module 5" }], answer: ["a"], explain: "Pace ~2 min/q; review flagged items at the end.", guideHref: "#m7" },
         { id: "m7-spec-01", module: "m7", difficulty: 2, type: "single", selectCount: 1, stem: "Two answers technically work. Which do you usually prefer?", constraints: ["least privilege"], choices: [{ id: "a", text: "The broadest Super Admin change" }, { id: "b", text: "The most specific tool / narrowest scope that meets the constraint" }, { id: "c", text: "Whatever mentions Vault" }, { id: "d", text: "Whatever mentions Meet" }], answer: ["b"], explain: "Most specific correct tool + least privilege wins most scenarios.", guideHref: "#m7" },
+        { id: "m7-flag-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "A stem is taking too long. Best exam habit?", constraints: [], choices: [{ id: "a", text: "Sit on it until time runs out" }, { id: "b", text: "Flag it, move on, come back in review" }, { id: "c", text: "Guess randomly and never review" }, { id: "d", text: "Leave the exam early" }], answer: ["b"], explain: "~2 minutes per question. Flag and return — don’t burn the clock on one scenario.", guideHref: "#m7" },
+        { id: "m7-con-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "What should you read for first in a long scenario stem?", constraints: [], choices: [{ id: "a", text: "The product logo" }, { id: "b", text: "The constraint (cost, preserve data, only some users, edition, managed devices)" }, { id: "c", text: "Only the last sentence’s first noun" }, { id: "d", text: "Whatever tool you studied last night" }], answer: ["b"], explain: "Constraint words pick the tool. Same story with different constraints → different answers.", guideHref: "#m7" },
+        { id: "m7-dist-01", module: "m7", difficulty: 2, type: "single", selectCount: 1, stem: "A choice names a real Google tool that solves a different problem than the stem. That choice is…", constraints: [], choices: [{ id: "a", text: "Always correct because the tool exists" }, { id: "b", text: "A classic distractor — skip it" }, { id: "c", text: "Worth picking if you are unsure" }, { id: "d", text: "The Super Admin answer" }], answer: ["b"], explain: "Safety vs quality, sync vs migration, dashboard vs investigation — real tools, wrong job.", guideHref: "#m7" },
+        { id: "m7-shape-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "Associate exam shape from the notes?", constraints: [], choices: [{ id: "a", text: "10 essay questions, untimed" }, { id: "b", text: "About 50–60 multiple-choice / multiple-select · 120 minutes · valid 3 years" }, { id: "c", text: "Oral lab only" }, { id: "d", text: "Unlimited time, 200 questions" }], answer: ["b"], explain: "50–60 items, 120 minutes, about $125, online or test center, certification valid 3 years.", guideHref: "#m7" },
+        { id: "m7-ms-01", module: "m7", difficulty: 1, type: "single", selectCount: 1, stem: "The item says “Select THREE.” You are sure about two and shaky on a third. You should…", constraints: [], choices: [{ id: "a", text: "Submit only the two you love" }, { id: "b", text: "Pick exactly three" }, { id: "c", text: "Pick all remaining options to be safe" }, { id: "d", text: "Skip the question type entirely" }], answer: ["b"], explain: "Multiple-select tells you the count. Pick exactly that many.", guideHref: "#m7" },
+        { id: "m7-priv-01", module: "m7", difficulty: 2, type: "single", selectCount: 1, stem: "Help desk only needs password resets. Super Admin is listed as an option. Strategy?", constraints: ["least privilege"], choices: [{ id: "a", text: "Pick Super Admin — it always works" }, { id: "b", text: "Pick the narrowest role that does the job" }, { id: "c", text: "Pick every admin role" }, { id: "d", text: "Pick Vault" }], answer: ["b"], explain: "Least privilege / most specific tool is the default heuristic when two answers “work.”", guideHref: "#m7" },
+        { id: "m7-multi-02", module: "m7", difficulty: 2, type: "multi", selectCount: 2, stem: "Select TWO exam habits from this module.", constraints: [], choices: [{ id: "a", text: "Read the constraint before picking a tool" }, { id: "b", text: "Flag hard items and keep pacing ~2 minutes" }, { id: "c", text: "Always choose Super Admin" }, { id: "d", text: "Ignore multiple-select counts" }], answer: ["a", "b"], explain: "Constraint + pacing. Super Admin and ignoring the stated count are traps.", guideHref: "#m7" },
 
         { id: "heur-01", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Requirement: access only from managed devices on the corp network. Reach for…", constraints: [], choices: [{ id: "a", text: "Context-Aware Access" }, { id: "b", text: "Collaborative Inbox" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Buildings CSV" }], answer: ["a"], explain: "Device/network/geo conditions → CAA.", guideHref: "#heuristics", editionNote: "Advanced CAA is typically Enterprise-tier." },
         { id: "heur-02", module: "heur", difficulty: 1, type: "single", selectCount: 1, stem: "Keep an ex-employee’s data cheaply for retention. Reach for…", constraints: ["minimise cost"], choices: [{ id: "a", text: "Archived User License" }, { id: "b", text: "Force-install extension" }, { id: "c", text: "MX only" }, { id: "d", text: "AppSheet" }], answer: ["a"], explain: "Cheap retention end-state → AUL.", guideHref: "#heuristics" },
@@ -2877,10 +2930,104 @@
         return Math.round((c / t) * 100);
       }
 
+      const MODULE_LABELS = {
+        m0: "Module 0 · Foundations",
+        m1: "Module 1 · Users & Directory",
+        m2: "Module 2 · Core Services",
+        m3: "Module 3 · Data & Compliance",
+        m4: "Module 4 · Security",
+        m5: "Module 5 · Browsers & Devices",
+        m6: "Module 6 · Monitoring",
+        m7: "Module 7 · Exam Strategy"
+      };
+
+      function questionsForModule(modId) {
+        const curated = BANK.filter((q) => q.module === modId);
+        const mocks = MOCK.filter((q) => q.module === modId);
+        const seen = new Set();
+        const out = [];
+        curated.concat(mocks).forEach((q) => {
+          if (!q || !q.id || seen.has(q.id)) return;
+          seen.add(q.id);
+          out.push(q);
+        });
+        return out;
+      }
+
+      const hosts = {
+        global: {
+          lobby: document.getElementById("gameLobby"),
+          stage: document.getElementById("gameStage"),
+          summary: document.getElementById("gameSummary")
+        },
+        module: {
+          lobby: document.getElementById("modulePracticeLobby"),
+          stage: document.getElementById("modulePracticeStage"),
+          summary: document.getElementById("modulePracticeSummary")
+        }
+      };
+      let arenaHost = "global";
+      let lockedModule = null;
+      let savedGlobalMode = null;
+
+      function bindHost(name) {
+        arenaHost = name;
+        const h = hosts[name];
+        if (!h || !h.lobby) return;
+        el.lobby = h.lobby;
+        el.stage = h.stage;
+        el.summary = h.summary;
+      }
+
+      function resetHostUI(name) {
+        const h = hosts[name];
+        if (!h) return;
+        if (h.lobby) h.lobby.classList.remove("hidden");
+        if (h.stage) {
+          h.stage.classList.add("hidden");
+          clearNode(h.stage);
+        }
+        if (h.summary) {
+          h.summary.classList.add("hidden");
+          clearNode(h.summary);
+        }
+      }
+
+      function releaseModuleArena() {
+        if (arenaHost !== "module") return;
+        stopMockTimer();
+        inRound = false;
+        round = null;
+        resetHostUI("module");
+        bindHost("global");
+        lockedModule = null;
+        if (savedGlobalMode) {
+          setMode(savedGlobalMode);
+          savedGlobalMode = null;
+        }
+      }
+
+      function enterModuleArena(modId, asAnswerKey) {
+        const mid = modId || deskModuleId || "m0";
+        stopMockTimer();
+        if (arenaHost !== "module") {
+          savedGlobalMode = mode;
+          if (inRound) {
+            inRound = false;
+            round = null;
+          }
+          resetHostUI("global");
+        }
+        lockedModule = mid;
+        bindHost("module");
+        setMode(asAnswerKey ? "answerKey" : "module");
+        startRound();
+      }
+
       const el = {
-        lobby: document.getElementById("gameLobby"),
-        stage: document.getElementById("gameStage"),
-        summary: document.getElementById("gameSummary"),
+        lobby: hosts.global.lobby,
+        stage: hosts.global.stage,
+        summary: hosts.global.summary,
         modulePick: document.getElementById("modulePick"),
         moduleSelect: document.getElementById("moduleSelect"),
         btnStart: document.getElementById("btnStart"),
@@ -2888,6 +3035,22 @@
         sidebarGame: document.getElementById("sidebarGame"),
         modeRow: document.getElementById("modeRow")
       };
+
+      function paintModulePracticeMeta() {
+        const title = document.getElementById("modulePracticeTitle");
+        const goal = document.getElementById("modulePracticeGoal");
+        const count = document.getElementById("modulePracticeCount");
+        const mid = deskModuleId || "m0";
+        const n = questionsForModule(mid).length;
+        if (title) title.textContent = "Practice · " + (MODULE_LABELS[mid] || mid);
+        if (goal) goal.textContent = "Questions from this module only — not a mixed exam.";
+        if (count) {
+          const drill = Math.min(12, n);
+          count.textContent = n
+            ? (n + " questions tagged " + mid.toUpperCase() + " only · a drill picks " + drill + " at random · the answer key lists every item.")
+            : ("No questions tagged " + mid.toUpperCase() + " yet.");
+        }
+      }
 
       let state = loadGame();
       let mode = state.lastMode || "quick";
@@ -2952,25 +3115,25 @@
       }
 
       function filterBank() {
+        if (arenaHost === "module" && lockedModule) return questionsForModule(lockedModule);
         if (mode === "heur") return BANK.filter((q) => q.module === "heur");
         if (mode === "module") {
           const m = el.moduleSelect.value;
-          if (m === "all") return BANK.slice();
-          return BANK.filter((q) => q.module === m);
+          if (m === "all") return BANK.filter((q) => q.module !== "heur");
+          return questionsForModule(m);
         }
         if (mode === "mock10" || mode === "mock50" || mode === "mockFull") return MOCK.slice();
         if (mode === "mockDomain" || mode === "answerKey") {
           const m = el.moduleSelect.value;
           if (m === "all") return MOCK.slice();
-          const target = (m === "m0" || m === "m7") ? "m1" : m;
-          return MOCK.filter((q) => q.module === target);
+          return questionsForModule(m);
         }
-        return BANK.slice();
+        return BANK.filter((q) => q.module !== "heur");
       }
 
       function pickRoundQuestions() {
         let pool = filterBank();
-        if (mode === "mix") {
+        if (mode === "mix" && !(arenaHost === "module" && lockedModule)) {
           // Light exam weighting by oversampling heavier modules
           const weights = { m0: 1, m1: 3, m2: 4, m3: 2, m4: 3, m5: 1, m6: 2, m7: 1, heur: 2 };
           const weighted = [];
@@ -3047,6 +3210,7 @@
         clearNode(el.stage);
         clearNode(el.summary);
         paintStats();
+        if (arenaHost === "module") paintModulePracticeMeta();
       }
 
       const MOD_LABELS = {
@@ -3066,7 +3230,9 @@
         clearNode(el.stage);
 
         const title = document.createElement("h3");
-        title.textContent = "Answer key";
+        title.textContent = lockedModule
+          ? "Answer key · " + (MODULE_LABELS[lockedModule] || lockedModule)
+          : "Answer key";
         el.stage.appendChild(title);
 
         const intro = document.createElement("p");
@@ -3471,6 +3637,38 @@
 
       setMode(mode);
       paintStats();
+      paintModulePracticeMeta();
+
+      document.getElementById("btnModulePractice")?.addEventListener("click", () => {
+        enterModuleArena(deskModuleId || "m0", false);
+      });
+      document.getElementById("btnModulePracticeKey")?.addEventListener("click", () => {
+        enterModuleArena(deskModuleId || "m0", true);
+      });
+
+      window.addEventListener("gws-desk-change", (e) => {
+        paintModulePracticeMeta();
+        const page = e.detail && e.detail.page;
+        if (page !== "module") {
+          releaseModuleArena();
+          return;
+        }
+        if (lockedModule && lockedModule !== deskModuleId) {
+          stopMockTimer();
+          inRound = false;
+          round = null;
+          resetHostUI("module");
+          lockedModule = null;
+          bindHost("global");
+        }
+      });
+
+      window.gwsPractice = {
+        start: enterModuleArena,
+        paint: paintModulePracticeMeta,
+        count: function (modId) { return questionsForModule(modId || deskModuleId || "m0").length; }
+      };
+
       window.gwsStorage?.onProgressRefresh?.(() => {
         state = loadGame();
         paintStats();
@@ -3609,16 +3807,11 @@
 
       /* Module rails: Read → Check → Drill */
       function drillModule(modId) {
-        const modeBtn = document.querySelector('#modeRow .mode-btn[data-mode="module"]');
-        const select = document.getElementById("moduleSelect");
-        if (modeBtn) modeBtn.click();
-        if (select) {
-          select.value = modId;
-          select.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        location.hash = "#practice";
-        showDesk("practice");
-        setTimeout(() => document.getElementById("practice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 30);
+        showDesk("module", { moduleId: modId });
+        requestAnimationFrame(() => {
+          document.getElementById("modulePractice")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          window.gwsPractice?.start(modId, false);
+        });
       }
 
       ["m0","m1","m2","m3","m4","m5","m6","m7"].forEach((id) => {
