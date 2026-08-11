@@ -199,6 +199,35 @@
       border: 1px solid var(--line); border-radius: 12px; padding: 1.15rem 1.2rem; margin-bottom: 1.1rem;
     }
     .lab-hero h1 { margin: 0 0 .35rem; }
+    .lab-mod-sec {
+      margin: 1.35rem 0 .55rem; font-family: var(--display); font-size: 1.05rem;
+    }
+    .lab-mod-sec a { font-size: .8rem; font-weight: 500; margin-left: .45rem; }
+    .lab-scenario {
+      background: #fff8e8; border: 1px solid #f9e3a0; border-radius: 8px;
+      padding: .65rem .75rem; font-size: .84rem; margin: .5rem 0 .65rem; line-height: 1.45;
+    }
+    .lab-scenario strong {
+      display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .04em;
+      color: #b06000; margin: .35rem 0 .15rem;
+    }
+    .lab-scenario strong:first-child { margin-top: 0; }
+    .lab-obj { margin: .35rem 0 .65rem; padding-left: 1.1rem; font-size: .82rem; color: var(--muted); }
+    .lab-from-desk {
+      background: #e8f0fe; border: 1px solid #c5d7f7; border-radius: 8px;
+      padding: .6rem .7rem; font-size: .8rem; line-height: 1.45; margin: .35rem 0 .55rem;
+    }
+    .lab-from-desk em { display: block; font-style: normal; font-size: .66rem; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--blue-dark); font-weight: 700; margin-bottom: .25rem; }
+    .lab-reads { display: flex; flex-wrap: wrap; gap: .3rem; margin: .25rem 0 .55rem; }
+    .lab-reads a {
+      font-size: .72rem; padding: .15rem .4rem; border-radius: 999px;
+      background: #f1f3f4; color: var(--blue-dark); text-decoration: none; border: 1px solid var(--line);
+    }
+    .lab-reads a:hover { border-color: var(--blue); background: #e8f0fe; }
+    .lab-card .lab-sec { font-size: .72rem; color: var(--blue-dark); }
+    .lab-task-body { flex: 1; min-width: 0; }
+    .lab-task .btn { margin-top: .35rem; font-size: .75rem; padding: .25rem .5rem; }
     .lab-live {
       display: none; align-items: center; gap: .45rem;
       padding: .2rem .55rem .2rem .65rem; border-radius: 999px;
@@ -457,7 +486,7 @@
     }
 
     function defaultLabs() {
-      return { activeId: null, startedAt: null, minimized: false, completed: {} };
+      return { activeId: null, startedAt: null, minimized: false, completed: {}, acks: {} };
     }
 
 
@@ -490,6 +519,7 @@
     if (!state.ui) state.ui = { route: "ous", selectedOuId: "ou_root", selectedUserId: "u_ada" };
     if (!state.ui.walkthrough) state.ui.walkthrough = defaultWalkthrough();
     if (!state.ui.labs) state.ui.labs = defaultLabs();
+    if (!state.ui.labs.acks) state.ui.labs.acks = {};
     if (!Array.isArray(state.domains) || !state.domains.length) {
       state.domains = seedState().domains;
     }
@@ -1057,103 +1087,678 @@
     }
 
     /* ---------- Associate lab catalog ---------- */
+    const LAB_MODULES = [
+      { id: "m0", title: "Module 0 · Foundations", href: "./index.html#m0" },
+      { id: "m1", title: "Module 1 · Users, Domains & Directory ~20%", href: "./index.html#m1" },
+      { id: "m2", title: "Module 2 · Core Workspace Services ~23%", href: "./index.html#m2" },
+      { id: "m3", title: "Module 3 · Data Governance & Compliance ~15%", href: "./index.html#m3" },
+      { id: "m4", title: "Module 4 · Security Policies & Access ~20%", href: "./index.html#m4" },
+      { id: "m5", title: "Module 5 · Browsers & Endpoints ~10%", href: "./index.html#m5" },
+      { id: "m6", title: "Module 6 · Monitoring & Troubleshooting ~13%", href: "./index.html#m6" },
+      { id: "m7", title: "Module 7 · Exam Strategy", href: "./index.html#m7" }
+    ];
+
     const LABS = [
       {
-        id: "lab-ou", code: "LAB-01", minutes: 15, level: "Associate", domain: "0 · Foundations",
-        title: "OU inheritance lab",
-        brief: "Northwind just hired you. Root sharing is OFF. Engineering asked for an exception. Prove you can read inherited vs overridden policy before you touch production.",
+        id: "lab-edition", code: "LAB-M0A", minutes: 10, level: "Associate", module: "m0",
+        domain: "0.1 Editions · pooled storage",
+        title: "Can this edition even do that?",
+        desk: "./index.html#m0-editions",
+        sections: ["0.1 Editions (plans)", "Storage is pooled"],
+        reads: [
+          { label: "0.1 Editions", href: "./index.html#m0-editions" },
+          { label: "Pooled storage", href: "./index.html#m0-storage" }
+        ],
+        fromDesk: "If a question mentions DLP, context-aware access, data regions, or the investigation tool — first check whether the stated edition includes it. Storage is one company tank: add licenses, set quotas, or free space — not “upgrade one mailbox.”",
+        scenario: {
+          who: "Northwind Retail — 180 seats on Business Plus. One designer is using 1.8 TB; the pool is almost empty.",
+          ticket: "CISO wants advanced Drive DLP and the Investigation tool this afternoon. Finance asks you to “upgrade that one mailbox” for storage.",
+          constraint: "Do not buy Enterprise until you prove Plus cannot do DLP/Investigation. Do not treat storage as per-mailbox."
+        },
+        objectives: [
+          "Edition is the first exam filter (DLP / CAA / Investigation / data regions / S/MIME).",
+          "Pooled storage: licenses, quotas, or free space — never upgrade one mailbox."
+        ],
+        why: "Business Plus is the hands-on mid tier (Vault + advanced endpoint). Many security/compliance toys are Enterprise.",
+        startRoute: "account",
+        tasks: [
+          { id: "flip", doThis: "Use Edition (top bar) and switch Business Plus ↔ Enterprise at least once.", check: function (s) { return !!s.ui.walkthrough._editionTouched; } },
+          { id: "map", doThis: "Open Storage and look at the pooled usage meter (one tank, not per-mailbox).", check: function (s) { return s.ui.route === "storage"; } },
+          { id: "ack", ack: true, doThis: "Say back: Plus may lack advanced Drive DLP / Investigation. Low storage ≠ upgrade one mailbox." }
+        ]
+      },
+      {
+        id: "lab-ou", code: "LAB-M0B", minutes: 18, level: "Associate", module: "m0",
+        domain: "0.3 OU vs Group · 0.4 Effective policy",
+        title: "Inheritance vs group overlay",
+        desk: "./index.html#m0-ou-group",
+        sections: ["0.3 Org → OUs → Users (+ Groups)", "0.4 How a setting reaches a user"],
+        reads: [
+          { label: "0.3 OU vs Group", href: "./index.html#m0-ou-group" },
+          { label: "0.4 Effective policy", href: "./index.html#m0-effective" }
+        ],
+        fromDesk: "Every person sits in exactly one OU folder. Parent settings flow down unless a child overrides. Groups are sticky notes across folders. If OU + group conflict → group usually wins. “Nothing happened” = wrong scope or still propagating (minutes, sometimes 24h).",
+        scenario: {
+          who: "Northwind. Root external Drive sharing = OFF. Engineering overrode ON. Sales inherits OFF.",
+          ticket: "A Gemini pilot includes Ada (Sales) and Eve (Engineering). Leadership wants the pilot blocked from sharing out, without moving people into a new OU.",
+          constraint: "One person, one OU. Fluid / cross-department access → group overlay (group usually wins)."
+        },
+        objectives: [
+          "Read INHERITED vs OVERRIDDEN on the OU tree.",
+          "Use a security group for a cross-OU exception, not a new OU."
+        ],
+        why: "OUs answer structure / service on-off. Groups answer exceptions that cut across the tree.",
         startRoute: "ous",
         tasks: [
-          { id: "visit", doThis: "Open Organizational units and click at least two OUs (Sales and Engineering).", check: function (s) { return (s.ui.walkthrough._ousVisited || 0) >= 2; } },
-          { id: "read", doThis: "Select the Engineering OU and confirm it is OVERRIDDEN (external sharing ON).", check: function (s) { return s.ui.selectedOuId === "ou_eng"; } }
+          { id: "visit", doThis: "In Organizational units, click at least two OUs (Sales and Engineering).", check: function (s) { return (s.ui.walkthrough._ousVisited || 0) >= 2; } },
+          { id: "eng", doThis: "Select Engineering and confirm it is OVERRIDDEN (external sharing ON).", check: function (s) { return s.ui.selectedOuId === "ou_eng"; } },
+          { id: "grp", doThis: "Open Groups and keep Apply group overlay checked on Gemini Pilot.", check: function (s) { try { return !!(s.groupOverrides["drive.externalSharing"].g_pilot.enabled); } catch (e) { return false; } } }
         ]
       },
       {
-        id: "lab-users", code: "LAB-02", minutes: 15, level: "Associate", domain: "1 · Users & Directory",
-        title: "Move a user, pick the right home",
-        brief: "Cara is a contractor sitting in Contractors. Facilities wants her under Engineering for a 2-week project. Wrong OU = wrong Chat/Drive policy.",
-        startRoute: "users",
+        id: "lab-identity", code: "LAB-M0C", minutes: 10, level: "Associate", module: "m0",
+        domain: "0.1 Cloud Identity · Frontline · 0.2 Console",
+        title: "Identity-only seats and the console map",
+        desk: "./index.html#m0-console",
+        sections: ["0.1 Cloud Identity / Frontline", "0.2 Admin console map"],
+        reads: [
+          { label: "0.1 Editions table", href: "./index.html#m0-editions" },
+          { label: "0.2 Console map", href: "./index.html#m0-console" }
+        ],
+        fromDesk: "Cloud Identity = users, groups, SSO, 2SV, devices — no Gmail/Drive seat. Frontline = lightweight seats for shift / deskless workers. Console drawers: Directory (people/OUs/rooms) · Apps · Security · Devices / Reporting / Billing / Account. Away from a computer → Admin mobile app can suspend, reset password, view alerts.",
+        scenario: {
+          who: "Northwind hired 40 warehouse pickers who never open Gmail. A vendor portal needs SSO accounts that must not consume Workspace seats.",
+          ticket: "Pick the license for pickers vs identity-only vendors. Then name which console area holds Users, DLP, and licenses.",
+          constraint: "Do not buy Business Plus for identity-only. Frontline ≠ Cloud Identity. Search bar (“DKIM”, “2SV”) is faster than hunting menus."
+        },
+        objectives: [
+          "Cloud Identity = identity only. Frontline = light Workspace. Education/Frontline show up as licensing-fit stems.",
+          "Map Directory / Apps / Security / Devices / Reporting / Billing / Account."
+        ],
+        why: "Exam often hides the answer in the edition/license name, not the click path.",
+        startRoute: "account",
         tasks: [
-          { id: "move", doThis: "On Users, change Cara Contract’s OU with the dropdown.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); } }
+          { id: "open", doThis: "Open Account settings (roles, company profile, data regions live here).", check: function (s) { return s.ui.route === "account"; } },
+          { id: "ack", ack: true, doThis: "Map: warehouse pickers → Frontline; vendor SSO with no mailbox → Cloud Identity; DLP → Security; licenses → Billing." }
         ]
       },
       {
-        id: "lab-gcds", code: "LAB-03", minutes: 12, level: "Associate", domain: "1 · Users & Directory",
-        title: "GCDS dry-run (identities, not mail)",
-        brief: "HR swears Active Directory is source of truth. Leadership wants a preview before you sync. Do not migrate mailboxes with GCDS.",
-        startRoute: "gcds",
-        tasks: [
-          { id: "dry", doThis: "Run Dry-Run Sync and read ADD / UPDATE / WOULD-DELETE. Dry-run must not change accounts.", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); } }
-        ]
-      },
-      {
-        id: "lab-mail", code: "LAB-04", minutes: 20, level: "Associate", domain: "2 · Core Services",
-        title: "Mail lab — inbound vs outbound",
-        brief: "Recipients say Northwind mail is spam. Inbound still has to land in Gmail. Separate MX (inbound) from SPF/DKIM/DMARC (outbound).",
-        startRoute: "gmail",
-        tasks: [
-          { id: "in", doThis: "Open Gmail → Test mail and run an inbound simulation.", check: function (s) { return !!(s.mailLab && s.mailLab.lastInbound); } },
-          { id: "out", doThis: "Run an outbound simulation (SPF + DKIM + DMARC).", check: function (s) { return !!(s.mailLab && s.mailLab.lastOutbound); } }
-        ]
-      },
-      {
-        id: "lab-drive", code: "LAB-05", minutes: 12, level: "Associate", domain: "2 · Core Services",
-        title: "Drive sharing + group overlay",
-        brief: "Root blocks external Drive. A Gemini pilot group crosses Sales and Engineering. Groups usually win over the OU.",
-        startRoute: "groups",
-        tasks: [
-          { id: "grp", doThis: "On Groups, keep Apply group overlay checked on Gemini Pilot.", check: function (s) { try { return !!(s.groupOverrides["drive.externalSharing"].g_pilot.enabled); } catch (e) { return false; } } },
-          { id: "viz", doThis: "Open Drive and Docs, then open the OU inheritance visualizer.", check: function (s) { return s.ui.route === "ous" || s.ui.route === "drive"; } }
-        ]
-      },
-      {
-        id: "lab-vault", code: "LAB-06", minutes: 15, level: "Associate", domain: "3 · Compliance",
-        title: "Vault hold beats delete",
-        brief: "Legal opened Acme v. Corp. Ada’s mail must survive even if HR offboards her today. Hold always beats retention deletion.",
-        startRoute: "vault",
-        prep: function (s) { s.ui.selectedUserId = "u_ada"; },
-        tasks: [
-          { id: "hold", doThis: "Place a Legal Hold on Ada Sales.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold; } },
-          { id: "block", doThis: "Open Offboarding with Ada — Delete must stay blocked by the hold.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold && s.ui.route === "offboard"; } }
-        ]
-      },
-      {
-        id: "lab-dlp", code: "LAB-07", minutes: 15, level: "Associate", domain: "3 · Compliance",
-        title: "DLP lab (edition gate)",
-        brief: "Finance wants to block credit-card numbers leaving Drive. Advanced DLP is typically Enterprise — check the plan first, like the exam.",
-        startRoute: "dlp",
-        tasks: [
-          { id: "ed", doThis: "Switch Edition (top bar) to Enterprise so the tester unlocks.", check: function (s) { return s.tenant.edition === "enterprise"; } },
-          { id: "test", doThis: "Paste 4111 1111 1111 1111 (or confidential) and Test against DLP policy.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); } }
-        ]
-      },
-      {
-        id: "lab-offboard", code: "LAB-08", minutes: 20, level: "Associate", domain: "1 · Users",
-        title: "Offboarding lab — suspend first",
-        brief: "Dan Sales resigned. Cut access now, keep data, transfer My Drive, then AUL or delete. Never delete first.",
+        id: "lab-offboard", code: "LAB-M1A", minutes: 20, level: "Associate", module: "m1",
+        domain: "1.1 User life cycle · off-boarding order",
+        title: "Dan resigned — suspend first",
+        desk: "./index.html#m1-offboard",
+        sections: ["1.1 User life cycle", "Clean off-boarding order"],
+        reads: [
+          { label: "1.1 Life cycle table", href: "./index.html#m1-lifecycle" },
+          { label: "Off-boarding order", href: "./index.html#m1-offboard" }
+        ],
+        fromDesk: "Active uses a full license. Suspended = no sign-in, data kept, license still used, instantly reversible. Deleted = recoverable 20 days, transfer Drive first. Archived (AUL) = cheaper license so Vault can keep ex-staff data. Order: Suspend → sessions → Transfer Drive → Delete or AUL. Shared Drive files already belong to the team.",
+        scenario: {
+          who: "Dan Sales resigned. Legal does not have a hold on him. His pricebook sits in My Drive; team decks sit on the Sales Shared Drive.",
+          ticket: "Cut access now. Keep data. Hand My Drive to his manager. Then reclaim the seat or keep data cheap for Vault.",
+          constraint: "Preserve data. Never delete before Drive transfer. Shared Drive needs no transfer. Investigating / may return → stay suspended."
+        },
+        objectives: [
+          "Memorize: Active / Suspended / Deleted (~20-day restore) / Archived (AUL).",
+          "Order: Suspend → sessions → Transfer Drive → Delete or AUL."
+        ],
+        why: "Cheap + keep ex-staff data for Vault → AUL. Investigating / may return → suspend. Gone + transferred → delete.",
         startRoute: "offboard",
         prep: function (s) { s.offboard.userId = "u_dan"; s.offboard.step = 0; },
         tasks: [
-          { id: "sus", doThis: "Pick Dan Sales and click Suspend now.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "suspended" || u.status === "archived" || u.status === "deleted"); } },
+          { id: "sus", doThis: "Pick Dan Sales and click Suspend now (cuts sign-in, keeps data and the license).", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "suspended" || u.status === "archived" || u.status === "deleted"); } },
           { id: "end", doThis: "Finish the wizard: sessions → Transfer Drive → Delete or Archived User License.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_dan"; }); return u && (u.status === "deleted" || u.status === "archived"); } }
         ]
       },
       {
-        id: "lab-wipe", code: "LAB-09", minutes: 10, level: "Associate", domain: "5 · Devices",
-        title: "Wipe lab — BYOD vs company phone",
-        brief: "Ada’s phone is personal (BYOD). Ben’s is company-owned. Account wipe vs device wipe is a classic Associate trap.",
-        startRoute: "mobile",
+        id: "lab-gcds", code: "LAB-M1B", minutes: 15, level: "Associate", module: "m1",
+        domain: "1.2 Provisioning · sync vs migration",
+        title: "AD is source of truth — dry-run only",
+        desk: "./index.html#m1-provision",
+        sections: ["1.2 Creating users & provisioning tools", "Exam tip — sync vs migration"],
+        reads: [
+          { label: "1.2 Provisioning tools", href: "./index.html#m1-provision" },
+          { label: "2.1 DMS (content)", href: "./index.html#m2-migration" }
+        ],
+        fromDesk: "On-prem AD/LDAP → GCDS (one-way, you install a connector). Cloud IdP (Entra) → Directory Sync (Google-hosted). IdP owns accounts + login → SCIM + SAML. Small batches → manual/CSV. Sync tools move identities. Migration tools (DMS) move content. Don’t mix them up.",
+        scenario: {
+          who: "Northwind identities live in on-prem Active Directory. A sister brand uses Entra ID in the cloud.",
+          ticket: "IT wants a preview of adds/updates/deletes before any live sync. Mailboxes are still on Microsoft 365 for two more weeks.",
+          constraint: "GCDS moves identities (AD → Workspace, one-way). Mail/calendar content is Data Migration Service — not GCDS. Entra as source → Directory Sync, not GCDS."
+        },
+        objectives: [
+          "Match tool: on-prem AD → GCDS; cloud IdP (Entra) → Directory Sync; mail content → DMS.",
+          "Dry-run must not change accounts."
+        ],
+        why: "Do not pick GCDS when the question is about moving mailboxes.",
+        startRoute: "gcds",
         tasks: [
-          { id: "read", doThis: "Open Mobile & Chrome and compare Ada (BYOD → account wipe) vs Ben (company → device wipe OK).", check: function (s) { return s.ui.route === "mobile"; } }
+          { id: "dry", doThis: "Run Dry-Run Sync and read ADD / UPDATE / WOULD-DELETE.", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); } },
+          { id: "ack", ack: true, doThis: "Confirm: dry-run is identities only. M365 mail → DMS. Sister brand on Entra → Directory Sync." }
         ]
       },
       {
-        id: "lab-edition", code: "LAB-10", minutes: 8, level: "Associate", domain: "0 · Foundations",
-        title: "Edition gate drill",
-        brief: "A scenario asks for advanced Drive DLP and the investigation tool on Business Plus. First question: does this edition even include it?",
+        id: "lab-users", code: "LAB-M1C", minutes: 12, level: "Associate", module: "m1",
+        domain: "1.3 Aliases · 1.7 OU design · 1.9 Domains",
+        title: "Cara’s home OU + domain types",
+        desk: "./index.html#m1-domains",
+        sections: ["1.3 Aliases, rename, OU moves", "1.7 OU design", "1.9 Domains"],
+        reads: [
+          { label: "1.3 Aliases / rename", href: "./index.html#m1-aliases" },
+          { label: "1.7 OU design", href: "./index.html#m1-ou-design" },
+          { label: "1.9 Domains", href: "./index.html#m1-domains" }
+        ],
+        fromDesk: "Email alias = extra address → same mailbox, no extra license. Rename primary keeps the old address as an alias. Design OUs for how policies differ, not the org chart (Standard · High-security · Kiosk · Contractors). Primary = main identity. Secondary = new accounts, each licensed. Domain alias = every existing user gets an extra address, no new seats. Verify with TXT (or CNAME/HTML/meta/MX), then add MX for mail.",
+        scenario: {
+          who: "Cara Contract sits in Contractors. Engineering needs her for a 2-week project. Marketing wants every staffer to also have @promo.example. A new Japan subsidiary needs its own @nw-jp.example accounts.",
+          ticket: "Move Cara’s home OU. Pick domain alias vs secondary. Know that rename keeps mail flowing via alias.",
+          constraint: "Wrong OU = wrong Chat/Drive. Extra addresses for existing users → domain alias. New people on another domain → secondary + a license each."
+        },
+        objectives: [
+          "OU placement drives inherited policy from the moment the account exists.",
+          "Domain alias = extra addresses, no new seats. Secondary domain = new accounts, each licensed."
+        ],
+        why: "Design OUs for how policies differ, not the org chart.",
+        startRoute: "users",
+        tasks: [
+          { id: "move", doThis: "On Users, change Cara Contract’s OU with the dropdown.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); } },
+          { id: "dom", doThis: "Open Domains and read primary vs alias vs secondary.", check: function (s) { return s.ui.route === "domains"; } },
+          { id: "ack", ack: true, doThis: "Map: @promo.example for everyone = domain alias. Japan’s own accounts = secondary + licenses. Rename primary keeps old address as alias." }
+        ]
+      },
+      {
+        id: "lab-sso", code: "LAB-M1D", minutes: 10, level: "Associate", module: "m1",
+        domain: "1.2b SSO · SCIM vs SAML · licenses",
+        title: "Okta is the bouncer — keep a break-glass admin",
+        desk: "./index.html#m1-sso",
+        sections: ["1.2b SSO (SAML)", "1.5–1.6 Licenses"],
+        reads: [
+          { label: "1.2b SSO (SAML)", href: "./index.html#m1-sso" },
+          { label: "1.2 Provisioning", href: "./index.html#m1-provision" },
+          { label: "1.5 Licenses", href: "./index.html#m1-licenses" }
+        ],
+        fromDesk: "The IdP (Okta/Entra) is the nightclub bouncer. Google trusts the SAML stamp and lets the person in. SCIM = create/update/disable. SAML = sign-in. Workspace is the SP. Keep a break-glass Super Admin that bypasses SSO. Can’t reach a paid service? Check license first (automatic vs manual assignment).",
+        scenario: {
+          who: "Okta owns create/disable and login. Last quarter an IdP outage locked every Super Admin. A new hire also “can’t open Drive.”",
+          ticket: "Name the two protocols, the lockout prevention, and the first check when a paid app is missing.",
+          constraint: "SCIM ≠ SAML. Never leave all Super Admins behind SSO. Missing Drive is often a missing license, not a Drive policy."
+        },
+        objectives: [
+          "SCIM provisions; SAML authenticates; Workspace is SP.",
+          "Break-glass Super Admin bypasses SSO.",
+          "License assignment is automatic or manual — check license before hunting toggles."
+        ],
+        why: "SSO lockout and “can’t open the app” license misses are classic Associate stems.",
+        startRoute: "password",
+        tasks: [
+          { id: "open", doThis: "Open Password management (Security → Authentication is where org password / 2SV live).", check: function (s) { return s.ui.route === "password" || s.ui.route === "access"; } },
+          { id: "ack", ack: true, doThis: "Map: SCIM = provision; SAML = sign-in; keep a break-glass Super Admin; missing Drive → check license first." }
+        ]
+      },
+      {
+        id: "lab-groups", code: "LAB-M1E", minutes: 10, level: "Associate", module: "m1",
+        domain: "1.8 Groups · 1.10 Buildings",
+        title: "support@ is a queue, not a mailbox",
+        desk: "./index.html#m1-groups",
+        sections: ["1.8 Groups", "1.10 Buildings & resources"],
+        reads: [
+          { label: "1.8 Groups", href: "./index.html#m1-groups" },
+          { label: "1.10 Buildings", href: "./index.html#m1-buildings" }
+        ],
+        fromDesk: "Distribution list = email many people. Collaborative Inbox = shared queue (take / assign / resolve). Dynamic group = membership from a query (department = Sales). Security group = access/security overlay, not just email. Also control who can join, post, view members, and whether outsiders can post. 200 rooms across 10 sites → CSV bulk under Buildings & resources — they become bookable calendars.",
+        scenario: {
+          who: "Support wants one address everyone can work. Sales wants department=Sales to join automatically. Security wants a policy target that is not email. Facilities dumped a spreadsheet of 200 rooms.",
+          ticket: "Match each need to a group type, and pick how rooms get created.",
+          constraint: "Do not create 200 users for rooms. Do not use a security group when they asked for a support queue."
+        },
+        objectives: [
+          "Name DL / Collaborative Inbox / Dynamic / Security in one sentence each.",
+          "Rooms = Buildings & resources + CSV, not one-by-one."
+        ],
+        why: "Group-type distractors are cheap points if you memorize the table.",
+        startRoute: "groups",
+        tasks: [
+          { id: "open", doThis: "Open Groups and note Gemini Pilot is a security overlay; All Staff is a distribution list.", check: function (s) { return s.ui.route === "groups"; } },
+          { id: "ack", ack: true, doThis: "Map: support@ → Collaborative Inbox; department=Sales → Dynamic; policy target → Security group; 200 rooms → CSV in Buildings & resources." }
+        ]
+      },
+      {
+        id: "lab-mail", code: "LAB-M2A", minutes: 20, level: "Associate", module: "m2",
+        domain: "2.1 Gmail · MX vs SPF/DKIM/DMARC",
+        title: "Spam at recipients, mail still inbound",
+        desk: "./index.html#m2-gmail",
+        sections: ["2.1 Gmail", "Appendix C · DNS cheat-sheet"],
+        reads: [
+          { label: "2.1 Gmail DNS", href: "./index.html#m2-gmail" },
+          { label: "DNS cheat-sheet", href: "./index.html#dns" }
+        ],
+        fromDesk: "MX tells the internet “deliver our mail to Google” — inbound only. Outbound spam is almost always missing SPF + DKIM + DMARC. SPF = who may send. DKIM = cryptographic signature. DMARC = what receivers do on fail (none → quarantine → reject) + reports. Start DMARC at p=none, then tighten.",
+        scenario: {
+          who: "Partners say Northwind mail lands in spam. New hires still receive mail in Gmail.",
+          ticket: "Fix outbound authentication without breaking inbound delivery.",
+          constraint: "MX = inbound routing only. Outbound spam → finish SPF + DKIM + DMARC. Start DMARC at p=none. Do not flip a random Gmail UI toggle."
+        },
+        objectives: [
+          "Name each record in one sentence (MX / SPF / DKIM / DMARC).",
+          "Run inbound and outbound simulations and read which check failed."
+        ],
+        why: "Do not flip a random Gmail UI toggle for outbound spam.",
+        startRoute: "gmail",
+        tasks: [
+          { id: "in", doThis: "Gmail → Test mail → run an inbound simulation (MX / activate Gmail).", check: function (s) { return !!(s.mailLab && s.mailLab.lastInbound); } },
+          { id: "out", doThis: "Run an outbound simulation (SPF + DKIM + DMARC).", check: function (s) { return !!(s.mailLab && s.mailLab.lastOutbound); } }
+        ]
+      },
+      {
+        id: "lab-drive", code: "LAB-M2B", minutes: 15, level: "Associate", module: "m2",
+        domain: "2.2 Drive · My Drive vs Shared Drive",
+        title: "Team files must survive off-boarding",
+        desk: "./index.html#m2-drive",
+        sections: ["2.2 Drive & Docs", "Sharing defaults / target audiences"],
+        reads: [
+          { label: "2.2 Drive & Docs", href: "./index.html#m2-drive" },
+          { label: "3.3 Trust rules", href: "./index.html#m3-trust" }
+        ],
+        fromDesk: "My Drive is owned by a person — transfer when they leave. Shared Drive is owned by the team and survives off-boarding. Roles: Manager (members + delete drive) · Content manager (files, not membership) · Contributor · Commenter / Viewer. Target audiences = safer “share with All of Company.” Precise who-can-share-with-whom → trust rules (Module 3).",
+        scenario: {
+          who: "Sales keeps the pricebook in Ada’s My Drive. Ada might leave next quarter. They also want a safer “share with company” suggestion, not a public link.",
+          ticket: "Move org files to a Shared Drive mentally, inspect inheritance, and name the role that can add members vs only files.",
+          constraint: "My Drive = person-owned. Shared Drive = team-owned. Target audiences ≠ trust rules."
+        },
+        objectives: [
+          "Prefer Shared Drive for org content.",
+          "Name Shared Drive roles; external sharing is OU-scoped with inheritance."
+        ],
+        why: "Off-boarding questions almost always hinge on My Drive transfer vs Shared Drive ownership.",
+        startRoute: "drive",
+        tasks: [
+          { id: "open", doThis: "Open Drive and Docs and read My Drive vs Shared Drive.", check: function (s) { return s.ui.route === "drive" || s.ui.route === "ous"; } },
+          { id: "viz", doThis: "Open the OU inheritance visualizer from Drive (or go to Organizational units).", check: function (s) { return s.ui.route === "ous"; } },
+          { id: "ack", ack: true, doThis: "Mark: pricebook → Shared Drive. Adding members → Manager. Safer company share list → target audiences." }
+        ]
+      },
+      {
+        id: "lab-meet", code: "LAB-M2C", minutes: 10, level: "Associate", module: "m2",
+        domain: "2.3 Calendar · 2.4 Meet · 2.5 Chat",
+        title: "Safety vs quality vs rooms",
+        desk: "./index.html#m2-meet",
+        sections: ["2.3 Calendar", "2.4 Meet", "2.5 Chat"],
+        reads: [
+          { label: "2.3 Calendar", href: "./index.html#m2-calendar" },
+          { label: "2.4 Meet", href: "./index.html#m2-meet" },
+          { label: "2.5 Chat", href: "./index.html#m2-chat" }
+        ],
+        fromDesk: "Unwanted guests / join problems → Meet safety (host controls, knocking, org-only). Bad audio/video → Meet quality tool (Module 6), not safety. Chat history on/off matters: if history was off, Vault cannot retain what never existed. Calendar: internal/external sharing defaults; transfer event ownership when the organizer leaves; rooms come from Buildings & resources.",
+        scenario: {
+          who: "All-hands Meet had random guests. Warehouse Wi-Fi makes video choppy. Facilities wants 200 rooms. Legal asks if last year’s Chat can be Vaulted — history was off.",
+          ticket: "Pick the right tool for each complaint — do not mix them.",
+          constraint: "Unwanted guests → Meet safety. Choppy A/V → Meet quality tool. 200 rooms → CSV. History off → nothing for Vault to keep. Organizer left → transfer calendar events."
+        },
+        objectives: [
+          "Meet safety ≠ Meet quality tool.",
+          "Chat history off means Vault cannot retain what never existed.",
+          "Rooms become resource calendars; bulk = CSV."
+        ],
+        why: "Classic distractor: using a safety lock to fix pixelation, or creating rooms one-by-one.",
+        startRoute: "calendar",
+        tasks: [
+          { id: "cal", doThis: "Open Calendar and read the Buildings & resources / CSV tip.", check: function (s) { return s.ui.route === "calendar"; } },
+          { id: "ack", ack: true, doThis: "Map: guests → Meet safety; choppy video → quality tool; 200 rooms → CSV; Chat history off → Vault has nothing; organizer left → transfer events." }
+        ]
+      },
+      {
+        id: "lab-routing", code: "LAB-M2D", minutes: 10, level: "Associate", module: "m2",
+        domain: "2.1 Routing · compliance · DMS",
+        title: "Keep Exchange alive during cutover",
+        desk: "./index.html#m2-routing",
+        sections: ["Routing & compliance", "Migration / DMS"],
+        reads: [
+          { label: "2.1 Routing", href: "./index.html#m2-routing" },
+          { label: "2.1 Migration", href: "./index.html#m2-migration" }
+        ],
+        fromDesk: "Content / attachment compliance can quarantine, reject, modify, BCC, or add a footer. Dual / split delivery copies to another system or splits Google vs legacy during migration. Inbound/outbound gateways relay through a third-party filter. Security Sandbox detonates attachments. Send up to ~25 MB (bigger → Drive link). Disable POP/IMAP/forwarding to reduce leak risk. Delegation = assistant sends on someone’s behalf. DMS moves email/calendar/contacts from Exchange/M365/IMAP/another Workspace. Migration = content. Sync = identities.",
+        scenario: {
+          who: "Half the company is still on Exchange for 30 days. Legal wants a BCC of all outbound Finance mail. A partner’s 40 MB attachment bounced. Ada’s assistant must send as Ada.",
+          ticket: "Pick dual/split delivery, compliance BCC, the 25 MB → Drive rule, and Gmail delegation. Content move is DMS, not GCDS.",
+          constraint: "Do not use GCDS to move mailboxes. Do not raise a “mailbox size” edition to fix a 40 MB send."
+        },
+        objectives: [
+          "Dual/split delivery during coexistence.",
+          "Compliance can BCC; attachments ~25 MB then Drive link; assistant → delegation.",
+          "DMS = content; GCDS = identities."
+        ],
+        why: "Migration-week stems mix routing, size limits, and the sync-vs-migration trap.",
+        startRoute: "gmail",
+        tasks: [
+          { id: "in", doThis: "Open Gmail and run (or re-run) an inbound simulation so you are in the mail lab.", check: function (s) { return s.ui.route === "gmail"; } },
+          { id: "ack", ack: true, doThis: "Map: coexistence → dual/split delivery; Finance BCC → content compliance; 40 MB → Drive link; assistant → delegation; mailboxes → DMS." }
+        ]
+      },
+      {
+        id: "lab-gemini", code: "LAB-M2E", minutes: 8, level: "Associate", module: "m2",
+        domain: "2.6 Gemini · 2.7 AppSheet vs Apps Script",
+        title: "Pilot Gemini — don’t train Google’s model",
+        desk: "./index.html#m2-gemini",
+        sections: ["2.6 Gemini", "2.7 AppSheet vs Apps Script"],
+        reads: [
+          { label: "2.6 Gemini", href: "./index.html#m2-gemini" },
+          { label: "2.7 AppSheet vs Apps Script", href: "./index.html#m2-appsheet" }
+        ],
+        fromDesk: "Org prompts/content are not used to train Google’s foundation models. Enable Gemini per OU; pilot with a group first. Extensions let Gemini act across Gmail/Drive; use usage reports for adoption. No-code app from Sheets/Drive → AppSheet. Custom JavaScript glue → Apps Script.",
+        scenario: {
+          who: "Legal fears staff prompts will train Google’s public model. Ops wants a no-code intake app from a Sheet. IT wants custom JS glue between Calendar and a webhook.",
+          ticket: "Answer the three asks with the right product and rollout pattern.",
+          constraint: "Gemini is not training Google’s foundation models on your org data. Pilot with a group, enable by OU. No-code ≠ Apps Script."
+        },
+        objectives: [
+          "State the training fact; pilot with a group.",
+          "AppSheet = no-code from Sheets. Apps Script = JS glue."
+        ],
+        why: "Gemini + AppSheet vs Apps Script are short, high-yield discriminators.",
+        startRoute: "groups",
+        tasks: [
+          { id: "open", doThis: "Open Groups — Gemini Pilot is how you would scope a cross-OU AI trial.", check: function (s) { return s.ui.route === "groups"; } },
+          { id: "ack", ack: true, doThis: "Map: prompts do not train Google’s foundation models; pilot = group + OU; Sheet app → AppSheet; JS glue → Apps Script." }
+        ]
+      },
+      {
+        id: "lab-vault", code: "LAB-M3A", minutes: 18, level: "Associate", module: "m3",
+        domain: "3.1 Vault · holds · Matter",
+        title: "Acme v. Corp — hold beats delete",
+        desk: "./index.html#m3-vault",
+        sections: ["3.1 Google Vault", "Big Vault facts"],
+        reads: [
+          { label: "3.1 Google Vault", href: "./index.html#m3-vault" }
+        ],
+        fromDesk: "Vault is the legal filing cabinet for Gmail, Drive, Chat, Meet recordings, Groups — not a user backup button. Retention rules auto keep/purge. Holds freeze data for litigation and live inside a Matter. Hold always beats retention deletion. Search & export for lawyers. Vault audit = who searched/exported/changed holds. Chat/Meet only retainable if history/recording was on when created. Keep ex-employee data cheap → AUL.",
+        scenario: {
+          who: "Legal opened Matter “Acme v. Corp”. Ada Sales is a custodian. A 2-year retention rule would otherwise purge her mail next month. HR still wants to start off-boarding today.",
+          ticket: "Freeze Ada’s Workspace data. Prove delete stays blocked. Do not “turn off retention” or offer Takeout as the legal hold.",
+          constraint: "Hold lives in a Matter. Hold always beats retention deletion. Vault is not user backup."
+        },
+        objectives: [
+          "Place a hold before anyone deletes the account.",
+          "See Delete stay blocked while the hold stands."
+        ],
+        why: "If litigation + preserve data → Vault hold, not “turn off retention” or Takeout.",
+        startRoute: "vault",
+        prep: function (s) { s.ui.selectedUserId = "u_ada"; },
+        tasks: [
+          { id: "hold", doThis: "Place a Legal Hold on Ada Sales (green Data Preserved).", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold; } },
+          { id: "block", doThis: "Open Offboarding with Ada — confirm Delete is blocked by the hold.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold && s.ui.route === "offboard"; } }
+        ]
+      },
+      {
+        id: "lab-dlp", code: "LAB-M3B", minutes: 18, level: "Associate", module: "m3",
+        domain: "3.2 DLP · 3.3 Trust rules · 3.5 Labels",
+        title: "Stop cards leaving — after you check edition",
+        desk: "./index.html#m3-dlp",
+        sections: ["3.2 DLP", "3.3 Drive trust rules", "3.5 Labels"],
+        reads: [
+          { label: "3.2 DLP", href: "./index.html#m3-dlp" },
+          { label: "3.3 Trust rules", href: "./index.html#m3-trust" },
+          { label: "3.5 Labels", href: "./index.html#m3-labels" }
+        ],
+        fromDesk: "DLP is a guard reading documents as they leave: detectors (card, SSN, regex) + actions (block / warn / audit) + scope (OU/group). Drive DLP on share; Gmail on outbound; Chat on messages. Advanced Drive/Chat DLP = Enterprise. Trust rules = who can share with whom (Legal ↔ counsel domain). Labels classify (Public / Internal / Confidential); DLP or trust rules enforce on the label.",
+        scenario: {
+          who: "Finance shared a Sheet with card numbers to a personal Gmail. Legal must still share only with outside-counsel.com. CISO wants files tagged Confidential first.",
+          ticket: "Block the card pattern. Name the tool for the counsel exception. Know labels classify and DLP/trust enforce.",
+          constraint: "Sensitive content leaving → DLP. One-domain exception → trust rules. Labels ≠ enforcement. Vault keeps; it does not stop a leak. Takeout is not a DLP control."
+        },
+        objectives: [
+          "Unlock the tester by switching to Enterprise (exam habit).",
+          "Trip a credit-card / confidential detector.",
+          "Do not use Vault to stop a leak (Vault keeps; DLP blocks)."
+        ],
+        why: "Labels classify; DLP / trust rules enforce. Takeout is not a DLP control.",
+        startRoute: "dlp",
+        tasks: [
+          { id: "ed", doThis: "Switch Edition (top bar) to Enterprise so the DLP tester unlocks.", check: function (s) { return s.tenant.edition === "enterprise"; } },
+          { id: "test", doThis: "Paste 4111 1111 1111 1111 (or confidential) and Test against DLP policy.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); } },
+          { id: "ack", ack: true, doThis: "Map: cards leaving → DLP; Legal↔counsel only → trust rules; Confidential tag → label then DLP/trust; Vault does not stop a leak." }
+        ]
+      },
+      {
+        id: "lab-export", code: "LAB-M3C", minutes: 10, level: "Associate", module: "m3",
+        domain: "3.4 Export & residency",
+        title: "Get the data out — the right export",
+        desk: "./index.html#m3-export",
+        sections: ["3.4 Export & residency"],
+        reads: [
+          { label: "3.4 Export & residency", href: "./index.html#m3-export" }
+        ],
+        fromDesk: "Google Takeout = user self-exports own data (often restricted). Data Export tool = Super Admin exports the entire org (waiting period) — the big “get everything out.” Vault export = targeted eDiscovery for a matter. Data regions = store covered data at rest in US/Europe etc. by OU (typically Enterprise).",
+        scenario: {
+          who: "Four asks land the same morning: (1) Ada wants her own files before she leaves. (2) The board voted to leave Google. (3) Lawyers need only Matter Acme v. Corp. (4) EU staff data must rest in Europe.",
+          ticket: "Match Takeout / Data Export tool / Vault export / data regions. Do not use Vault to migrate the company off Google.",
+          constraint: "Takeout = one user. Data Export = whole org, Super Admin, waiting period. Vault export = a matter. Data regions = at-rest residency by OU."
+        },
+        objectives: [
+          "Name all four tools without mixing them.",
+          "Data regions are not a backup and not an export."
+        ],
+        why: "Export-vs-Vault-vs-regions is a favorite Module 3 discriminator.",
         startRoute: "account",
         tasks: [
-          { id: "flip", doThis: "Use the Edition dropdown and switch Business Plus ↔ Enterprise at least once.", check: function (s) { return !!s.ui.walkthrough._editionTouched; } }
+          { id: "open", doThis: "Open Account settings (data regions live under Account; edition must allow them).", check: function (s) { return s.ui.route === "account"; } },
+          { id: "ack", ack: true, doThis: "Map: Ada’s own files → Takeout; leave Google → Data Export tool; one matter → Vault export; EU at rest → data regions." }
+        ]
+      },
+      {
+        id: "lab-caa", code: "LAB-M4A", minutes: 12, level: "Associate", module: "m4",
+        domain: "4.1 2SV · 4.2 CAA · 4.4 Session",
+        title: "Who you are vs where you are",
+        desk: "./index.html#m4-caa",
+        sections: ["4.1 Passwords & 2SV", "4.2 Context-Aware Access", "4.4 Session control"],
+        reads: [
+          { label: "4.1 2SV", href: "./index.html#m4-2sv" },
+          { label: "4.2 CAA", href: "./index.html#m4-caa" },
+          { label: "4.4 Session", href: "./index.html#m4-session" }
+        ],
+        fromDesk: "Password = something you know. 2SV = second proof. Rollout: allow → enforcement date → enrollment grace period. Security keys / passkeys strongest (require for admins). SMS weakest (SIM-swap). Enforce 2SV with zero window → lockout. CAA decides if the situation is allowed (managed device, corp network, country) — often Enterprise. Session control = how long web sessions last; shorter for sensitive groups.",
+        scenario: {
+          who: "Finance Drive must be reachable only from managed, encrypted laptops on corp Wi-Fi. Security already plans to enforce 2SV org-wide next Monday with no grace period.",
+          ticket: "Is 2SV enough for Finance? Fix the rollout so people are not locked out. Add shorter sessions for Finance.",
+          constraint: "2SV proves who. CAA decides if the situation is allowed. Words like managed device / corp network / country → CAA. Always pilot + grace period. Protect Super Admins; keep break-glass."
+        },
+        objectives: [
+          "Do not answer a device/network question with 2SV alone.",
+          "Roll out 2SV with allow → date → grace period (no surprise lockout)."
+        ],
+        why: "Words like managed device, corp network, country → CAA.",
+        startRoute: "access",
+        tasks: [
+          { id: "open", doThis: "Open Access and data control and read the 2SV vs CAA tip.", check: function (s) { return s.ui.route === "access"; } },
+          { id: "ack", ack: true, doThis: "Map: Finance on managed laptops + corp Wi-Fi → CAA (+ 2SV). Rollout = allow → date → grace. SMS is weakest. Shorter sessions complement both." }
+        ]
+      },
+      {
+        id: "lab-roles", code: "LAB-M4B", minutes: 12, level: "Associate", module: "m4",
+        domain: "4.3 Admin roles · 4.6 API / Marketplace",
+        title: "Least privilege + the shady app",
+        desk: "./index.html#m4-roles",
+        sections: ["4.3 Admin roles", "4.6 Apps, Marketplace, API access"],
+        reads: [
+          { label: "4.3 Admin roles", href: "./index.html#m4-roles" },
+          { label: "4.6 API / Marketplace", href: "./index.html#m4-api" }
+        ],
+        fromDesk: "Super Admin = everything — keep rare, strongest 2SV, not daily work. User Management Admin = create/suspend/reset non-admins. Help Desk Admin = password resets only. Custom role = exact privileges, scope to OU if regional. Risky app already connected → block/Limited in API controls + remove token under Connected apps. Stop new junk → Marketplace allowlist. Workspace can also be IdP for SaaS via SAML.",
+        scenario: {
+          who: "APAC help desk should reset passwords only. A random Marketplace app already has Drive OAuth. Staff keep installing new “PDF magic” add-ons.",
+          ticket: "Pick roles and app controls. Do not hand Super Admin to the help desk.",
+          constraint: "Help Desk Admin (or custom) for resets. Regional admin → role scoped to OU. Already connected → revoke + block. Future junk → Marketplace allowlist."
+        },
+        objectives: [
+          "Never gift Super Admin for a narrow job.",
+          "Separate “already connected” (revoke + block) from “stop future installs” (allowlist)."
+        ],
+        why: "Most-specific role + most-specific app control wins the exam.",
+        startRoute: "account",
+        tasks: [
+          { id: "open", doThis: "Open Account settings and read the roles / least-privilege tip.", check: function (s) { return s.ui.route === "account" || s.ui.route === "password"; } },
+          { id: "ack", ack: true, doThis: "Map: help desk → Help Desk Admin; APAC → OU-scoped role; existing OAuth → block + revoke; new junk → Marketplace allowlist." }
+        ]
+      },
+      {
+        id: "lab-seccenter", code: "LAB-M4C", minutes: 8, level: "Associate", module: "m4",
+        domain: "4.5 Security center toolkit",
+        title: "Dashboard vs Investigation vs Alert",
+        desk: "./index.html#m4-seccenter",
+        sections: ["4.5 Security center toolkit"],
+        reads: [
+          { label: "4.5 Security center", href: "./index.html#m4-seccenter" },
+          { label: "6.1 Right log", href: "./index.html#m6-logs" }
+        ],
+        fromDesk: "Quick health / gaps vs best practice → Security dashboard / health page. Investigate + remediate (delete mail, suspend, remove access) → Investigation tool. Auto-notify when X happens → activity rule + Alert center. Investigation is typically Enterprise.",
+        scenario: {
+          who: "CISO wants a security health score. Then a phishing mail must be pulled from 80 inboxes. Then Security wants a ping if anyone turns 2SV off.",
+          ticket: "Pick dashboard / Investigation tool / activity rule + Alert center. Do not use Status Dashboard (that’s “is Google down?”).",
+          constraint: "Health page ≠ Investigation. Investigation remediates. Alerts notify. Status Dashboard is Module 6 “is it just us?”"
+        },
+        objectives: [
+          "Name the three Security center jobs.",
+          "Don’t confuse Investigation with Status Dashboard or admin audit log."
+        ],
+        why: "Tool-picker stems: health vs act vs notify.",
+        startRoute: "reporting",
+        tasks: [
+          { id: "open", doThis: "Open Audit logs — this sandbox log is not the Investigation tool; remember that difference.", check: function (s) { return s.ui.route === "reporting"; } },
+          { id: "ack", ack: true, doThis: "Map: health score → Security dashboard; delete phishing from 80 inboxes → Investigation tool; ping on 2SV off → activity rule + Alert center." }
+        ]
+      },
+      {
+        id: "lab-wipe", code: "LAB-M5A", minutes: 12, level: "Associate", module: "m5",
+        domain: "5.1 MDM · account wipe vs device wipe",
+        title: "Ada’s phone is personal",
+        desk: "./index.html#m5-mdm",
+        sections: ["5.1 Mobile device management"],
+        reads: [
+          { label: "5.1 Mobile MDM", href: "./index.html#m5-mdm" }
+        ],
+        fromDesk: "Basic MDM (on by default, agentless) = screen lock + wipe corporate account. Advanced MDM = approval, stronger policies, apps, full device wipe (needs compatible edition). Third-party (Intune/Jamf) if the company already standardizes there. BYOD → account wipe. Company-owned → device wipe OK. Suspending the user also cuts mobile access immediately.",
+        scenario: {
+          who: "Ada’s phone is BYOD (photos, personal WhatsApp). Ben’s phone is company-owned. Both are leaving in an hour.",
+          ticket: "Wipe corporate data. Do not factory-reset Ada’s personal phone. Cut access immediately while you choose wipe type.",
+          constraint: "BYOD → account wipe. Company-owned → device wipe OK. Suspend cuts mobile now. Basic ≠ Advanced (full wipe / apps)."
+        },
+        objectives: [
+          "Say the wipe choice without thinking.",
+          "Basic MDM = agentless screen lock + account wipe; Advanced = full device wipe / apps."
+        ],
+        why: "Factory-resetting BYOD is the classic wrong answer.",
+        startRoute: "mobile",
+        tasks: [
+          { id: "read", doThis: "Open Mobile & Chrome and compare Ada (BYOD) vs Ben (company) recommended wipe.", check: function (s) { return s.ui.route === "mobile"; } },
+          { id: "ack", ack: true, doThis: "Mark: Ada → account wipe only; Ben → device wipe OK." }
+        ]
+      },
+      {
+        id: "lab-cbcm", code: "LAB-M5B", minutes: 8, level: "Associate", module: "m5",
+        domain: "5.2 Chrome Browser Cloud Management",
+        title: "Force-install Finance’s extension",
+        desk: "./index.html#m5-cbcm",
+        sections: ["5.2 Chrome Browser Cloud Management (CBCM)"],
+        reads: [
+          { label: "5.2 CBCM", href: "./index.html#m5-cbcm" }
+        ],
+        fromDesk: "Enroll browsers with a token; enforce updates, Safe Browsing, homepage, extensions by OU/group — same inheritance model. Finance must have extension X and can’t remove it → Force install on Finance OU/group. Stop random extensions → block all, allow approved list.",
+        scenario: {
+          who: "Finance must run extension X and cannot remove it. Everyone else must not install random extensions. IT also wants Safe Browsing and auto-updates on those browsers.",
+          ticket: "Enroll with a CBCM token, then scope policy. This is not Vault and not Meet safety.",
+          constraint: "Force install on Finance OU/group. Stop junk → block all + allowlist. Don’t org-wide Super Admin the browser."
+        },
+        objectives: [
+          "CBCM ≠ Vault and ≠ Meet safety.",
+          "Scope the force-install; don’t org-wide Super Admin the browser."
+        ],
+        why: "Extension X for Finance only → force install on that OU/group.",
+        startRoute: "endpoints",
+        tasks: [
+          { id: "open", doThis: "Open Endpoints and read the CBCM enrollment-token tip.", check: function (s) { return s.ui.route === "endpoints"; } },
+          { id: "ack", ack: true, doThis: "Mark: Finance extension X → force install on Finance OU; everyone else → block + allowlist." }
+        ]
+      },
+      {
+        id: "lab-audit", code: "LAB-M6A", minutes: 15, level: "Associate", module: "m6",
+        domain: "6.1 Right log · 6.3 Recovery windows",
+        title: "Who flipped the switch — and which clock?",
+        desk: "./index.html#m6-logs",
+        sections: ["6.1 Where to look first", "6.3 Recovery windows"],
+        reads: [
+          { label: "6.1 Where to look", href: "./index.html#m6-logs" },
+          { label: "6.3 Recovery windows", href: "./index.html#m6-recovery" }
+        ],
+        fromDesk: "Admin setting change → admin audit log. Suspicious sign-in → login audit + Investigation. File sharing → Drive log. Group membership → Groups audit. Which app got data → OAuth / Token audit. Device enrollments → Devices audit. Drive Trash 30 days then purged. Admin restore deleted Drive/Gmail ~25 days after that. Deleted user account 20 days to restore.",
+        scenario: {
+          who: "Someone turned off a Drive sharing default last night. A user emptied Trash on a deck yesterday. HR deleted a contractor 18 days ago and wants them back.",
+          ticket: "Find the admin change in the sandbox audit log. Recite the restore clocks. Know which log is NOT for “did this one email deliver?”",
+          constraint: "Admin setting → admin audit log. One message → Email Log Search (30 days) — next lab. Trash 30 · admin restore ~25 · deleted user 20."
+        },
+        objectives: [
+          "Generate at least one audit event, then read Audit logs.",
+          "Lock 20 / 25 / 30."
+        ],
+        why: "Wrong log is the #1 monitoring miss on the exam.",
+        startRoute: "ous",
+        tasks: [
+          { id: "act", doThis: "Change any OU Drive sharing toggle (or another setting) so an audit row exists.", check: function (s) { return (s.auditLog || []).length > 0; } },
+          { id: "log", doThis: "Open Audit logs and skim actor / action / target.", check: function (s) { return s.ui.route === "reporting"; } },
+          { id: "ack", ack: true, doThis: "Recite: deleted user 20 days · admin restore ~25 · Trash 30. Message path → ELS, not this admin log." }
+        ]
+      },
+      {
+        id: "lab-els", code: "LAB-M6B", minutes: 10, level: "Associate", module: "m6",
+        domain: "6.1 Status · 6.2 ELS / Toolbox / HAR · 6.4 Support",
+        title: "Is it us, or is Google down?",
+        desk: "./index.html#m6-email",
+        sections: ["6.1 Status Dashboard", "6.2 Email troubleshooting", "6.4 Reports & support"],
+        reads: [
+          { label: "6.1 Where to look", href: "./index.html#m6-logs" },
+          { label: "6.2 Email / HAR", href: "./index.html#m6-email" },
+          { label: "6.4 Reports & support", href: "./index.html#m6-reports" }
+        ],
+        fromDesk: "Is Google down for everyone? → Workspace Status Dashboard first. Did this email get delivered? → Email Log Search (last 30 days): delivered / rejected / quarantined / in transit. Headers + SPF/DKIM/DMARC → Admin Toolbox Messageheader. HAR for support: Chrome DevTools → Network → Preserve log → reproduce → Save as HAR (treat as sensitive). Escalate with repro steps + ELS/headers/HAR + Status Dashboard checked + Google Support case.",
+        scenario: {
+          who: "CEO: “Gmail is down.” One partner never got an invoice. Google Support asks for a HAR. Usage reports should show whether Meet adoption dropped.",
+          ticket: "Order the checks. Do not start with Investigation for “is Google down?” Do not use this sandbox admin log for one message’s path.",
+          constraint: "Status Dashboard first. One message → ELS (30 days). Headers → Toolbox. HAR = Network + Preserve log. Reports = trends, not a single delivery."
+        },
+        objectives: [
+          "Status Dashboard vs ELS vs Toolbox vs HAR vs Investigation.",
+          "Escalate only after Status + evidence."
+        ],
+        why: "Wrong first click on an outage or a single missing mail is an easy miss.",
+        startRoute: "reporting",
+        tasks: [
+          { id: "open", doThis: "Open Audit logs and notice it is admin activity — not Email Log Search.", check: function (s) { return s.ui.route === "reporting"; } },
+          { id: "ack", ack: true, doThis: "Map: “Gmail down” → Status Dashboard; one invoice → ELS 30 days; headers → Toolbox; Support file → HAR (sensitive); Meet adoption → usage reports." }
+        ]
+      },
+      {
+        id: "lab-strategy", code: "LAB-M7A", minutes: 12, level: "Associate", module: "m7",
+        domain: "7 · Constraints · heuristics",
+        title: "Read the constraint, pick the narrow tool",
+        desk: "./index.html#m7-strategy",
+        sections: ["Module 7 · Exam Strategy", "Decision heuristics"],
+        reads: [
+          { label: "Module 7 strategy", href: "./index.html#m7-strategy" },
+          { label: "Heuristics sheet", href: "./index.html#heuristics" }
+        ],
+        fromDesk: "~2 minutes per question; flag and move on. Multiple-select tells you how many — pick exactly that many. Read the constraint: only some users, minimise cost, managed devices, preserve data, edition limits. Pick the most specific correct tool (least privilege, narrowest scope). Beware distractors that exist but solve a different problem (safety vs quality, sync vs migration, dashboard vs investigation).",
+        scenario: {
+          who: "Five tickets land at once (same habit as multi-select + scenario stems).",
+          ticket: "(1) Only Legal may share with counsel.com. (2) Keep an ex-employee’s data cheap for Vault. (3) Drive only from managed devices. (4) On-prem AD is source of accounts. (5) Recipients mark you as spam, inbound still works.",
+          constraint: "Most specific tool: trust rules · AUL · CAA · GCDS · SPF+DKIM+DMARC. Not Super Admin, not Vault-for-everything, not 2SV-for-devices, not GCDS-for-mail."
+        },
+        objectives: [
+          "~2 minutes; flag and move on.",
+          "Multiple-select: pick exactly the stated count.",
+          "Constraint words decide the tool — open the heuristics sheet."
+        ],
+        why: "Heuristics beat menu memorization.",
+        startRoute: "labs",
+        tasks: [
+          { id: "ack", ack: true, doThis: "Map out loud: (1) trust rules (2) AUL (3) CAA (4) GCDS (5) SPF+DKIM+DMARC. Then Check my work." }
         ]
       }
     ];
@@ -1162,12 +1767,30 @@
       return LABS.find(function (l) { return l.id === id; });
     }
 
+    function labAckKey(labId, taskId) {
+      return labId + ":" + taskId;
+    }
+
+    function labAcked(s, labId, taskId) {
+      return !!(s.ui.labs && s.ui.labs.acks && s.ui.labs.acks[labAckKey(labId, taskId)]);
+    }
+
+    function markLabAck(labId, taskId) {
+      if (!state.ui.labs.acks) state.ui.labs.acks = {};
+      state.ui.labs.acks[labAckKey(labId, taskId)] = true;
+      saveState();
+      paintLabCoach();
+    }
+
     function labTasksPassed(lab) {
       if (!lab) return [];
       return lab.tasks.map(function (t) {
         var ok = false;
-        try { ok = !!t.check(state); } catch (e) { ok = false; }
-        return { id: t.id, doThis: t.doThis, ok: ok };
+        if (t.ack) ok = labAcked(state, lab.id, t.id);
+        else {
+          try { ok = !!t.check(state); } catch (e) { ok = false; }
+        }
+        return { id: t.id, doThis: t.doThis, ok: ok, ack: !!t.ack };
       });
     }
 
@@ -1220,32 +1843,44 @@
       const wrap = el("div", { className: "panel active" });
       const hero = el("div", { className: "lab-hero" });
       hero.appendChild(el("p", { className: "chip blue", text: "Associate Google Workspace Administrator" }));
-      hero.appendChild(el("h1", { text: "Practice labs" }));
-      hero.appendChild(el("p", { className: "lede", text: "Each lab is a short ticket from a fake company. Start it, do the work in this practice tenant, then Check my work. Same decisions as the exam — OUs, Vault, DLP, GCDS, offboarding — without a real Google tenant." }));
+      hero.appendChild(el("h1", { text: "Practice labs by module" }));
+      hero.appendChild(el("p", { className: "lede", text: "Every lab is a Northwind ticket mapped to a Study Desk section (0.1 Editions, 1.8 Groups, 3.4 Export…). Start it, read the quoted module fact, do the work in this practice tenant, then Check my work." }));
       const doneN = Object.keys(state.ui.labs.completed || {}).length;
-      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed on this device." }));
+      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed · every module 0–7 has scenarios that quote the desk." }));
       wrap.appendChild(hero);
 
-      const grid = el("div", { className: "lab-grid" });
-      LABS.forEach(function (lab) {
-        const done = !!(state.ui.labs.completed && state.ui.labs.completed[lab.id]);
-        const card = el("button", { type: "button", className: "lab-card" + (done ? " done" : "") });
-        card.appendChild(el("div", { className: "lab-card-meta" }, [
-          el("span", { className: "lab-id", text: lab.code }),
-          el("span", { className: "badge", text: lab.minutes + " min" }),
-          el("span", { className: "badge inherited", text: lab.level })
-        ]));
-        card.appendChild(el("h3", { text: lab.title }));
-        card.appendChild(el("p", { text: lab.brief }));
-        card.appendChild(el("div", { className: "muted", text: (done ? "Completed · " : "") + lab.domain }));
-        card.addEventListener("click", function () { startLab(lab.id); });
-        grid.appendChild(card);
+      LAB_MODULES.forEach(function (mod) {
+        const labs = LABS.filter(function (l) { return l.module === mod.id; });
+        if (!labs.length) return;
+        const h = el("h2", { className: "lab-mod-sec" });
+        h.appendChild(document.createTextNode(mod.title));
+        const a = el("a", { href: mod.href, text: "Open module →" });
+        a.target = "_blank";
+        a.rel = "noopener";
+        h.appendChild(a);
+        wrap.appendChild(h);
+        const grid = el("div", { className: "lab-grid" });
+        labs.forEach(function (lab) {
+          const done = !!(state.ui.labs.completed && state.ui.labs.completed[lab.id]);
+          const card = el("button", { type: "button", className: "lab-card" + (done ? " done" : "") });
+          card.appendChild(el("div", { className: "lab-card-meta" }, [
+            el("span", { className: "lab-id", text: lab.code }),
+            el("span", { className: "badge", text: lab.minutes + " min" }),
+            el("span", { className: "badge inherited", text: lab.domain })
+          ]));
+          card.appendChild(el("h3", { text: lab.title }));
+          card.appendChild(el("div", { className: "lab-sec", text: (lab.sections || []).join(" · ") }));
+          card.appendChild(el("p", { text: lab.scenario ? lab.scenario.ticket : "" }));
+          card.appendChild(el("div", { className: "muted", text: (done ? "Completed · " : "") + (lab.scenario ? lab.scenario.constraint : "") }));
+          card.addEventListener("click", function () { startLab(lab.id); });
+          grid.appendChild(card);
+        });
+        wrap.appendChild(grid);
       });
-      wrap.appendChild(grid);
 
       const tour = el("div", { className: "card" });
       tour.appendChild(el("h2", { text: "Prefer a linear tour?" }));
-      tour.appendChild(el("p", { className: "muted", text: "Guided tour walks modules 0–7 in order. Labs are better when you want exam-style tickets." }));
+      tour.appendChild(el("p", { className: "muted", text: "Guided tour walks modules 0–7 in order. Labs are the exam-style tickets tied to each module." }));
       tour.appendChild(el("button", { type: "button", className: "btn", text: "Start guided tour", onclick: function () {
         state.ui.walkthrough.active = true;
         state.ui.walkthrough.minimized = false;
@@ -2338,7 +2973,49 @@
       coach.appendChild(el("h2", { text: "Lab brief" }));
       coach.appendChild(el("div", { className: "lab-id", text: lab.code + " · " + lab.minutes + " min · " + lab.domain }));
       coach.appendChild(el("div", { className: "coach-title", text: lab.title }));
-      coach.appendChild(el("p", { className: "coach-body", text: lab.brief }));
+      if (lab.desk) {
+        const link = el("a", { href: lab.desk, text: "Jump to this section on the Study Desk →" });
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.style.display = "inline-block";
+        link.style.margin = ".15rem 0 .45rem";
+        link.style.fontSize = ".82rem";
+        coach.appendChild(link);
+      }
+      if (lab.reads && lab.reads.length) {
+        const reads = el("div", { className: "lab-reads" });
+        lab.reads.forEach(function (r) {
+          const a = el("a", { href: r.href, text: r.label });
+          a.target = "_blank";
+          a.rel = "noopener";
+          reads.appendChild(a);
+        });
+        coach.appendChild(reads);
+      }
+      if (lab.fromDesk) {
+        const quote = el("div", { className: "lab-from-desk" });
+        quote.appendChild(el("em", { text: "From the Study Desk" }));
+        quote.appendChild(document.createTextNode(lab.fromDesk));
+        coach.appendChild(quote);
+      }
+      if (lab.scenario) {
+        const sc = el("div", { className: "lab-scenario" });
+        sc.appendChild(el("strong", { text: "Scenario · Who" }));
+        sc.appendChild(document.createTextNode(lab.scenario.who));
+        sc.appendChild(el("strong", { text: "Ticket" }));
+        sc.appendChild(document.createTextNode(lab.scenario.ticket));
+        sc.appendChild(el("strong", { text: "Constraint (exam)" }));
+        sc.appendChild(document.createTextNode(lab.scenario.constraint));
+        coach.appendChild(sc);
+      }
+      if (lab.objectives && lab.objectives.length) {
+        const ul = el("ul", { className: "lab-obj" });
+        lab.objectives.forEach(function (o) { ul.appendChild(el("li", { text: o })); });
+        coach.appendChild(ul);
+      }
+      if (lab.sections && lab.sections.length) {
+        coach.appendChild(el("p", { className: "coach-meta", text: "Covers: " + lab.sections.join(" · ") }));
+      }
       const bar = el("div", { className: "coach-progress" });
       const fill = document.createElement("i");
       fill.style.width = Math.round((passN / Math.max(1, results.length)) * 100) + "%";
@@ -2348,7 +3025,17 @@
       results.forEach(function (r) {
         const row = el("div", { className: "lab-task " + (r.ok ? "pass" : "fail") });
         row.appendChild(el("span", { className: "mark" }));
-        row.appendChild(el("div", { text: r.doThis }));
+        const body = el("div", { className: "lab-task-body" });
+        body.appendChild(document.createTextNode(r.doThis));
+        if (r.ack && !r.ok) {
+          body.appendChild(el("button", {
+            type: "button",
+            className: "btn",
+            text: "I mapped this to the module",
+            onclick: function () { markLabAck(lab.id, r.id); }
+          }));
+        }
+        row.appendChild(body);
         coach.appendChild(row);
       });
       const actions = el("div", { className: "coach-actions" });
@@ -2367,7 +3054,7 @@
       } }));
       actions.appendChild(el("button", { type: "button", className: "btn ghost", text: "End lab", onclick: function () { endLab(); } }));
       coach.appendChild(actions);
-      coach.appendChild(el("p", { className: "coach-why", text: "Exam habit: read the constraint, pick the narrowest correct tool, then act in the tenant." }));
+      coach.appendChild(el("p", { className: "coach-why", text: lab.why || "Exam habit: read the constraint, pick the narrowest correct tool, then act in the tenant." }));
     }
 
     function paintCoach() {

@@ -242,6 +242,7 @@
     }
     .goal { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
     h3 { font-size: 1.05rem; margin: 1.35rem 0 .55rem; }
+    .module h2[id], .module h3[id], .module h4[id] { scroll-margin-top: 4.75rem; }
     h4 { font-size: .92rem; margin: 1rem 0 .4rem; color: #2a3d36; }
     p { margin: .45rem 0 .7rem; }
     ul, ol { margin: .35rem 0 .85rem; padding-left: 1.2rem; }
@@ -1169,10 +1170,10 @@
         <div class="path-grid">
           <button type="button" class="path-card" id="pathSandbox" data-path="sandbox">
             <h3>1 · Lab mode</h3>
-            <p>Run Associate-level labs in a practice tenant, then take the exam drill.</p>
+            <p>Run Associate-level labs — each ticket quotes a Study Desk section, then do the work in a practice tenant.</p>
             <ol>
-              <li>Open Admin labs</li>
-              <li>Start a ticket (OU, Vault, DLP, offboarding…)</li>
+              <li>Open Admin labs (grouped by module 0–7)</li>
+              <li>Start a scenario (edition, GCDS, Vault, CAA…)</li>
               <li>Take Practice / Mock</li>
             </ol>
           </button>
@@ -1389,7 +1390,7 @@
           The Admin console (<code>admin.google.com</code>) is your control room.
         </div>
 
-        <h3>0.1 Editions (plans)</h3>
+        <h3 id="m0-editions">0.1 Editions (plans)</h3>
         <p>Editions differ by storage, security, and compliance features. Exam loves to ask: “Can this edition even do that?”</p>
         <table>
           <thead><tr><th>Edition</th><th>Best for</th><th>Remember</th></tr></thead>
@@ -1427,14 +1428,14 @@
           If a question mentions DLP, context-aware access, data regions, or the investigation tool — first check whether the stated edition includes it. The “correct” action may be unavailable on Business Starter.
         </div>
 
-        <h3>Storage is pooled</h3>
+        <h3 id="m0-storage">Storage is pooled</h3>
         <div class="plain">
           <strong>Analogy</strong><br />
           Imagine one big company water tank. Every license adds water to the tank. Anyone can drink from it until the tank is empty (or you set per-person limits).
           Low storage? Add licenses, set quotas, or free space — not “upgrade one mailbox.”
         </div>
 
-        <h3>0.2 Admin console map</h3>
+        <h3 id="m0-console">0.2 Admin console map</h3>
         <div class="grid-2">
           <div class="card">
             <h4>Directory</h4>
@@ -1458,7 +1459,7 @@
           Use the top search bar (“DKIM”, “retention”, “2SV”). Away from computer? Google Admin mobile app can suspend users, reset passwords, view alerts.
         </div>
 
-        <h3>0.3 The #1 mental model: Org → OUs → Users (+ Groups on top)</h3>
+        <h3 id="m0-ou-group">0.3 The #1 mental model: Org → OUs → Users (+ Groups on top)</h3>
         <div class="plain">
           <strong>In plain English</strong><br />
           <em>Organizational Units (OUs)</em> = folders in a company tree. Every person sits in <strong>exactly one</strong> folder.<br />
@@ -1480,7 +1481,7 @@
           If OU + group policies conflict → <strong>group usually wins</strong> (most specific group wins when several apply).
         </div>
 
-        <h3>0.4 How a setting reaches a user</h3>
+        <h3 id="m0-effective">0.4 How a setting reaches a user</h3>
         <ol class="steps">
           <li>Service must be On (org / OU / group).</li>
           <li>Start from org default → apply user’s OU (inheritance) → apply group overrides.</li>
@@ -1503,7 +1504,7 @@
           The exam hammers <em>what happens to data and licenses</em> at each step.
         </div>
 
-        <h3>1.1 User life cycle (memorize this)</h3>
+        <h3 id="m1-lifecycle">1.1 User life cycle (memorize this)</h3>
         <table>
           <thead><tr><th>State</th><th>Can sign in?</th><th>Data &amp; license</th></tr></thead>
           <tbody>
@@ -1514,7 +1515,7 @@
           </tbody>
         </table>
 
-        <h4>Clean off-boarding order</h4>
+        <h4 id="m1-offboard">Clean off-boarding order</h4>
         <ol class="steps">
           <li><strong>Suspend</strong> immediately — cuts access, destroys nothing.</li>
           <li>Reset password / sign out sessions (Session Control).</li>
@@ -1530,7 +1531,7 @@
           Deleting before transferring Drive ownership = classic data-loss mistake. Shared Drive files belong to the team — no transfer needed.
         </div>
 
-        <h3>1.2 Creating users &amp; provisioning tools</h3>
+        <h3 id="m1-provision">1.2 Creating users &amp; provisioning tools</h3>
         <p>Small batches: manual or CSV. Ongoing / large: sync or SCIM. Match the tool to the source of truth.</p>
         <table>
           <thead><tr><th>Method</th><th>When</th><th>Notes</th></tr></thead>
@@ -1547,29 +1548,29 @@
           Sync tools move <em>identities</em>. Migration tools (DMS) move <em>content</em> (email/files). Don’t mix them up.
         </div>
 
-        <h3>1.2b SSO (SAML)</h3>
+        <h3 id="m1-sso">1.2b SSO (SAML)</h3>
         <div class="plain">
           <strong>Analogy</strong><br />
           The Identity Provider (Okta/Entra) is the nightclub bouncer with the guest list. Google trusts the bouncer’s stamp (SAML assertion) and lets the person in.
           Keep a <strong>break-glass Super Admin</strong> that bypasses SSO so you’re never locked out if the IdP dies.
         </div>
 
-        <h3>1.3 Aliases, rename, OU moves</h3>
+        <h3 id="m1-aliases">1.3 Aliases, rename, OU moves</h3>
         <ul>
           <li><strong>Email alias</strong> = extra address → same mailbox. No extra license.</li>
           <li><strong>Rename primary email</strong> keeps old address as alias so mail still flows.</li>
           <li>Separate mailbox = separate user + license.</li>
         </ul>
 
-        <h3>1.5–1.6 Licenses &amp; passwords</h3>
+        <h3 id="m1-licenses">1.5–1.6 Licenses &amp; passwords</h3>
         <p>Licenses can be automatic (everyone gets a seat) or manual (per user/OU/group). Can’t reach a paid service? Check license first.
         Password rules live under Security → Authentication → Password management.</p>
 
-        <h3>1.7 OU design</h3>
+        <h3 id="m1-ou-design">1.7 OU design</h3>
         <p>Design OUs for <em>how policies differ</em>, not the org chart. Fewer purpose-built OUs beat deep confusing trees.
         Common pattern: Standard staff · High-security · Shared/Kiosk · Contractors + groups for exceptions.</p>
 
-        <h3>1.8 Groups</h3>
+        <h3 id="m1-groups">1.8 Groups</h3>
         <table>
           <thead><tr><th>Type</th><th>What it’s for</th></tr></thead>
           <tbody>
@@ -1581,7 +1582,7 @@
         </table>
         <p>Also control: who can join, post, view members, and whether outsiders can post.</p>
 
-        <h3>1.9 Domains</h3>
+        <h3 id="m1-domains">1.9 Domains</h3>
         <table>
           <thead><tr><th>Type</th><th>Meaning</th></tr></thead>
           <tbody>
@@ -1592,7 +1593,7 @@
         </table>
         <p>Verify ownership with TXT (or CNAME / HTML / meta / MX), then add MX for mail.</p>
 
-        <h3>1.10 Buildings &amp; resources</h3>
+        <h3 id="m1-buildings">1.10 Buildings &amp; resources</h3>
         <p>Rooms/equipment under Directory → Buildings and resources. Become bookable calendars.
         “Add 200 rooms across 10 sites” → <strong>CSV bulk upload</strong>, not one-by-one.</p>
 
@@ -1606,7 +1607,7 @@
         <h2>Module 2 · Core Workspace Services <span class="pct">~23%</span></h2>
         <p class="goal">Goal: configure Gmail, Drive, Calendar, Meet, Chat, Gemini — and know where each toggle lives.</p>
 
-        <h3>2.1 Gmail</h3>
+        <h3 id="m2-gmail">2.1 Gmail</h3>
         <div class="plain">
           <strong>In plain English</strong><br />
           <strong>MX records</strong> tell the internet “deliver our mail to Google.” That’s inbound routing only.
@@ -1626,7 +1627,7 @@
           Outbound mail lands in spam → finish SPF + DKIM + DMARC. Start DMARC at <code>p=none</code> (monitor), then tighten.
         </div>
 
-        <h4>Routing &amp; compliance</h4>
+        <h4 id="m2-routing">Routing &amp; compliance</h4>
         <ul>
           <li>Content / attachment compliance — match words/patterns/types → quarantine, reject, modify, BCC, footer.</li>
           <li>Dual / split delivery — copy to another system or split Google vs legacy during migration.</li>
@@ -1636,11 +1637,11 @@
           <li>Delegation — assistant reads/sends on someone’s behalf.</li>
         </ul>
 
-        <h4>Migration</h4>
+        <h4 id="m2-migration">Migration</h4>
         <p><strong>Data Migration Service (DMS)</strong> moves email/calendar/contacts from Exchange/M365, IMAP, or another Workspace.
         Migration = content. Sync = identities.</p>
 
-        <h3>2.2 Drive &amp; Docs</h3>
+        <h3 id="m2-drive">2.2 Drive &amp; Docs</h3>
         <div class="grid-2">
           <div class="card">
             <h4>My Drive</h4>
@@ -1667,32 +1668,32 @@
           <li>Pooled storage + per-OU quotas.</li>
         </ul>
 
-        <h3>2.3 Calendar</h3>
+        <h3 id="m2-calendar">2.3 Calendar</h3>
         <ul>
           <li>Internal/external sharing defaults; block invite spam from unknowns.</li>
           <li>Resource calendars from Buildings &amp; resources + booking rules/delegates.</li>
           <li>Calendar delegation for assistants; transfer event ownership when organizer leaves.</li>
         </ul>
 
-        <h3>2.4 Meet</h3>
+        <h3 id="m2-meet">2.4 Meet</h3>
         <div class="exam">
           <strong>Exam tip</strong><br />
           Unwanted guests / join problems → <strong>Meet safety</strong> (host controls, knocking, org-only).<br />
           Bad audio/video → <strong>Meet quality tool</strong> (Module 6), not safety.
         </div>
 
-        <h3>2.5 Chat</h3>
+        <h3 id="m2-chat">2.5 Chat</h3>
         <p>History on/off matters: if history was off, Vault can’t retain what never existed.
         Control spaces, external chat, moderation, approved bots.</p>
 
-        <h3>2.6 Gemini</h3>
+        <h3 id="m2-gemini">2.6 Gemini</h3>
         <ul>
           <li>Org prompts/content are <strong>not</strong> used to train Google’s foundation models.</li>
           <li>Enable per OU; pilot with a group first.</li>
           <li>Extensions let Gemini act across Gmail/Drive; use usage reports for adoption.</li>
         </ul>
 
-        <h3>2.7 AppSheet vs Apps Script</h3>
+        <h3 id="m2-appsheet">2.7 AppSheet vs Apps Script</h3>
         <p>No-code app from Sheets/Drive → <strong>AppSheet</strong>. Custom JavaScript glue → <strong>Apps Script</strong>.</p>
 
         <div class="check-row"><label><input type="checkbox" data-check="m2a" /> I can explain SPF / DKIM / DMARC in one sentence each.</label></div>
@@ -1705,7 +1706,7 @@
         <h2>Module 3 · Data Governance &amp; Compliance <span class="pct">~15%</span></h2>
         <p class="goal">Goal: retain, protect, classify, and export data — and know which tool does which job.</p>
 
-        <h3>3.1 Google Vault</h3>
+        <h3 id="m3-vault">3.1 Google Vault</h3>
         <div class="plain">
           <strong>In plain English</strong><br />
           Vault is the company’s legal filing cabinet for Gmail, Drive, Chat, Meet recordings, Groups.
@@ -1725,7 +1726,7 @@
           4) Chat/Meet only retainable if history/recording was on when created.
         </div>
 
-        <h3>3.2 DLP (Data Loss Prevention)</h3>
+        <h3 id="m3-dlp">3.2 DLP (Data Loss Prevention)</h3>
         <div class="plain">
           <strong>Analogy</strong><br />
           DLP is a security guard reading documents as they leave the building. Sees a credit card number? Blocks, warns, or logs it.
@@ -1733,11 +1734,11 @@
         <p>Detectors (credit card, SSN, custom regex/word lists) + actions (block / warn / audit) + scope (OU/group).
         Drive DLP on share; Gmail on outbound; Chat on messages/uploads. Advanced Drive/Chat DLP = Enterprise.</p>
 
-        <h3>3.3 Drive trust rules</h3>
+        <h3 id="m3-trust">3.3 Drive trust rules</h3>
         <p>Granular sharing control: OU ↔ OU, group, domain, user; external + visitors.
         Answer for “Legal may share with outside counsel’s domain, but nobody else may share externally.”</p>
 
-        <h3>3.4 Export &amp; residency</h3>
+        <h3 id="m3-export">3.4 Export &amp; residency</h3>
         <table>
           <thead><tr><th>Tool</th><th>Use when</th></tr></thead>
           <tbody>
@@ -1748,7 +1749,7 @@
           </tbody>
         </table>
 
-        <h3>3.5 Labels</h3>
+        <h3 id="m3-labels">3.5 Labels</h3>
         <p>Tags like Public / Internal / Confidential. User-applied, default, DLP-driven, or AI classification.
         Labels bridge classification → enforcement: label “Confidential” then DLP/trust rules act on it.</p>
 
@@ -1761,7 +1762,7 @@
         <h2>Module 4 · Security Policies &amp; Access <span class="pct">~20%</span></h2>
         <p class="goal">Goal: protect sign-in, delegate admin power safely, watch threats, control which apps touch data.</p>
 
-        <h3>4.1 Passwords &amp; 2-Step Verification (2SV)</h3>
+        <h3 id="m4-2sv">4.1 Passwords &amp; 2-Step Verification (2SV)</h3>
         <div class="plain">
           <strong>In plain English</strong><br />
           Password = something you know. 2SV = second proof (phone prompt, authenticator, security key).
@@ -1781,7 +1782,7 @@
           Enforce 2SV with zero enrollment window → lock people out. Always pilot + grace period. Protect Super Admins hard; keep break-glass account.
         </div>
 
-        <h3>4.2 Context-Aware Access (CAA)</h3>
+        <h3 id="m4-caa">4.2 Context-Aware Access (CAA)</h3>
         <div class="exam">
           <strong>Exam tip</strong><br />
           <strong>2SV</strong> proves <em>who</em> you are.<br />
@@ -1789,7 +1790,7 @@
           Words like device state / network / geography → CAA (often Enterprise).
         </div>
 
-        <h3>4.3 Admin roles — least privilege</h3>
+        <h3 id="m4-roles">4.3 Admin roles — least privilege</h3>
         <table>
           <thead><tr><th>Role</th><th>Can do</th></tr></thead>
           <tbody>
@@ -1805,10 +1806,10 @@
           Help desk resets passwords only → Help Desk Admin (or custom). Regional admin → role scoped to that OU. Never gift Super Admin for a narrow need.
         </div>
 
-        <h3>4.4 Session control</h3>
+        <h3 id="m4-session">4.4 Session control</h3>
         <p>How long web sessions last before re-login. Shorter for sensitive groups. Complements 2SV + CAA.</p>
 
-        <h3>4.5 Security center toolkit</h3>
+        <h3 id="m4-seccenter">4.5 Security center toolkit</h3>
         <table>
           <thead><tr><th>Need</th><th>Tool</th></tr></thead>
           <tbody>
@@ -1818,7 +1819,7 @@
           </tbody>
         </table>
 
-        <h3>4.6 Apps, Marketplace, API access</h3>
+        <h3 id="m4-api">4.6 Apps, Marketplace, API access</h3>
         <ul>
           <li>Marketplace allowlist — only approved apps.</li>
           <li>API controls (OAuth) — Trusted / Limited / Blocked; restrict Gmail/Drive scopes.</li>
@@ -1840,7 +1841,7 @@
         <h2>Module 5 · Browsers &amp; Endpoints <span class="pct">~10%</span></h2>
         <p class="goal">Goal: keep company data safe on phones, laptops, browsers — and off-board cleanly.</p>
 
-        <h3>5.1 Mobile device management</h3>
+        <h3 id="m5-mdm">5.1 Mobile device management</h3>
         <table>
           <thead><tr><th>Approach</th><th>What you get</th></tr></thead>
           <tbody>
@@ -1856,7 +1857,7 @@
           Suspending the user also cuts mobile access immediately.
         </div>
 
-        <h3>5.2 Chrome Browser Cloud Management (CBCM)</h3>
+        <h3 id="m5-cbcm">5.2 Chrome Browser Cloud Management (CBCM)</h3>
         <p>Enroll browsers with a token; enforce updates, Safe Browsing, homepage, extensions by OU/group — same inheritance model.</p>
         <div class="exam">
           <strong>Exam tip</strong><br />
@@ -1872,7 +1873,7 @@
         <h2>Module 6 · Monitoring &amp; Troubleshooting <span class="pct">~13%</span></h2>
         <p class="goal">Goal: find the right log fast, recover data, escalate cleanly.</p>
 
-        <h3>6.1 Where to look first</h3>
+        <h3 id="m6-logs">6.1 Where to look first</h3>
         <table>
           <thead><tr><th>Question</th><th>Go to</th></tr></thead>
           <tbody>
@@ -1887,12 +1888,12 @@
           </tbody>
         </table>
 
-        <h3>6.2 Email troubleshooting</h3>
+        <h3 id="m6-email">6.2 Email troubleshooting</h3>
         <p>Email Log Search for delivery path (delivered / rejected / quarantined / in transit).
         Headers + SPF/DKIM/DMARC → Google Admin Toolbox (<code>toolbox.googleapps.com</code>) Messageheader tool.
         HAR file for support: Chrome DevTools → Network → Preserve log → reproduce → Save as HAR. Treat as sensitive.</p>
 
-        <h3>6.3 Recovery windows (memorize)</h3>
+        <h3 id="m6-recovery">6.3 Recovery windows (memorize)</h3>
         <table>
           <thead><tr><th>Thing</th><th>Window</th></tr></thead>
           <tbody>
@@ -1902,7 +1903,7 @@
           </tbody>
         </table>
 
-        <h3>6.4 Reports &amp; support</h3>
+        <h3 id="m6-reports">6.4 Reports &amp; support</h3>
         <p>Reporting → usage, storage, account/device activity for trends.
         Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Google Support case.</p>
 
@@ -1912,7 +1913,7 @@
 
       <!-- MODULE 7 -->
       <section class="module" id="m7" data-desk-page="module" data-search="exam strategy pacing multiple select scenario distractors">
-        <h2>Module 7 · Exam Strategy</h2>
+        <h2 id="m7-strategy">Module 7 · Exam Strategy</h2>
         <ul>
           <li>~2 minutes per question; flag and move on; review flagged at end.</li>
           <li>Multiple-select tells you how many — pick exactly that many.</li>
@@ -2208,6 +2209,16 @@
       function deskFromHash(skipHash) {
         const id = (location.hash || "#overview").slice(1);
         if (MODULE_IDS.includes(id)) return showDesk("module", { moduleId: id, skipHash: !!skipHash });
+        const subMod = MODULE_IDS.find((m) => id.startsWith(m + "-"));
+        if (subMod) {
+          showDesk("module", { moduleId: subMod, skipHash: true });
+          setDeskNavActive("#" + subMod);
+          requestAnimationFrame(() => {
+            const target = document.getElementById(id);
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          return;
+        }
         if (PRACTICE_IDS.has(id)) return showDesk("practice", { skipHash: !!skipHash });
         if (REF_IDS.includes(id)) return showDesk("reference", { refId: id, skipHash: !!skipHash });
         if (id === "studySession" || id === "how-to-study") return showDesk("home", { skipHash: !!skipHash });
