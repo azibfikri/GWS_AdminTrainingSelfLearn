@@ -478,6 +478,19 @@
     .pin-btn { border: 0; background: 0; color: #80868b; cursor: pointer; margin-left: auto; font-size: .85rem; padding: 0 .25rem; }
     .pin-btn:hover, .pin-btn.on { color: #1a73e8; }
     .nav-pinned { margin: .15rem 0 .35rem; }
+    .g-switch {
+      flex: 0 0 36px; width: 36px; height: 20px; border-radius: 99px; background: #dadce0;
+      position: relative; margin-top: .15rem;
+    }
+    .g-switch::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(60,64,67,.3);
+    }
+    .g-switch.on { background: #1a73e8; }
+    .g-switch.on::after { left: 18px; }
+    .settings-row select, .settings-row input[type="text"], .settings-row input[type="date"], .settings-row input[type="number"], .settings-row input[type="search"] {
+      margin-top: .45rem; max-width: 320px; padding: .4rem .55rem; border: 1px solid #dadce0; border-radius: 4px;
+    }
     @media (max-width: 900px) {
       .users-layout, .settings-split { grid-template-columns: 1fr; }
       .admin-search-wrap { max-width: none; }
@@ -549,6 +562,7 @@
 
   <script src="./config.js"></script>
   <script src="./data/gws-auth.js"></script>
+  <script src="./data/gws-admin-features.js"></script>
   <script>
     const simStore = window.gwsStorage || {
       getItem(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -566,22 +580,31 @@
       { sec: "Directory", id: "users", label: "Users", crumb: ["Directory", "Users"] },
       { sec: "Directory", id: "groups", label: "Groups", crumb: ["Directory", "Groups"] },
       { sec: "Directory", id: "ous", label: "Organizational units", crumb: ["Directory", "Organizational units"] },
-      { sec: "Directory", id: "buildings", label: "Buildings and resources", stub: true, tip: "Rooms become bookable calendars. 200 rooms → CSV bulk upload.", href: "./index.html#m1-buildings", crumb: ["Directory", "Buildings and resources"] },
+      { sec: "Directory", id: "buildings", label: "Buildings and resources", crumb: ["Directory", "Buildings and resources"] },
       { sec: "Apps", id: "gmail", label: "Gmail", crumb: ["Apps", "Google Workspace", "Gmail"] },
       { sec: "Apps", id: "drive", label: "Drive and Docs", crumb: ["Apps", "Google Workspace", "Drive and Docs"] },
-      { sec: "Apps", id: "calendar", label: "Calendar", stub: true, tip: "Resource calendars come from Buildings & resources.", href: "./index.html#m2-calendar", crumb: ["Apps", "Google Workspace", "Calendar"] },
-      { sec: "Apps", id: "meet", label: "Google Meet", stub: true, tip: "Unwanted guests → Meet safety. Bad A/V → Meet quality tool.", href: "./index.html#m2-meet", crumb: ["Apps", "Google Workspace", "Google Meet"] },
-      { sec: "Security", id: "access", label: "Access and data control", stub: true, tip: "2SV proves who; Context-Aware Access checks device/network/geo (often Enterprise).", href: "./index.html#m4-caa", crumb: ["Security", "Access and data control"] },
+      { sec: "Apps", id: "calendar", label: "Calendar", crumb: ["Apps", "Google Workspace", "Calendar"] },
+      { sec: "Apps", id: "meet", label: "Google Meet", crumb: ["Apps", "Google Workspace", "Google Meet"] },
+      { sec: "Apps", id: "chat", label: "Google Chat", crumb: ["Apps", "Google Workspace", "Google Chat"] },
+      { sec: "Apps", id: "gemini", label: "Gemini", crumb: ["Apps", "Google Workspace", "Gemini"] },
+      { sec: "Security", id: "access", label: "Access and data control", crumb: ["Security", "Access and data control"] },
       { sec: "Security", id: "dlp", label: "Data protection", crumb: ["Security", "Access and data control", "Data protection"] },
-      { sec: "Security", id: "password", label: "Password management", stub: true, tip: "Length, reuse, strength; reset from the user page.", href: "./index.html#m4-2sv", crumb: ["Security", "Authentication", "Password management"] },
-      { sec: "Devices", id: "endpoints", label: "Chrome browsers", stub: true, tip: "Chrome Browser Cloud Management enrolls with a token.", href: "./index.html#m5-cbcm", crumb: ["Devices", "Chrome", "Browsers"] },
+      { sec: "Security", id: "trust", label: "Trust rules", crumb: ["Security", "Access and data control", "Trust rules"] },
+      { sec: "Security", id: "labels", label: "Labels", crumb: ["Security", "Access and data control", "Labels"] },
+      { sec: "Security", id: "password", label: "Password management", crumb: ["Security", "Authentication", "Password management"] },
+      { sec: "Security", id: "sso", label: "SSO with third-party IdP", crumb: ["Security", "Authentication", "SSO with third-party IdP"] },
+      { sec: "Security", id: "marketplace", label: "API controls", crumb: ["Security", "Access and data control", "API controls"] },
+      { sec: "Devices", id: "endpoints", label: "Chrome browsers", crumb: ["Devices", "Chrome", "Browsers"] },
       { sec: "Devices", id: "mobile", label: "Mobile & endpoints", crumb: ["Devices", "Mobile & endpoints"] },
-      { sec: "Reporting", id: "reporting", label: "Audit and investigation", crumb: ["Reporting", "Audit and investigation"] },
-      { sec: "Billing", id: "billing", label: "Subscriptions", stub: true, tip: "Licenses can be automatic or manual. Missing Drive is often a missing license.", href: "./index.html#m1-licenses", crumb: ["Billing", "Subscriptions"] },
-      { sec: "Account", id: "account", label: "Account settings", stub: true, tip: "Company profile, admin roles, data regions (Enterprise).", href: "./index.html#m0-console", crumb: ["Account", "Account settings"] },
+      { sec: "Reporting", id: "reporting", label: "Reporting", crumb: ["Reporting", "Reporting"] },
+      { sec: "Reporting", id: "investigation", label: "Investigation tool", crumb: ["Security", "Security center", "Investigation tool"] },
+      { sec: "Billing", id: "billing", label: "Subscriptions", crumb: ["Billing", "Subscriptions"] },
+      { sec: "Account", id: "account", label: "Account settings", crumb: ["Account", "Account settings"] },
+      { sec: "Account", id: "roles", label: "Admin roles", crumb: ["Account", "Admin roles"] },
       { sec: "Account", id: "domains", label: "Domains", crumb: ["Account", "Domains", "Manage domains"] },
       { sec: "Account", id: "storage", label: "Storage", crumb: ["Account", "Account settings", "Storage"] },
-      { sec: "Reporting", id: "alerts", label: "Alert center", stub: true, tip: "Activity rules + Alert center notify. Investigation remediates.", href: "./index.html#m4-seccenter", crumb: ["Reporting", "Alert center"] },
+      { sec: "Reporting", id: "alerts", label: "Alert center", crumb: ["Reporting", "Alert center"] },
+      { sec: "Labs", id: "strategy", label: "Constraint picker", crumb: ["Labs", "Constraint picker"] },
       { sec: "Labs", id: "labs", label: "Lab catalog", crumb: ["Labs"] },
       { sec: "Labs", id: "scenarios", label: "Scenario hub", crumb: ["Labs", "Scenario hub"] },
       { sec: "Labs", id: "gcds", label: "Directory Sync / GCDS", crumb: ["Labs", "GCDS dry-run"] },
@@ -592,13 +615,13 @@
     const NAV_TREE = [
       { id: "home", label: "Home", icon: "home" },
       { id: "dir", label: "Directory", icon: "dir", kids: ["users", "groups", "ous", "buildings"] },
-      { id: "apps", label: "Apps", icon: "apps", kids: ["gmail", "drive", "calendar", "meet"] },
-      { id: "sec", label: "Security", icon: "sec", kids: ["access", "dlp", "password"] },
+      { id: "apps", label: "Apps", icon: "apps", kids: ["gmail", "drive", "calendar", "meet", "chat", "gemini"] },
+      { id: "sec", label: "Security", icon: "sec", kids: ["access", "password", "sso", "dlp", "trust", "labels", "marketplace"] },
       { id: "dev", label: "Devices", icon: "dev", kids: ["mobile", "endpoints"] },
-      { id: "rep", label: "Reporting", icon: "rep", kids: ["reporting", "alerts"] },
+      { id: "rep", label: "Reporting", icon: "rep", kids: ["reporting", "alerts", "investigation"] },
       { id: "bill", label: "Billing", icon: "bill", kids: ["billing"] },
-      { id: "acct", label: "Account", icon: "acct", kids: ["account", "domains", "storage"] },
-      { id: "labsgrp", label: "Labs", icon: "labs", kids: ["labs", "scenarios", "gcds", "vault", "offboard"] }
+      { id: "acct", label: "Account", icon: "acct", kids: ["account", "roles", "domains", "storage"] },
+      { id: "labsgrp", label: "Labs", icon: "labs", kids: ["labs", "scenarios", "gcds", "vault", "offboard", "strategy"] }
     ];
 
     const SEARCH_ALIASES = [
@@ -621,8 +644,24 @@
       { q: "storage", id: "storage", kind: "Settings", label: "Storage" },
       { q: "ou", id: "ous", kind: "Settings", label: "Organizational units" },
       { q: "group", id: "groups", kind: "Settings", label: "Groups" },
-      { q: "els", id: "reporting", kind: "Features", label: "Email Log Search / audit logs" },
-      { q: "audit", id: "reporting", kind: "Features", label: "Admin audit log" }
+      { q: "els", id: "reporting", kind: "Features", label: "Email Log Search" },
+      { q: "audit", id: "reporting", kind: "Features", label: "Admin audit log" },
+      { q: "sso", id: "sso", kind: "Settings", label: "SSO with third-party IdP" },
+      { q: "saml", id: "sso", kind: "Settings", label: "SAML SSO" },
+      { q: "scim", id: "sso", kind: "Settings", label: "SCIM provisioning" },
+      { q: "marketplace", id: "marketplace", kind: "Settings", label: "Marketplace allowlist" },
+      { q: "oauth", id: "marketplace", kind: "Settings", label: "API controls / connected apps" },
+      { q: "gemini", id: "gemini", kind: "Settings", label: "Gemini" },
+      { q: "appsheet", id: "gemini", kind: "Settings", label: "AppSheet vs Apps Script" },
+      { q: "trust", id: "trust", kind: "Settings", label: "Trust rules" },
+      { q: "label", id: "labels", kind: "Settings", label: "Labels" },
+      { q: "takeout", id: "account", kind: "Settings", label: "Takeout / Data Export / data regions" },
+      { q: "investigation", id: "investigation", kind: "Features", label: "Investigation tool" },
+      { q: "alert", id: "alerts", kind: "Features", label: "Alert center" },
+      { q: "status", id: "reporting", kind: "Features", label: "Workspace Status Dashboard" },
+      { q: "meet safety", id: "meet", kind: "Settings", label: "Meet safety" },
+      { q: "delegation", id: "gmail", kind: "Settings", label: "Gmail delegation" },
+      { q: "role", id: "roles", kind: "Settings", label: "Admin roles" }
     ];
 
     function uid(prefix) {
@@ -698,6 +737,7 @@
         gcdsLastDryRun: { at: null, lines: [] },
         auditLog: [],
         offboard: { userId: null, step: 0, wipeChoice: null },
+        admin: (window.GwsAdminFeatures && window.GwsAdminFeatures.defaults()) || {},
         ui: { route: "home", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", navOpen: { dir: true, labsgrp: true }, pinned: ["users", "gmail"], walkthrough: defaultWalkthrough(), labs: defaultLabs() }
       };
     }
@@ -744,6 +784,7 @@
       }
     }
 
+    let AF = null;
     let state = loadState();
     if (!state.ui) state.ui = { route: "ous", selectedOuId: "ou_root", selectedUserId: "u_ada" };
     if (!state.ui.walkthrough) state.ui.walkthrough = defaultWalkthrough();
@@ -757,6 +798,7 @@
     if (!state.ui.gmailTab) state.ui.gmailTab = "setup";
     if (!state.ui.navOpen) state.ui.navOpen = { dir: true, labsgrp: true };
     if (!state.ui.pinned) state.ui.pinned = ["users", "gmail"];
+    if (window.GwsAdminFeatures) window.GwsAdminFeatures.ensure(state);
     if (state.ui.navCollapsed == null) state.ui.navCollapsed = false;
     if (!state.ui.userQuery) state.ui.userQuery = "";
     if (!state.ui.searchChip) state.ui.searchChip = "all";
@@ -1043,10 +1085,10 @@
 
     function tipBox(text, href) {
       const box = el("div", { className: "tip" });
-      box.appendChild(el("strong", { text: "Exam tip · " }));
+      box.appendChild(el("strong", { text: "Cross-check · " }));
       box.appendChild(document.createTextNode(text + " "));
       if (href) {
-        const a = el("a", { href: href, text: "Open Study Desk →" });
+        const a = el("a", { href: href, text: "Study Desk →" });
         box.appendChild(a);
       }
       return box;
@@ -1056,8 +1098,8 @@
       const wrap = el("div", { className: "panel active" });
       wrap.appendChild(crumbBar(route));
       wrap.appendChild(pageHead(route.label));
-      wrap.appendChild(el("p", { className: "lede", text: "This page matches the Admin console location. Hands-on controls for this topic live in the related lab and Study Desk notes." }));
-      wrap.appendChild(tipBox(route.tip || "Use Study Desk for full notes.", route.href || "./index.html"));
+      wrap.appendChild(el("p", { className: "lede", text: "This page is a practice stand-in. Configure the live settings in the matching Admin drawer — Study Desk is only a cross-check." }));
+      wrap.appendChild(tipBox(route.tip || "Confirm the name of the setting on Study Desk after you click it here.", route.href || "./index.html"));
       wrap.appendChild(el("button", { type: "button", className: "btn primary", text: "Open matching lab", onclick: function () {
         go("labs");
       } }));
@@ -1085,9 +1127,10 @@
         { title: "Domains", body: (state.domains || []).map(function (d) { return d.name; }).join(", "), links: [
           { t: "Manage domains", fn: function () { go("domains"); } }
         ]},
-        { title: "Apps", body: "Gmail, Drive, Calendar, Meet — on for the org.", links: [
+        { title: "Apps", body: "Gmail, Drive, Calendar, Meet, Chat, Gemini — on for the org.", links: [
           { t: "Gmail", fn: function () { go("gmail"); } },
-          { t: "Drive and Docs", fn: function () { go("drive"); } }
+          { t: "Drive and Docs", fn: function () { go("drive"); } },
+          { t: "Meet safety", fn: function () { go("meet"); } }
         ]},
         { title: "Labs", body: "Associate tickets that use this console.", links: [
           { t: "Open lab catalog", fn: function () { go("labs"); } },
@@ -1506,10 +1549,12 @@
     function panelGroups() {
       const wrap = el("div", { className: "panel active" });
       const createG = el("button", { type: "button", className: "btn primary", text: "Create group", onclick: function () {
-        toast("Practice: use the seeded groups. In a real console this opens Create group.");
+        const name = document.querySelector(".panel .card input");
+        if (name) name.focus();
       } });
       wrap.appendChild(pageHead("Groups", createG));
-      wrap.appendChild(el("p", { className: "lede", text: "Groups overlay the OU tree. Demo: Gemini Pilot security group can override Drive external sharing for its members — group wins over OU." }));
+      wrap.appendChild(el("p", { className: "lede", text: "Groups overlay the OU tree. Create a DL, Collaborative Inbox, Dynamic, or Security group — same types as Admin console." }));
+      if (AF) AF.panelGroupsCreate(wrap);
       wrap.appendChild(tipBox("OU = structural home. Group = cross-cutting access. If both conflict, group usually wins.", "./index.html#m0"));
 
       state.groups.forEach((g) => {
@@ -1579,6 +1624,7 @@
         list.appendChild(b);
       });
       wrap.appendChild(list);
+      if (AF) AF.panelDriveExtra(wrap);
       wrap.appendChild(tipBox("Prefer Shared Drives for org content so files survive off-boarding.", "./index.html#m2"));
       return wrap;
     }
@@ -1645,7 +1691,8 @@
     function panelMobile() {
       const wrap = el("div", { className: "panel active" });
       wrap.appendChild(pageHead("Mobile & endpoints"));
-      wrap.appendChild(el("p", { className: "lede", text: "BYOD → account wipe. Company-owned → device wipe OK." }));
+      wrap.appendChild(el("p", { className: "lede", text: "BYOD → account wipe only. Company-owned → device wipe OK. Suspend also cuts mobile immediately." }));
+      if (AF) AF.panelMobileExtra(wrap);
       const card = el("div", { className: "card" });
       const table = el("table", { className: "user-table" });
       const head = el("tr");
@@ -1658,7 +1705,10 @@
           tr.appendChild(el("td", { text: u.name }));
           tr.appendChild(el("td", { text: d.type }));
           tr.appendChild(el("td", { text: d.ownership }));
-          tr.appendChild(el("td", { text: d.ownership === "byod" ? "Account wipe" : "Device wipe OK" }));
+          const rec = el("td");
+          rec.appendChild(el("div", { text: d.ownership === "byod" ? "Account wipe" : "Device wipe OK" }));
+          if (AF) rec.appendChild(AF.wipeButtonsFor(u, d));
+          tr.appendChild(rec);
           tb.appendChild(tr);
         });
       });
@@ -1683,6 +1733,18 @@
       bar.appendChild(fill);
       card.appendChild(bar);
       wrap.appendChild(card);
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn",
+        text: (state.admin && state.admin.storage && state.admin.storage.quotaSet) ? "OU quota set ✓" : "Set 50 GB quota on Sales OU (not one mailbox)",
+        onclick: function () {
+          if (!state.admin) window.GwsAdminFeatures.ensure(state);
+          state.admin.storage.quotaSet = true;
+          state.admin.storage.quotaGb = 50;
+          audit("Storage quota set", "Sales OU 50 GB");
+          saveState(); render();
+        }
+      }));
+      wrap.appendChild(el("button", { type: "button", className: "btn", text: "Add licenses instead", onclick: function () { go("billing"); } }));
       wrap.appendChild(tipBox("Low storage → add licenses, set quotas, or free space.", "./index.html#m0"));
       return wrap;
     }
@@ -1690,9 +1752,10 @@
     /* ---------- Reporting ---------- */
     function panelReporting() {
       const wrap = el("div", { className: "panel active" });
-      wrap.appendChild(pageHead("Audit and investigation"));
-      wrap.appendChild(el("p", { className: "lede", text: "Simulated admin audit — scenario actions append here. On the exam: setting changes → admin audit log." }));
-      wrap.appendChild(tipBox("Message delivery → Email Log Search. Incidents across services → Investigation tool (Enterprise).", "./index.html#m6"));
+      wrap.appendChild(pageHead("Reporting"));
+      wrap.appendChild(el("p", { className: "lede", text: "Admin audit log is one report. Also use Status Dashboard, Email Log Search, and Investigation — they are different tools." }));
+      if (AF) AF.panelReportingExtra(wrap);
+      wrap.appendChild(tipBox("Setting change → this audit log. One message → ELS. Is Google down? → Status Dashboard.", "./index.html#m6"));
       const card = el("div", { className: "card" });
       if (!state.auditLog.length) card.appendChild(el("p", { className: "muted", text: "No events yet — change a setting or run a scenario." }));
       else {
@@ -1752,9 +1815,8 @@
         why: "Business Plus is the hands-on mid tier (Vault + advanced endpoint). Many security/compliance toys are Enterprise.",
         startRoute: "account",
         tasks: [
-          { id: "flip", doThis: "Use Edition (top bar) and switch Business Plus ↔ Enterprise at least once.", check: function (s) { return !!s.ui.walkthrough._editionTouched; } },
-          { id: "map", doThis: "Open Storage and look at the pooled usage meter (one tank, not per-mailbox).", check: function (s) { return s.ui.route === "storage"; } },
-          { id: "ack", ack: true, doThis: "Say back: Plus may lack advanced Drive DLP / Investigation. Low storage ≠ upgrade one mailbox." }
+          { id: "flip", doThis: "Avatar menu → Edition: switch Business Plus ↔ Enterprise (DLP / Investigation need Enterprise).", check: function (s) { return !!s.ui.walkthrough._editionTouched; } },
+          { id: "pool", doThis: "Storage: set a 50 GB OU quota — or Billing: add seats to the org pool. Do not upgrade one mailbox.", check: function (s) { return !!(s.admin && ((s.admin.storage && s.admin.storage.quotaSet) || (s.admin.licenses && s.admin.licenses.seatsAdded))); } }
         ]
       },
       {
@@ -1806,10 +1868,11 @@
           "Map Directory / Apps / Security / Devices / Reporting / Billing / Account."
         ],
         why: "Exam often hides the answer in the edition/license name, not the click path.",
-        startRoute: "account",
+        startRoute: "billing",
         tasks: [
-          { id: "open", doThis: "Open Account settings (roles, company profile, data regions live here).", check: function (s) { return s.ui.route === "account"; } },
-          { id: "ack", ack: true, doThis: "Map: warehouse pickers → Frontline; vendor SSO with no mailbox → Cloud Identity; DLP → Security; licenses → Billing." }
+          { id: "front", doThis: "Billing → Subscriptions: set Frontline seats to 40 (warehouse pickers).", check: function (s) { return !!(s.admin && s.admin.licenses && s.admin.licenses.frontline >= 40); } },
+          { id: "ci", doThis: "Set Cloud Identity seats to at least 1 (vendor SSO, no Gmail/Drive).", check: function (s) { return !!(s.admin && s.admin.licenses && s.admin.licenses.cloudIdentity >= 1); } },
+          { id: "dlpnav", doThis: "Open Security → Data protection (that is where DLP lives).", check: function (s) { return s.ui.route === "dlp"; } }
         ]
       },
       {
@@ -1863,8 +1926,9 @@
         why: "Do not pick GCDS when the question is about moving mailboxes.",
         startRoute: "gcds",
         tasks: [
-          { id: "dry", doThis: "Run Dry-Run Sync and read ADD / UPDATE / WOULD-DELETE.", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); } },
-          { id: "ack", ack: true, doThis: "Confirm: dry-run is identities only. M365 mail → DMS. Sister brand on Entra → Directory Sync." }
+          { id: "dry", doThis: "Run Dry-Run Sync and read ADD / UPDATE / WOULD-DELETE (identities only).", check: function (s) { return !!(s.gcdsLastDryRun && s.gcdsLastDryRun.at); } },
+          { id: "entra", doThis: "Set Identity source to Microsoft Entra ID (Directory Sync) for the sister brand.", check: function (s) { return !!(s.admin && s.admin.directorySync && s.admin.directorySync.source === "entra"); } },
+          { id: "dms", doThis: "Gmail → Routing: Start DMS (M365 → Gmail) for mailbox content.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.dmsRan); } }
         ]
       },
       {
@@ -1891,9 +1955,9 @@
         why: "Design OUs for how policies differ, not the org chart.",
         startRoute: "users",
         tasks: [
-          { id: "move", doThis: "On Users, change Cara Contract’s OU with the dropdown.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); } },
-          { id: "dom", doThis: "Open Domains and read primary vs alias vs secondary.", check: function (s) { return s.ui.route === "domains"; } },
-          { id: "ack", ack: true, doThis: "Map: @promo.example for everyone = domain alias. Japan’s own accounts = secondary + licenses. Rename primary keeps old address as alias." }
+          { id: "move", doThis: "Users → Cara Contract → change her Organizational unit.", check: function (s) { return (s.auditLog || []).some(function (a) { return /Moved user OU/.test(a.action); }); } },
+          { id: "alias", doThis: "Account → Domains: add promo.example as a Domain alias.", check: function (s) { return (s.domains || []).some(function (d) { return d.type === "alias"; }); } },
+          { id: "sec", doThis: "Add nw-jp.example (or any name) as a Secondary domain for Japan accounts.", check: function (s) { return (s.domains || []).some(function (d) { return d.type === "secondary"; }); } }
         ]
       },
       {
@@ -1919,10 +1983,11 @@
           "License assignment is automatic or manual — check license before hunting toggles."
         ],
         why: "SSO lockout and “can’t open the app” license misses are classic Associate stems.",
-        startRoute: "password",
+        startRoute: "sso",
         tasks: [
-          { id: "open", doThis: "Open Password management (Security → Authentication is where org password / 2SV live).", check: function (s) { return s.ui.route === "password" || s.ui.route === "access"; } },
-          { id: "ack", ack: true, doThis: "Map: SCIM = provision; SAML = sign-in; keep a break-glass Super Admin; missing Drive → check license first." }
+          { id: "saml", doThis: "Security → SSO: turn on SSO with a third-party IdP (SAML).", check: function (s) { return !!(s.admin && s.admin.sso && s.admin.sso.enabled); } },
+          { id: "glass", doThis: "Leave Super Admin break-glass ON (bypass SSO).", check: function (s) { return !!(s.admin && s.admin.sso && s.admin.sso.breakGlass); } },
+          { id: "scim", doThis: "Enable SCIM provisioning, then Billing → set license assignment to Automatic.", check: function (s) { return !!(s.admin && s.admin.sso && s.admin.sso.scim && s.admin.licenses && s.admin.licenses.assignment === "automatic"); } }
         ]
       },
       {
@@ -1948,8 +2013,9 @@
         why: "Group-type distractors are cheap points if you memorize the table.",
         startRoute: "groups",
         tasks: [
-          { id: "open", doThis: "Open Groups and note Gemini Pilot is a security overlay; All Staff is a distribution list.", check: function (s) { return s.ui.route === "groups"; } },
-          { id: "ack", ack: true, doThis: "Map: support@ → Collaborative Inbox; department=Sales → Dynamic; policy target → Security group; 200 rooms → CSV in Buildings & resources." }
+          { id: "ci", doThis: "Groups → Create group → Collaborative Inbox named support.", check: function (s) { return (s.groups || []).some(function (g) { return g.kind === "collaborative"; }); } },
+          { id: "dyn", doThis: "Create a Dynamic group (department = Sales).", check: function (s) { return (s.groups || []).some(function (g) { return g.kind === "dynamic"; }); } },
+          { id: "csv", doThis: "Directory → Buildings and resources → Bulk upload CSV (200 rooms).", check: function (s) { return !!(s.admin && s.admin.csvImported); } }
         ]
       },
       {
@@ -2002,9 +2068,9 @@
         why: "Off-boarding questions almost always hinge on My Drive transfer vs Shared Drive ownership.",
         startRoute: "drive",
         tasks: [
-          { id: "open", doThis: "Open Drive and Docs and read My Drive vs Shared Drive.", check: function (s) { return s.ui.route === "drive" || s.ui.route === "ous"; } },
-          { id: "viz", doThis: "Open the OU inheritance visualizer from Drive (or go to Organizational units).", check: function (s) { return s.ui.route === "ous"; } },
-          { id: "ack", ack: true, doThis: "Mark: pricebook → Shared Drive. Adding members → Manager. Safer company share list → target audiences." }
+          { id: "sd", doThis: "Drive and Docs → Create Shared drive “Sales Team” (Ada = Manager).", check: function (s) { return !!(s.admin && (s.admin.sharedDrives || []).some(function (d) { return (d.members || []).some(function (m) { return m.role === "manager"; }); })); } },
+          { id: "ta", doThis: "Turn on Target audience: All of Company.", check: function (s) { return !!(s.admin && s.admin.targetAudiences && s.admin.targetAudiences.enabled); } },
+          { id: "viz", doThis: "Open Sharing settings / OU inspector and confirm inheritance.", check: function (s) { return s.ui.route === "ous"; } }
         ]
       },
       {
@@ -2030,10 +2096,11 @@
           "Rooms become resource calendars; bulk = CSV."
         ],
         why: "Classic distractor: using a safety lock to fix pixelation, or creating rooms one-by-one.",
-        startRoute: "calendar",
+        startRoute: "meet",
         tasks: [
-          { id: "cal", doThis: "Open Calendar and read the Buildings & resources / CSV tip.", check: function (s) { return s.ui.route === "calendar"; } },
-          { id: "ack", ack: true, doThis: "Map: guests → Meet safety; choppy video → quality tool; 200 rooms → CSV; Chat history off → Vault has nothing; organizer left → transfer events." }
+          { id: "safe", doThis: "Meet → turn on “Only people in the organization can join”.", check: function (s) { return !!(s.admin && s.admin.meet && s.admin.meet.domainOnly); } },
+          { id: "qual", doThis: "Run Meet quality report (choppy Wi-Fi ≠ safety).", check: function (s) { return !!(s.admin && s.admin.meet && s.admin.meet.qualityRan); } },
+          { id: "cal", doThis: "Calendar → transfer Dan’s events, and Chat → leave history ON (Vault can only keep what existed).", check: function (s) { return !!(s.admin && s.admin.calendar && s.admin.calendar.eventsTransferred && s.admin.chat && s.admin.chat.historyDefault); } }
         ]
       },
       {
@@ -2060,8 +2127,9 @@
         why: "Migration-week stems mix routing, size limits, and the sync-vs-migration trap.",
         startRoute: "gmail",
         tasks: [
-          { id: "in", doThis: "Open Gmail and run (or re-run) an inbound simulation so you are in the mail lab.", check: function (s) { return s.ui.route === "gmail"; } },
-          { id: "ack", ack: true, doThis: "Map: coexistence → dual/split delivery; Finance BCC → content compliance; 40 MB → Drive link; assistant → delegation; mailboxes → DMS." }
+          { id: "dual", doThis: "Gmail → Routing: turn on Dual delivery (copy to Exchange).", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.dualDelivery); } },
+          { id: "bcc", doThis: "Turn on Content compliance BCC for Finance, and let Cara send as Ada.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.complianceBcc && s.admin.gmail.delegation && s.admin.gmail.delegation.u_ada); } },
+          { id: "dms", doThis: "Start DMS (M365 → Gmail) — content, not GCDS.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.dmsRan); } }
         ]
       },
       {
@@ -2085,10 +2153,11 @@
           "AppSheet = no-code from Sheets. Apps Script = JS glue."
         ],
         why: "Gemini + AppSheet vs Apps Script are short, high-yield discriminators.",
-        startRoute: "groups",
+        startRoute: "gemini",
         tasks: [
-          { id: "open", doThis: "Open Groups — Gemini Pilot is how you would scope a cross-OU AI trial.", check: function (s) { return s.ui.route === "groups"; } },
-          { id: "ack", ack: true, doThis: "Map: prompts do not train Google’s foundation models; pilot = group + OU; Sheet app → AppSheet; JS glue → Apps Script." }
+          { id: "ou", doThis: "Apps → Gemini: turn Gemini on for the Sales OU.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.enabledOu && s.admin.gemini.enabledOu.ou_sales); } },
+          { id: "pilot", doThis: "Set Pilot group to Gemini Pilot.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.pilotGroupId === "g_pilot"); } },
+          { id: "sheet", doThis: "Choose AppSheet (no-code) for the Sheet intake app.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.noCodeTool === "appsheet"); } }
         ]
       },
       {
@@ -2143,9 +2212,9 @@
         why: "Labels classify; DLP / trust rules enforce. Takeout is not a DLP control.",
         startRoute: "dlp",
         tasks: [
-          { id: "ed", doThis: "Switch Edition (top bar) to Enterprise so the DLP tester unlocks.", check: function (s) { return s.tenant.edition === "enterprise"; } },
+          { id: "ed", doThis: "Switch Edition to Enterprise so the DLP tester unlocks.", check: function (s) { return s.tenant.edition === "enterprise"; } },
           { id: "test", doThis: "Paste 4111 1111 1111 1111 (or confidential) and Test against DLP policy.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); } },
-          { id: "ack", ack: true, doThis: "Map: cards leaving → DLP; Legal↔counsel only → trust rules; Confidential tag → label then DLP/trust; Vault does not stop a leak." }
+          { id: "trust", doThis: "Security → Trust rules: enable Legal ↔ outside-counsel.com. Labels → apply Confidential.", check: function (s) { return !!(s.admin && (s.admin.trustRules || []).some(function (r) { return r.enabled; }) && s.admin.labels && s.admin.labels._confidentialApplied); } }
         ]
       },
       {
@@ -2170,8 +2239,9 @@
         why: "Export-vs-Vault-vs-regions is a favorite Module 3 discriminator.",
         startRoute: "account",
         tasks: [
-          { id: "open", doThis: "Open Account settings (data regions live under Account; edition must allow them).", check: function (s) { return s.ui.route === "account"; } },
-          { id: "ack", ack: true, doThis: "Map: Ada’s own files → Takeout; leave Google → Data Export tool; one matter → Vault export; EU at rest → data regions." }
+          { id: "to", doThis: "Account settings → Start Takeout for Ada (her own files).", check: function (s) { return !!(s.admin && s.admin.export && s.admin.export.takeoutUserId === "u_ada"); } },
+          { id: "dx", doThis: "Request Data Export for the entire org (leave Google).", check: function (s) { return !!(s.admin && s.admin.export && s.admin.export.dataExportRequested); } },
+          { id: "eu", doThis: "Set Data regions to Europe (switch to Enterprise first). Vault export is under Vault if lawyers need one matter.", check: function (s) { return !!(s.admin && s.admin.dataRegion && s.admin.dataRegion.enabled && s.admin.dataRegion.region === "europe"); } }
         ]
       },
       {
@@ -2198,8 +2268,9 @@
         why: "Words like managed device, corp network, country → CAA.",
         startRoute: "access",
         tasks: [
-          { id: "open", doThis: "Open Access and data control and read the 2SV vs CAA tip.", check: function (s) { return s.ui.route === "access"; } },
-          { id: "ack", ack: true, doThis: "Map: Finance on managed laptops + corp Wi-Fi → CAA (+ 2SV). Rollout = allow → date → grace. SMS is weakest. Shorter sessions complement both." }
+          { id: "grace", doThis: "2SV: set a grace period (7+ days) — do not enforce with a zero window.", check: function (s) { return !!(s.admin && s.admin.twoSv && s.admin.twoSv.graceDays > 0); } },
+          { id: "caa", doThis: "Turn on Context-Aware Access (Enterprise) with managed device + corp network on Drive.", check: function (s) { return !!(s.admin && s.admin.caa && s.admin.caa.enabled && s.admin.caa.requireManaged && s.admin.caa.requireCorpNet); } },
+          { id: "sess", doThis: "Session control: shorten Finance / sensitive group sessions.", check: function (s) { return !!(s.admin && s.admin.session && s.admin.session.financeHours); } }
         ]
       },
       {
@@ -2223,10 +2294,11 @@
           "Separate “already connected” (revoke + block) from “stop future installs” (allowlist)."
         ],
         why: "Most-specific role + most-specific app control wins the exam.",
-        startRoute: "account",
+        startRoute: "roles",
         tasks: [
-          { id: "open", doThis: "Open Account settings and read the roles / least-privilege tip.", check: function (s) { return s.ui.route === "account" || s.ui.route === "password"; } },
-          { id: "ack", ack: true, doThis: "Map: help desk → Help Desk Admin; APAC → OU-scoped role; existing OAuth → block + revoke; new junk → Marketplace allowlist." }
+          { id: "help", doThis: "Admin roles: assign Help Desk Admin to someone (password resets only).", check: function (s) { var r = s.admin && (s.admin.roles || []).find(function (x) { return x.id === "role_help"; }); return !!(r && r.users && r.users.length); } },
+          { id: "block", doThis: "Security → API controls: Block + revoke PDF Magic.", check: function (s) { return !!(s.admin && s.admin.marketplace && (s.admin.marketplace.apps || []).some(function (a) { return a.id === "app_pdf" && a.status === "blocked"; })); } },
+          { id: "allow", doThis: "Turn on “Allow only allowlisted Marketplace apps”.", check: function (s) { return !!(s.admin && s.admin.marketplace && s.admin.marketplace.allowlistOnly); } }
         ]
       },
       {
@@ -2252,8 +2324,9 @@
         why: "Tool-picker stems: health vs act vs notify.",
         startRoute: "reporting",
         tasks: [
-          { id: "open", doThis: "Open Audit logs — this sandbox log is not the Investigation tool; remember that difference.", check: function (s) { return s.ui.route === "reporting"; } },
-          { id: "ack", ack: true, doThis: "Map: health score → Security dashboard; delete phishing from 80 inboxes → Investigation tool; ping on 2SV off → activity rule + Alert center." }
+          { id: "dash", doThis: "Reporting → Open security health page.", check: function (s) { return !!(s.admin && s.admin.security && s.admin.security.dashboardViewed); } },
+          { id: "inv", doThis: "Investigation tool (Enterprise): delete matching mail from 80 inboxes.", check: function (s) { return !!(s.admin && s.admin.investigation && s.admin.investigation.lastAction === "delete_mail"); } },
+          { id: "al", doThis: "Alert center: enable “Notify when 2-step verification is turned off”.", check: function (s) { return !!(s.admin && s.admin.alerts && (s.admin.alerts.rules || []).some(function (r) { return r.enabled; })); } }
         ]
       },
       {
@@ -2278,8 +2351,8 @@
         why: "Factory-resetting BYOD is the classic wrong answer.",
         startRoute: "mobile",
         tasks: [
-          { id: "read", doThis: "Open Mobile & Chrome and compare Ada (BYOD) vs Ben (company) recommended wipe.", check: function (s) { return s.ui.route === "mobile"; } },
-          { id: "ack", ack: true, doThis: "Mark: Ada → account wipe only; Ben → device wipe OK." }
+          { id: "ada", doThis: "Mobile: Account wipe Ada’s BYOD phone (device wipe stays disabled).", check: function (s) { var u = (s.users || []).find(function (x) { return x.id === "u_ada"; }); return !!(u && (u.devices || []).some(function (d) { return d.wiped === "account"; })); } },
+          { id: "ben", doThis: "Device wipe Ben’s company phone.", check: function (s) { var u = (s.users || []).find(function (x) { return x.id === "u_ben"; }); return !!(u && (u.devices || []).some(function (d) { return d.wiped === "device"; })); } }
         ]
       },
       {
@@ -2304,8 +2377,9 @@
         why: "Extension X for Finance only → force install on that OU/group.",
         startRoute: "endpoints",
         tasks: [
-          { id: "open", doThis: "Open Endpoints and read the CBCM enrollment-token tip.", check: function (s) { return s.ui.route === "endpoints"; } },
-          { id: "ack", ack: true, doThis: "Mark: Finance extension X → force install on Finance OU; everyone else → block + allowlist." }
+          { id: "enroll", doThis: "Chrome browsers: enroll with the CBCM token.", check: function (s) { return !!(s.admin && s.admin.chrome && s.admin.chrome.enrolled); } },
+          { id: "force", doThis: "Select Sales OU → Force-install Finance extension X.", check: function (s) { var p = s.admin && s.admin.chrome && s.admin.chrome.policies && s.admin.chrome.policies.ou_sales; return !!(p && (p.forceInstall || []).indexOf("ext_x") >= 0); } },
+          { id: "block", doThis: "Block-all extensions on Root (everyone else).", check: function (s) { var p = s.admin && s.admin.chrome && s.admin.chrome.policies && s.admin.chrome.policies.ou_root; return !!(p && p.blockAll); } }
         ]
       },
       {
@@ -2331,9 +2405,9 @@
         why: "Wrong log is the #1 monitoring miss on the exam.",
         startRoute: "ous",
         tasks: [
-          { id: "act", doThis: "Change any OU Drive sharing toggle (or another setting) so an audit row exists.", check: function (s) { return (s.auditLog || []).length > 0; } },
-          { id: "log", doThis: "Open Audit logs and skim actor / action / target.", check: function (s) { return s.ui.route === "reporting"; } },
-          { id: "ack", ack: true, doThis: "Recite: deleted user 20 days · admin restore ~25 · Trash 30. Message path → ELS, not this admin log." }
+          { id: "act", doThis: "Change any OU Drive sharing toggle so an admin audit row exists.", check: function (s) { return (s.auditLog || []).length > 0; } },
+          { id: "log", doThis: "Reporting: skim the admin audit log (this is not Email Log Search).", check: function (s) { return s.ui.route === "reporting"; } },
+          { id: "clocks", doThis: "Mark recovery clocks reviewed (user 20 · admin restore ~25 · Trash 30).", check: function (s) { return !!(s.admin && s.admin.reporting && s.admin.reporting.clocksViewed); } }
         ]
       },
       {
@@ -2360,8 +2434,9 @@
         why: "Wrong first click on an outage or a single missing mail is an easy miss.",
         startRoute: "reporting",
         tasks: [
-          { id: "open", doThis: "Open Audit logs and notice it is admin activity — not Email Log Search.", check: function (s) { return s.ui.route === "reporting"; } },
-          { id: "ack", ack: true, doThis: "Map: “Gmail down” → Status Dashboard; one invoice → ELS 30 days; headers → Toolbox; Support file → HAR (sensitive); Meet adoption → usage reports." }
+          { id: "st", doThis: "Reporting → Check if Google is down (Status Dashboard).", check: function (s) { return !!(s.admin && s.admin.status && s.admin.status.checked); } },
+          { id: "els", doThis: "Email Log Search the invoice (last 30 days).", check: function (s) { return !!(s.admin && s.admin.els && s.admin.els.lastSearch); } },
+          { id: "hdr", doThis: "Decode sample headers in Admin Toolbox Messageheader.", check: function (s) { return !!(s.admin && s.admin.toolbox && s.admin.toolbox.headerRan); } }
         ]
       },
       {
@@ -2386,9 +2461,9 @@
           "Constraint words decide the tool — open the heuristics sheet."
         ],
         why: "Heuristics beat menu memorization.",
-        startRoute: "labs",
+        startRoute: "strategy",
         tasks: [
-          { id: "ack", ack: true, doThis: "Map out loud: (1) trust rules (2) AUL (3) CAA (4) GCDS (5) SPF+DKIM+DMARC. Then Check my work." }
+          { id: "pick", doThis: "Labs → Constraint picker: choose the narrow tool for all 5 tickets.", check: function (s) { var p = s.admin && s.admin.strategy && s.admin.strategy.picks || {}; return p.t1 === "trust" && p.t2 === "aul" && p.t3 === "caa" && p.t4 === "gcds" && p.t5 === "auth"; } }
         ]
       }
     ];
@@ -2474,9 +2549,9 @@
       const hero = el("div", { className: "lab-hero" });
       hero.appendChild(el("p", { className: "chip blue", text: "Associate Google Workspace Administrator" }));
       hero.appendChild(el("h1", { text: "Practice labs by module" }));
-      hero.appendChild(el("p", { className: "lede", text: "Every lab is a Northwind ticket mapped to a Study Desk section (0.1 Editions, 1.8 Groups, 3.4 Export…). Start it, read the quoted module fact, do the work in this practice tenant, then Check my work." }));
+      hero.appendChild(el("p", { className: "lede", text: "Every lab is a Northwind ticket you finish in this Admin console — flip the real settings. Study Desk is a cross-check after you click, not the lesson." }));
       const doneN = Object.keys(state.ui.labs.completed || {}).length;
-      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed · every module 0–7 has scenarios that quote the desk." }));
+      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed · configure here, then optionally confirm names on the desk." }));
       wrap.appendChild(hero);
 
       LAB_MODULES.forEach(function (mod) {
@@ -2604,6 +2679,7 @@
       });
       compare.appendChild(table);
       wrap.appendChild(compare);
+      if (AF) AF.panelGcdsExtra(wrap);
       return wrap;
     }
 
@@ -2665,6 +2741,7 @@
         card.appendChild(el("p", { className: "muted", text: "No active holds." }));
       }
       wrap.appendChild(card);
+      if (AF) AF.panelVaultExtra(wrap);
       return wrap;
     }
 
@@ -3369,25 +3446,9 @@
 
       if (tab === "routing") {
         const card = el("div", { className: "card" });
-        card.appendChild(el("h2", { text: "Routing & compliance (exam map)" }));
-        card.appendChild(el("p", { text: "Full routing rule builders are stubbed here — know where they live and what they do:" }));
-        const table = el("table", { className: "user-table" });
-        const thr = el("tr");
-        ["Need", "Where / tool"].forEach(function (h) { thr.appendChild(el("th", { text: h })); });
-        table.appendChild(el("thead", null, [thr]));
-        [
-          ["Content / attachment compliance", "Apps > Gmail > Compliance / routing rules"],
-          ["Dual or split delivery during migration", "Gmail routing"],
-          ["Inbound/outbound gateway (third-party filter)", "Gmail Advanced settings > Gateways"],
-          ["Disable POP/IMAP / forwarding (exfil control)", "Gmail user settings per OU"],
-          ["Trace one message", "Email Log Search (Reporting) — last ~30 days"]
-        ].forEach(function (row) {
-          const tr = el("tr");
-          tr.appendChild(el("td", { text: row[0] }));
-          tr.appendChild(el("td", { text: row[1] }));
-          table.appendChild(tr);
-        });
-        card.appendChild(table);
+        card.appendChild(el("h2", { text: "Routing, compliance, delegation, DMS" }));
+        card.appendChild(el("p", { className: "muted", text: "Same settings list as Apps > Gmail > Compliance / Advanced settings. Configure them — don’t only read about them." }));
+        if (AF) card.appendChild(AF.gmailRoutingCard());
         wrap.appendChild(card);
         wrap.appendChild(tipBox("Migration of mailbox content uses Data Migration Service — not GCDS.", "./index.html#m2"));
       }
@@ -3398,7 +3459,7 @@
 
     /* ---------- Walkthrough trainer ---------- */
     const WALKTHROUGH = [
-      { id: "m0-s1", module: "m0", moduleTitle: "Foundations", title: "What Workspace admin is", body: "You don't run mail servers — you configure people, services, and security in the Admin console. Editions unlock features (Business Plus vs Enterprise).", route: "account", doThis: "Read the exam tip on this stub panel (domains, roles, data regions).", why: "Exam questions often hinge on whether an edition includes a feature.", requireMark: true, desk: "./index.html#m0" },
+      { id: "m0-s1", module: "m0", moduleTitle: "Foundations", title: "What Workspace admin is", body: "You don't run mail servers — you configure people, services, and security in the Admin console. Editions unlock features (Business Plus vs Enterprise).", route: "account", doThis: "Open Account settings and set a company name or request Data Export once.", why: "Exam questions often hinge on whether an edition includes a feature.", check: function (s) { return s.ui.route === "account"; }, desk: "./index.html#m0" },
       { id: "m0-s2", module: "m0", moduleTitle: "Foundations", title: "Edition selector (top bar)", body: "Many advanced tools (DLP, CAA, Investigation) are Enterprise-tier. Practice checking the edition before picking an answer.", route: "account", doThis: "Use the Edition dropdown (top bar) to switch Business Plus ↔ Enterprise once.", why: "First ask: does this capability exist on the stated plan?", check: function (s) { return !!s.ui.walkthrough._editionTouched; }, desk: "./index.html#m0" },
       { id: "m0-s3", module: "m0", moduleTitle: "Foundations", title: "Storage is pooled", body: "Modern Workspace storage is a shared pool, not a fixed per-mailbox tank. Low storage → licenses, quotas, or free space.", route: "storage", doThis: "Open Storage and look at the pooled usage meter.", why: "Do not upgrade one mailbox as the fix.", requireMark: true, desk: "./index.html#m0" },
       { id: "m0-s4", module: "m0", moduleTitle: "Foundations", title: "OU tree walk", body: "Every user lives in exactly one OU. Children inherit parent settings unless overridden.", route: "ous", doThis: "Click Root, then Sales, then Engineering. Notice INHERITED vs OVERRIDDEN badges.", why: "OUs answer who is this person structurally.", check: function (s) { return (s.ui.walkthrough._ousVisited || 0) >= 2; }, desk: "./index.html#m0" },
@@ -3414,18 +3475,18 @@
       { id: "m2-s1", module: "m2", moduleTitle: "Core Services", title: "Gmail setup: inbound vs outbound", body: "MX = inbound routing. Outbound spam at recipients is usually missing SPF + DKIM + DMARC — not a random Gmail toggle.", route: "gmail", doThis: "Open Gmail. Use tabs: Setup → Inbound (MX) → Outbound (SPF/DKIM/DMARC) → Test mail. Try an inbound and outbound simulation.", why: "Match the symptom to authentication vs delivery.", requireMark: true, desk: "./index.html#m2" },
       { id: "m2-s2", module: "m2", moduleTitle: "Core Services", title: "Drive sharing policy", body: "External sharing is an OU-scoped setting with inheritance — same model as other services.", route: "drive", doThis: "Open Drive and Docs, then click Open OU inheritance visualizer.", why: "Shared Drives keep org files team-owned through off-boarding.", check: function (s) { return s.ui.route === "ous" || !!s.ui.walkthrough.completed["m2-s2"]; }, desk: "./index.html#m2" },
       { id: "m2-s3", module: "m2", moduleTitle: "Core Services", title: "Confirm seed sharing story", body: "Root OFF, Engineering ON (override), Sales/Contractors inherit OFF.", route: "ous", doThis: "Click through those OUs and confirm the badges match the story.", why: "Scenario questions often describe exactly this pattern.", requireMark: true, desk: "./index.html#m2" },
-      { id: "m2-s4", module: "m2", moduleTitle: "Core Services", title: "Calendar resources", body: "Bookable rooms come from Buildings & resources and become resource calendars.", route: "calendar", doThis: "Read the Calendar stub tip.", why: "Add 200 rooms across sites → CSV bulk, not one-by-one.", requireMark: true, desk: "./index.html#m2" },
+      { id: "m2-s4", module: "m2", moduleTitle: "Core Services", title: "Calendar resources", body: "Bookable rooms come from Buildings & resources and become resource calendars.", route: "buildings", doThis: "Bulk upload the CSV of rooms, then open Calendar sharing defaults.", why: "Add 200 rooms across sites → CSV bulk, not one-by-one.", check: function (s) { return !!(s.admin && s.admin.csvImported); }, desk: "./index.html#m2" },
 
       { id: "m3-s1", module: "m3", moduleTitle: "Data & Compliance", title: "Place a Vault hold", body: "Holds live in a Matter. While a hold stands, retention cannot purge that data.", route: "vault", doThis: "Place a Legal Hold on Ada Sales. See the green Data Preserved badge.", why: "Hold always beats retention deletion.", check: function (s) { var u = s.users.find(function (x) { return x.id === "u_ada"; }); return u && u.vaultHold; }, prep: function (s) { s.ui.selectedUserId = "u_ada"; }, desk: "./index.html#m3" },
       { id: "m3-s2", module: "m3", moduleTitle: "Data & Compliance", title: "Hold blocks delete", body: "Offboarding must not destroy held data. This simulator disables Delete while a hold is active.", route: "offboard", doThis: "Open Offboarding with Ada selected. Confirm Delete is blocked by the hold message.", why: "Vault ≠ user backup; it is legal hold / eDiscovery.", requireMark: true, prep: function (s) { s.offboard.userId = "u_ada"; }, desk: "./index.html#m3" },
       { id: "m3-s3", module: "m3", moduleTitle: "Data & Compliance", title: "DLP edition gate", body: "Advanced Drive/Chat DLP is typically Enterprise. On Business Plus the tester stays locked — same habit as the exam.", route: "dlp", doThis: "If you're on Business Plus, read the gate — then Switch to Enterprise (button or top bar).", why: "Capability questions start with edition.", check: function (s) { return s.tenant.edition === "enterprise"; }, desk: "./index.html#m3" },
       { id: "m3-s4", module: "m3", moduleTitle: "Data & Compliance", title: "DLP block banner", body: "Detectors catch sensitive content; actions block, warn, or audit.", route: "dlp", doThis: "Paste a fake card like 4111 1111 1111 1111 (or the word confidential) and click Test against DLP policy.", why: "Labels classify; DLP enforces.", check: function (s) { return (s.auditLog || []).some(function (a) { return /DLP block/.test(a.action); }); }, desk: "./index.html#m3" },
 
-      { id: "m4-s1", module: "m4", moduleTitle: "Security", title: "2SV vs Context-Aware Access", body: "2SV proves who you are. CAA asks whether the situation (device, network, location) is allowed.", route: "access", doThis: "Read the Access and data control stub tip.", why: "Words like managed device / corp network → CAA (often Enterprise).", requireMark: true, desk: "./index.html#m4" },
-      { id: "m4-s2", module: "m4", moduleTitle: "Security", title: "Password management", body: "Org password rules live under Security → Authentication. Reset individuals from the user page.", route: "password", doThis: "Read the Password management stub tip.", why: "Least privilege: Help Desk Admin for resets — not Super Admin.", requireMark: true, desk: "./index.html#m4" },
-      { id: "m4-s3", module: "m4", moduleTitle: "Security", title: "DLP as enforcement", body: "Security is layers: authentication, context, content controls, and app/API access.", route: "dlp", doThis: "Skim DLP again — remember Marketplace allowlist + API controls for shady OAuth apps (Study Desk).", why: "Pick the most specific control for the constraint.", requireMark: true, desk: "./index.html#m4" },
+      { id: "m4-s1", module: "m4", moduleTitle: "Security", title: "2SV vs Context-Aware Access", body: "2SV proves who you are. CAA asks whether the situation (device, network, location) is allowed.", route: "access", doThis: "Set a 2SV grace period and turn on CAA (Enterprise) for Drive.", why: "Words like managed device / corp network → CAA (often Enterprise).", check: function (s) { return !!(s.admin && s.admin.twoSv && s.admin.twoSv.graceDays > 0); }, desk: "./index.html#m4" },
+      { id: "m4-s2", module: "m4", moduleTitle: "Security", title: "Password management", body: "Org password rules live under Security → Authentication. Reset individuals from the user page.", route: "password", doThis: "Raise minimum password length, then open a user account to see Reset password.", why: "Least privilege: Help Desk Admin for resets — not Super Admin.", check: function (s) { return !!(s.admin && s.admin.password && s.admin.password.minLength >= 10); }, desk: "./index.html#m4" },
+      { id: "m4-s3", module: "m4", moduleTitle: "Security", title: "API controls", body: "Already-connected shady app → block + revoke. Future junk → Marketplace allowlist.", route: "marketplace", doThis: "Block + revoke PDF Magic and turn on the Marketplace allowlist.", why: "Pick the most specific control for the constraint.", check: function (s) { return !!(s.admin && s.admin.marketplace && s.admin.marketplace.allowlistOnly); }, desk: "./index.html#m4" },
 
-      { id: "m5-s1", module: "m5", moduleTitle: "Browsers & Devices", title: "Chrome / endpoints cue", body: "Chrome Browser Cloud Management enrolls browsers with a token and pushes policies by OU/group.", route: "endpoints", doThis: "Read the Endpoints stub tip.", why: "Force-install extension X for Finance → CBCM on that OU.", requireMark: true, desk: "./index.html#m5" },
+      { id: "m5-s1", module: "m5", moduleTitle: "Browsers & Devices", title: "Chrome / endpoints cue", body: "Chrome Browser Cloud Management enrolls browsers with a token and pushes policies by OU/group.", route: "endpoints", doThis: "Enroll with the CBCM token and force-install extension X on Sales.", why: "Force-install extension X for Finance → CBCM on that OU.", check: function (s) { return !!(s.admin && s.admin.chrome && s.admin.chrome.enrolled); }, desk: "./index.html#m5" },
       { id: "m5-s2", module: "m5", moduleTitle: "Browsers & Devices", title: "Account wipe vs device wipe", body: "BYOD → wipe corporate account only. Company-owned → full device wipe is acceptable.", route: "mobile", doThis: "Open Mobile & Chrome and compare Ada (BYOD) vs Ben (company) recommended wipe.", why: "Don't factory-reset a personal phone by default.", requireMark: true, desk: "./index.html#m5" },
       { id: "m5-s3", module: "m5", moduleTitle: "Browsers & Devices", title: "Suspend cuts mobile too", body: "Suspending a user immediately cuts Workspace access on enrolled devices.", route: "mobile", doThis: "Remember: offboarding often starts with Suspend — including mobile access.", why: "Fast containment without destroying data.", requireMark: true, desk: "./index.html#m5" },
 
@@ -3622,7 +3683,7 @@
       }
       if (lab.fromDesk) {
         const quote = el("div", { className: "lab-from-desk" });
-        quote.appendChild(el("em", { text: "From the Study Desk" }));
+        quote.appendChild(el("em", { text: "Cross-check (Study Desk) — after you configure" }));
         quote.appendChild(document.createTextNode(lab.fromDesk));
         coach.appendChild(quote);
       }
@@ -3830,6 +3891,24 @@
         case "gcds": panel = panelGcds(); break;
         case "vault": panel = panelVault(); break;
         case "offboard": panel = panelOffboard(); break;
+        case "account": panel = AF.panelAccount(); break;
+        case "roles": panel = AF.panelRoles(); break;
+        case "billing": panel = AF.panelBilling(); break;
+        case "password": panel = AF.panelPassword(); break;
+        case "access": panel = AF.panelAccess(); break;
+        case "sso": panel = AF.panelSso(); break;
+        case "marketplace": panel = AF.panelMarketplace(); break;
+        case "buildings": panel = AF.panelBuildings(); break;
+        case "calendar": panel = AF.panelCalendar(); break;
+        case "meet": panel = AF.panelMeet(); break;
+        case "chat": panel = AF.panelChat(); break;
+        case "gemini": panel = AF.panelGemini(); break;
+        case "trust": panel = AF.panelTrust(); break;
+        case "labels": panel = AF.panelLabels(); break;
+        case "endpoints": panel = AF.panelEndpoints(); break;
+        case "alerts": panel = AF.panelAlerts(); break;
+        case "investigation": panel = AF.panelInvestigation(); break;
+        case "strategy": panel = AF.panelStrategy(); break;
         default: panel = stubPanel(route); break;
       }
       if (route.id !== "home" && route.id !== "users" && !panel.querySelector(".crumbs")) {
@@ -3991,6 +4070,20 @@
         saveState();
         renderCoachOnly();
       }
+    });
+
+    AF = window.GwsAdminFeatures.attach({
+      el: el,
+      getState: function () { return state; },
+      go: go,
+      audit: audit,
+      saveState: saveState,
+      render: render,
+      toast: toast,
+      pageHead: pageHead,
+      tipBox: tipBox,
+      userById: userById,
+      ouById: ouById
     });
 
     document.getElementById("btnReset").addEventListener("click", () => {
