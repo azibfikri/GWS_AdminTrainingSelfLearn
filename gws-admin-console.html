@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Associate Admin Labs — Google Workspace practice tenant</title>
+  <title>Admin console</title>
   <link rel="icon" href="./favicon.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -321,33 +321,207 @@
       .sidebar { border-right: 0; border-bottom: 1px solid var(--line); max-height: 220px; }
       .grid-2, .grid-3, .scenario-grid, .lab-grid { grid-template-columns: 1fr; }
     }
+
+    /* —— Google Admin console chrome —— */
+    :root {
+      --sidebar-w: 280px;
+      --top-h: 64px;
+      --g-blue: #1a73e8;
+      --g-header: #fff;
+    }
+    body { background: #f8f9fa; }
+    .banner {
+      background: #fef7e0; border-bottom: 1px solid #f9e3a0; color: #3c4043;
+      padding: .4rem 1rem; font-size: .78rem; text-align: left;
+      display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center;
+    }
+    .banner strong { color: #3c4043; }
+    body.lab-mode .banner { background: #e6f4ea; border-bottom-color: #a8dab5; color: #0d652d; }
+    .topbar {
+      height: 64px; padding: 0 .75rem 0 .35rem; gap: .35rem;
+      box-shadow: 0 1px 2px rgba(60,64,67,.15);
+    }
+    .hamburger {
+      width: 48px; height: 48px; border: 0; background: transparent; border-radius: 50%;
+      cursor: pointer; color: #5f6368; display: grid; place-items: center;
+    }
+    .hamburger:hover { background: #f1f3f4; }
+    .g-logo { display: flex; align-items: center; gap: .45rem; text-decoration: none; color: #5f6368; padding: 0 .4rem 0 .15rem; }
+    .g-logo svg { width: 32px; height: 32px; display: block; }
+    .g-logo .word { font-family: var(--display); font-size: 1.35rem; font-weight: 500; letter-spacing: -.02em; color: #5f6368; }
+    .admin-search-wrap { flex: 1; max-width: 720px; margin: 0 auto; position: relative; }
+    .admin-search {
+      width: 100%; height: 48px; border: 0; border-radius: 8px; background: #f1f3f4;
+      padding: 0 1rem 0 3rem; font-size: 1rem; color: #202124;
+    }
+    .admin-search:focus { outline: none; background: #fff; box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15); }
+    .admin-search-ico {
+      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: #5f6368; pointer-events: none;
+    }
+    .search-pop {
+      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+      background: #fff; border-radius: 8px; box-shadow: var(--shadow); z-index: 40;
+      max-height: 420px; overflow: auto; padding: .35rem 0;
+    }
+    .search-pop.open { display: block; }
+    .search-chip-row { display: flex; gap: .35rem; padding: .4rem .75rem .55rem; }
+    .search-chip {
+      border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: .2rem .65rem;
+      font-size: .78rem; cursor: pointer; color: #3c4043;
+    }
+    .search-chip.on { background: #e8f0fe; border-color: #c2d7fc; color: #1967d2; }
+    .search-hit {
+      display: flex; gap: .65rem; align-items: center; width: 100%; border: 0; background: transparent;
+      text-align: left; padding: .55rem .9rem; cursor: pointer; font-size: .9rem;
+    }
+    .search-hit:hover { background: #f1f3f4; }
+    .search-hit small { display: block; color: var(--muted); font-size: .75rem; }
+    .top-ico {
+      width: 40px; height: 40px; border: 0; background: transparent; border-radius: 50%;
+      cursor: pointer; color: #5f6368; display: grid; place-items: center;
+    }
+    .top-ico:hover { background: #f1f3f4; }
+    .avatar-btn {
+      width: 32px; height: 32px; border-radius: 50%; border: 0; background: #1a73e8; color: #fff;
+      font-weight: 700; font-size: .8rem; cursor: pointer; margin: 0 .35rem;
+    }
+    .acct-menu {
+      display: none; position: absolute; right: .5rem; top: 58px; width: 300px; background: #fff;
+      border-radius: 8px; box-shadow: var(--shadow); z-index: 45; padding: .85rem;
+    }
+    .acct-menu.open { display: block; }
+    .acct-menu h3 { margin: 0 0 .15rem; font-size: .95rem; }
+    .sidebar {
+      background: #fff; border-right: 1px solid #dadce0; padding: .35rem 0 2rem;
+    }
+    .nav-sec {
+      margin: .65rem 1.1rem .15rem; font-size: .68rem; font-weight: 500;
+      text-transform: none; letter-spacing: 0; color: #80868b;
+    }
+    .nav-group-btn, .nav-item {
+      display: flex; align-items: center; gap: .75rem; width: 100%; text-align: left; border: 0;
+      background: transparent; padding: .55rem 1rem; cursor: pointer; color: #3c4043; font-size: .875rem;
+      border-radius: 0 24px 24px 0; margin-right: .5rem; width: calc(100% - .5rem);
+      border-left: 0;
+    }
+    .nav-item .sub { display: none; }
+    .nav-group-btn:hover, .nav-item:hover { background: #f1f3f4; }
+    .nav-item.active { background: #e8f0fe; color: #1967d2; font-weight: 500; }
+    .nav-ico { width: 20px; height: 20px; flex: 0 0 20px; color: #5f6368; }
+    .nav-item.active .nav-ico { color: #1967d2; }
+    .nav-chev { margin-left: auto; color: #5f6368; font-size: .7rem; }
+    .nav-kids { padding-left: .25rem; }
+    body.nav-collapsed { --sidebar-w: 72px; }
+    body.nav-collapsed .nav-label, body.nav-collapsed .nav-sec, body.nav-collapsed .nav-chev, body.nav-collapsed .nav-kids { display: none; }
+    .crumbs { font-size: .8125rem; color: #5f6368; margin: 0 0 .85rem; }
+    .crumbs button { border: 0; background: 0; color: #1a73e8; cursor: pointer; padding: 0; font: inherit; }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .page-head h1 { margin: 0; font-size: 1.75rem; font-weight: 400; font-family: var(--display); }
+    .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .home-card {
+      background: #fff; border: 1px solid #dadce0; border-radius: 8px; padding: 1.15rem 1.2rem;
+      box-shadow: 0 1px 2px rgba(60,64,67,.08); text-align: left;
+    }
+    .home-card h2 { margin: 0 0 .35rem; font-size: 1rem; font-weight: 500; }
+    .home-card p { margin: 0 0 .75rem; color: #5f6368; font-size: .85rem; }
+    .home-card .ql { display: block; border: 0; background: 0; color: #1a73e8; cursor: pointer; padding: .25rem 0; font: inherit; font-size: .875rem; text-align: left; }
+    .home-card .ql:hover { text-decoration: underline; }
+    .user-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 .75rem; }
+    .filter-chip {
+      border: 1px solid #dadce0; background: #fff; border-radius: 16px; padding: .35rem .75rem;
+      font-size: .8125rem; cursor: pointer;
+    }
+    .users-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: 420px; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; background: #fff; }
+    .ou-rail { background: #fff; border-right: 1px solid #dadce0; padding: .65rem .5rem; overflow: auto; }
+    .ou-rail h3 { margin: 0 .35rem .45rem; font-size: .75rem; font-weight: 500; color: #5f6368; }
+    .user-table { font-size: .875rem; }
+    .user-table tbody tr { cursor: pointer; }
+    .user-table tbody tr:hover { background: #f8f9fa; }
+    .user-table tbody tr.picked { background: #e8f0fe; }
+    .av {
+      width: 32px; height: 32px; border-radius: 50%; display: inline-grid; place-items: center;
+      color: #fff; font-weight: 700; font-size: .75rem; margin-right: .55rem; vertical-align: middle;
+    }
+    .name-cell { display: flex; align-items: center; }
+    .name-cell .who { display: flex; flex-direction: column; }
+    .name-cell .who b { font-weight: 500; }
+    .name-cell .who span { font-size: .75rem; color: #5f6368; }
+    .user-hero { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+    .user-hero .av { width: 64px; height: 64px; font-size: 1.4rem; }
+    .modal-scrim {
+      position: fixed; inset: 0; background: rgba(32,33,36,.4); z-index: 60;
+      display: grid; place-items: center; padding: 1rem;
+    }
+    .modal {
+      width: min(520px, 100%); background: #fff; border-radius: 8px; padding: 1.25rem 1.35rem 1rem;
+      box-shadow: 0 8px 10px 1px rgba(60,64,67,.14);
+    }
+    .modal h2 { margin: 0 0 1rem; font-weight: 400; font-size: 1.35rem; }
+    .fab-add {
+      position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 16;
+      width: 56px; height: 56px; border-radius: 50%; border: 0; background: #fbbc04; color: #202124;
+      font-size: 1.6rem; line-height: 1; cursor: pointer; box-shadow: var(--shadow);
+    }
+    body.coach-open .fab-add { right: calc(var(--coach-w) + 1.5rem); }
+    .settings-split { display: grid; grid-template-columns: 240px 1fr; gap: 1rem; }
+    @media (max-width: 900px) {
+      .users-layout, .settings-split { grid-template-columns: 1fr; }
+      .admin-search-wrap { max-width: none; }
+      .g-logo .word { display: none; }
+    }
   </style>
 </head>
 <body>
   <div class="banner" id="labBanner">
-    <strong>Associate Admin Labs</strong> — a practice tenant for the Associate Google Workspace Administrator exam. Not Google, not a real Admin console.
-    <a href="./index.html">Study Desk</a>
-  </div>
-  <header class="topbar">
-    <a class="logo" href="./gws-admin-console.html#labs"><span class="mark">L</span> Admin Labs <span class="chip">Practice tenant</span></a>
-    <div class="lab-live" id="labLive" aria-live="polite">
+    <strong>Practice tenant</strong> — looks and works like the Google Admin console for Associate labs. Not Google, not a live org.
+    <span class="lab-live" id="labLive" aria-live="polite">
       <span id="labLiveId">LAB</span>
       <span id="labLiveTime">00:00</span>
-      <button type="button" class="btn ghost" id="btnEndLab" style="border:0;padding:.15rem .4rem;font-size:.75rem">End lab</button>
+      <button type="button" class="btn ghost" id="btnEndLab" style="border:0;padding:.1rem .35rem;font-size:.75rem">End lab</button>
+    </span>
+    <span style="margin-left:auto"></span>
+    <button type="button" class="btn ghost" id="btnLabs" style="font-size:.78rem;padding:.2rem .5rem">Labs</button>
+    <button type="button" class="btn ghost" id="btnWalkthrough" style="font-size:.78rem;padding:.2rem .5rem">Tour</button>
+    <a href="./index.html" style="font-size:.78rem">Study Desk</a>
+  </div>
+  <header class="topbar">
+    <button type="button" class="hamburger" id="btnMenu" aria-label="Main menu" title="Main menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <a class="g-logo" href="./gws-admin-console.html#home" aria-label="Google Admin">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      <span class="word">Admin</span>
+    </a>
+    <div class="admin-search-wrap">
+      <span class="admin-search-ico" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </span>
+      <input class="admin-search" id="adminSearch" type="search" placeholder="Search for users, groups, or settings" autocomplete="off" />
+      <div class="search-pop" id="searchPop" role="listbox"></div>
     </div>
-    <div class="top-spacer"></div>
-    <label class="chip" for="editionSelect">Edition
-      <select id="editionSelect" style="border:0;background:transparent;font:inherit;font-weight:500">
-        <option value="business_plus">Business Plus</option>
-        <option value="enterprise">Enterprise</option>
-      </select>
-    </label>
-    <span class="chip blue" id="tenantChip">exam-demo.example</span>
-    <span class="chip">Lab Super Admin</span>
-    <button type="button" class="btn primary" id="btnLabs">Lab catalog</button>
-    <button type="button" class="btn" id="btnWalkthrough" aria-expanded="false" aria-controls="coach">Guided tour</button>
-    <button type="button" class="btn ghost" id="btnReset">Reset tenant</button>
-    <a class="btn" href="./index.html">Study Desk</a>
+    <button type="button" class="top-ico" id="btnHelp" title="Help" aria-label="Help">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    </button>
+    <button type="button" class="avatar-btn" id="btnAvatar" title="Super Admin" aria-haspopup="true">SA</button>
+    <div class="acct-menu" id="acctMenu">
+      <h3>you@<span id="tenantChip">exam-demo.example</span></h3>
+      <p class="muted" style="margin:.15rem 0 .65rem">Super Admin · practice tenant</p>
+      <label class="field">Edition
+        <select id="editionSelect">
+          <option value="business_plus">Business Plus</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+      </label>
+      <div class="row">
+        <button type="button" class="btn" id="btnReset">Reset tenant</button>
+        <a class="btn" href="./index.html">Study Desk</a>
+      </div>
+    </div>
   </header>
 
   <div class="layout">
@@ -374,26 +548,67 @@
     const MAX_USERS = 200;
 
     const ROUTES = [
-      { sec: "Labs", id: "labs", label: "Lab catalog", sub: "Associate-level practice labs" },
-      { sec: "Directory", id: "users", label: "Users", sub: "Accounts & OU placement" },
-      { sec: "Directory", id: "groups", label: "Groups", sub: "Security group overlay demo" },
-      { sec: "Directory", id: "ous", label: "Organizational units", sub: "Inheritance visualizer" },
-      { sec: "Apps", id: "gmail", label: "Gmail", sub: "Setup · MX · SPF/DKIM/DMARC" },
-      { sec: "Apps", id: "drive", label: "Drive and Docs", sub: "External sharing policy" },
-      { sec: "Apps", id: "calendar", label: "Calendar", stub: true, tip: "Resource calendars come from Buildings & resources.", href: "./index.html#m2" },
-      { sec: "Security", id: "access", label: "Access and data control", stub: true, tip: "2SV proves who; Context-Aware Access checks device/network/geo (often Enterprise).", href: "./index.html#m4" },
-      { sec: "Security", id: "dlp", label: "Data protection / DLP", sub: "Rule tester" },
-      { sec: "Security", id: "password", label: "Password management", stub: true, tip: "Length, reuse, strength; reset from user page.", href: "./index.html#m4" },
-      { sec: "Devices", id: "endpoints", label: "Endpoints", stub: true, tip: "Chrome Browser Cloud Management enrolls with a token.", href: "./index.html#m5" },
-      { sec: "Devices", id: "mobile", label: "Mobile & Chrome", sub: "Wipe types" },
-      { sec: "Account", id: "account", label: "Account settings", stub: true, tip: "Company profile, admin roles, data regions (Enterprise).", href: "./index.html#m0" },
-      { sec: "Account", id: "domains", label: "Domains", sub: "Add · verify · primary/alias" },
-      { sec: "Account", id: "storage", label: "Storage", sub: "Pooled storage meter" },
-      { sec: "Reporting", id: "reporting", label: "Audit logs", sub: "Simulated admin activity" },
-      { sec: "Scenarios", id: "scenarios", label: "Scenario hub", sub: "GCDS · Vault · DLP · Offboarding" },
-      { sec: "Scenarios", id: "gcds", label: "GCDS dry-run", sub: "AD → Workspace sync" },
-      { sec: "Scenarios", id: "vault", label: "Vault legal hold", sub: "Hold overrides retention" },
-      { sec: "Scenarios", id: "offboard", label: "Offboarding wizard", sub: "Suspend → transfer → delete/AUL" }
+      { sec: "Home", id: "home", label: "Home", crumb: ["Home"] },
+      { sec: "Directory", id: "users", label: "Users", crumb: ["Directory", "Users"] },
+      { sec: "Directory", id: "groups", label: "Groups", crumb: ["Directory", "Groups"] },
+      { sec: "Directory", id: "ous", label: "Organizational units", crumb: ["Directory", "Organizational units"] },
+      { sec: "Directory", id: "buildings", label: "Buildings and resources", stub: true, tip: "Rooms become bookable calendars. 200 rooms → CSV bulk upload.", href: "./index.html#m1-buildings", crumb: ["Directory", "Buildings and resources"] },
+      { sec: "Apps", id: "gmail", label: "Gmail", crumb: ["Apps", "Google Workspace", "Gmail"] },
+      { sec: "Apps", id: "drive", label: "Drive and Docs", crumb: ["Apps", "Google Workspace", "Drive and Docs"] },
+      { sec: "Apps", id: "calendar", label: "Calendar", stub: true, tip: "Resource calendars come from Buildings & resources.", href: "./index.html#m2-calendar", crumb: ["Apps", "Google Workspace", "Calendar"] },
+      { sec: "Apps", id: "meet", label: "Google Meet", stub: true, tip: "Unwanted guests → Meet safety. Bad A/V → Meet quality tool.", href: "./index.html#m2-meet", crumb: ["Apps", "Google Workspace", "Google Meet"] },
+      { sec: "Security", id: "access", label: "Access and data control", stub: true, tip: "2SV proves who; Context-Aware Access checks device/network/geo (often Enterprise).", href: "./index.html#m4-caa", crumb: ["Security", "Access and data control"] },
+      { sec: "Security", id: "dlp", label: "Data protection", crumb: ["Security", "Access and data control", "Data protection"] },
+      { sec: "Security", id: "password", label: "Password management", stub: true, tip: "Length, reuse, strength; reset from the user page.", href: "./index.html#m4-2sv", crumb: ["Security", "Authentication", "Password management"] },
+      { sec: "Devices", id: "endpoints", label: "Chrome browsers", stub: true, tip: "Chrome Browser Cloud Management enrolls with a token.", href: "./index.html#m5-cbcm", crumb: ["Devices", "Chrome", "Browsers"] },
+      { sec: "Devices", id: "mobile", label: "Mobile & endpoints", crumb: ["Devices", "Mobile & endpoints"] },
+      { sec: "Reporting", id: "reporting", label: "Audit and investigation", crumb: ["Reporting", "Audit and investigation"] },
+      { sec: "Billing", id: "billing", label: "Subscriptions", stub: true, tip: "Licenses can be automatic or manual. Missing Drive is often a missing license.", href: "./index.html#m1-licenses", crumb: ["Billing", "Subscriptions"] },
+      { sec: "Account", id: "account", label: "Account settings", stub: true, tip: "Company profile, admin roles, data regions (Enterprise).", href: "./index.html#m0-console", crumb: ["Account", "Account settings"] },
+      { sec: "Account", id: "domains", label: "Domains", crumb: ["Account", "Domains", "Manage domains"] },
+      { sec: "Account", id: "storage", label: "Storage", crumb: ["Account", "Account settings", "Storage"] },
+      { sec: "Reporting", id: "alerts", label: "Alert center", stub: true, tip: "Activity rules + Alert center notify. Investigation remediates.", href: "./index.html#m4-seccenter", crumb: ["Reporting", "Alert center"] },
+      { sec: "Labs", id: "labs", label: "Lab catalog", crumb: ["Labs"] },
+      { sec: "Labs", id: "scenarios", label: "Scenario hub", crumb: ["Labs", "Scenario hub"] },
+      { sec: "Labs", id: "gcds", label: "Directory Sync / GCDS", crumb: ["Labs", "GCDS dry-run"] },
+      { sec: "Labs", id: "vault", label: "Google Vault", crumb: ["Labs", "Vault"] },
+      { sec: "Labs", id: "offboard", label: "Offboarding", crumb: ["Labs", "Offboarding"] }
+    ];
+
+    const NAV_TREE = [
+      { id: "home", label: "Home", icon: "home" },
+      { id: "dir", label: "Directory", icon: "dir", kids: ["users", "groups", "ous", "buildings"] },
+      { id: "apps", label: "Apps", icon: "apps", kids: ["gmail", "drive", "calendar", "meet"] },
+      { id: "sec", label: "Security", icon: "sec", kids: ["access", "dlp", "password"] },
+      { id: "dev", label: "Devices", icon: "dev", kids: ["mobile", "endpoints"] },
+      { id: "rep", label: "Reporting", icon: "rep", kids: ["reporting", "alerts"] },
+      { id: "bill", label: "Billing", icon: "bill", kids: ["billing"] },
+      { id: "acct", label: "Account", icon: "acct", kids: ["account", "domains", "storage"] },
+      { id: "labsgrp", label: "Labs", icon: "labs", kids: ["labs", "scenarios", "gcds", "vault", "offboard"] }
+    ];
+
+    const SEARCH_ALIASES = [
+      { q: "dkim", id: "gmail", kind: "Settings", label: "Authenticate email (DKIM)" },
+      { q: "spf", id: "gmail", kind: "Settings", label: "SPF record" },
+      { q: "dmarc", id: "gmail", kind: "Settings", label: "DMARC policy" },
+      { q: "mx", id: "gmail", kind: "Settings", label: "MX records / inbound mail" },
+      { q: "2sv", id: "access", kind: "Settings", label: "2-step verification" },
+      { q: "2-step", id: "access", kind: "Settings", label: "2-step verification" },
+      { q: "caa", id: "access", kind: "Settings", label: "Context-Aware Access" },
+      { q: "password", id: "password", kind: "Settings", label: "Password management" },
+      { q: "dlp", id: "dlp", kind: "Settings", label: "Data protection / DLP" },
+      { q: "vault", id: "vault", kind: "Features", label: "Google Vault" },
+      { q: "hold", id: "vault", kind: "Features", label: "Legal hold" },
+      { q: "wipe", id: "mobile", kind: "Settings", label: "Account wipe vs device wipe" },
+      { q: "chrome", id: "endpoints", kind: "Settings", label: "Chrome Browser Cloud Management" },
+      { q: "extension", id: "endpoints", kind: "Settings", label: "Force-install extension" },
+      { q: "domain", id: "domains", kind: "Settings", label: "Manage domains" },
+      { q: "license", id: "billing", kind: "Settings", label: "Subscriptions / licenses" },
+      { q: "storage", id: "storage", kind: "Settings", label: "Storage" },
+      { q: "ou", id: "ous", kind: "Settings", label: "Organizational units" },
+      { q: "group", id: "groups", kind: "Settings", label: "Groups" },
+      { q: "els", id: "reporting", kind: "Features", label: "Email Log Search / audit logs" },
+      { q: "audit", id: "reporting", kind: "Features", label: "Admin audit log" }
     ];
 
     function uid(prefix) {
@@ -469,7 +684,7 @@
         gcdsLastDryRun: { at: null, lines: [] },
         auditLog: [],
         offboard: { userId: null, step: 0, wipeChoice: null },
-        ui: { route: "labs", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", walkthrough: defaultWalkthrough(), labs: defaultLabs() }
+        ui: { route: "home", selectedOuId: root, selectedUserId: "u_ada", selectedDomainId: "dom_primary", gmailTab: "setup", navOpen: { dir: true, labsgrp: true }, walkthrough: defaultWalkthrough(), labs: defaultLabs() }
       };
     }
 
@@ -526,6 +741,10 @@
     if (!state.mailLab) state.mailLab = { lastInbound: null, lastOutbound: null };
     if (!state.ui.selectedDomainId) state.ui.selectedDomainId = state.domains[0].id;
     if (!state.ui.gmailTab) state.ui.gmailTab = "setup";
+    if (!state.ui.navOpen) state.ui.navOpen = { dir: true, labsgrp: true };
+    if (state.ui.navCollapsed == null) state.ui.navCollapsed = false;
+    if (!state.ui.userQuery) state.ui.userQuery = "";
+    if (!state.ui.searchChip) state.ui.searchChip = "all";
     state.tenant.domain = (state.domains.find(function (d) { return d.type === "primary"; }) || state.domains[0]).name;
     const toastEl = document.getElementById("toast");
     let toastTimer = null;
@@ -642,24 +861,124 @@
       render();
     }
 
+    function go(id, extra) {
+      state.ui.route = id;
+      if (extra) Object.keys(extra).forEach(function (k) { state.ui[k] = extra[k]; });
+      if (id !== "users") state.ui.userDetail = false;
+      saveState();
+      render();
+    }
+
+    function crumbBar(route) {
+      const bar = el("div", { className: "crumbs" });
+      const parts = (route && route.crumb) || [route.label];
+      parts.forEach(function (p, i) {
+        if (i) bar.appendChild(document.createTextNode("  >  "));
+        if (i === 0 && p === "Directory") {
+          bar.appendChild(el("button", { type: "button", text: p, onclick: function () { go("users"); } }));
+        } else if (i === 0 && p === "Home") {
+          bar.appendChild(el("button", { type: "button", text: p, onclick: function () { go("home"); } }));
+        } else {
+          bar.appendChild(document.createTextNode(p));
+        }
+      });
+      return bar;
+    }
+
+    function pageHead(title, actions) {
+      const row = el("div", { className: "page-head" });
+      row.appendChild(el("h1", { text: title }));
+      if (actions) row.appendChild(actions);
+      return row;
+    }
+
+    function avColor(name) {
+      const palette = ["#1a73e8", "#188038", "#c5221f", "#e37400", "#9334e6", "#00897b"];
+      let n = 0;
+      for (let i = 0; i < (name || "").length; i++) n += name.charCodeAt(i);
+      return palette[n % palette.length];
+    }
+
+    function initials(name) {
+      const p = String(name || "?").trim().split(/\s+/);
+      return ((p[0] && p[0][0]) || "?") + ((p[1] && p[1][0]) || "");
+    }
+
+    function avatarEl(name, big) {
+      const a = el("span", { className: "av", text: initials(name).toUpperCase() });
+      a.style.background = avColor(name);
+      if (big) { a.style.width = "64px"; a.style.height = "64px"; a.style.fontSize = "1.35rem"; }
+      return a;
+    }
+
+    function navIcon(kind) {
+      const paths = {
+        home: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+        dir: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+        apps: "M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z",
+        sec: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z",
+        dev: "M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z",
+        rep: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z",
+        bill: "M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z",
+        acct: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z",
+        labs: "M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+      };
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "nav-ico");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("fill", "currentColor");
+      p.setAttribute("d", paths[kind] || paths.home);
+      svg.appendChild(p);
+      return svg;
+    }
+
     /* ---------- Nav ---------- */
     function renderNav() {
       const nav = document.getElementById("sidebar");
       clear(nav);
-      let lastSec = null;
-      ROUTES.forEach((r) => {
-        if (r.sec !== lastSec) {
-          nav.appendChild(el("div", { className: "nav-sec", text: r.sec }));
-          lastSec = r.sec;
+      document.body.classList.toggle("nav-collapsed", !!state.ui.navCollapsed);
+      NAV_TREE.forEach(function (g) {
+        if (!g.kids) {
+          const btn = el("button", {
+            type: "button",
+            className: "nav-item" + (state.ui.route === g.id ? " active" : ""),
+            onclick: function () { go(g.id); }
+          });
+          btn.appendChild(navIcon(g.icon));
+          btn.appendChild(el("span", { className: "nav-label", text: g.label }));
+          nav.appendChild(btn);
+          return;
         }
-        const btn = el("button", {
+        const open = !!state.ui.navOpen[g.id];
+        const head = el("button", {
           type: "button",
-          className: "nav-item" + (state.ui.route === r.id ? " active" : ""),
-          onclick: () => { state.ui.route = r.id; saveState(); render(); }
+          className: "nav-group-btn",
+          onclick: function () {
+            state.ui.navOpen[g.id] = !state.ui.navOpen[g.id];
+            saveState();
+            renderNav();
+          }
         });
-        btn.appendChild(document.createTextNode(r.label));
-        if (r.sub) btn.appendChild(el("span", { className: "sub", text: r.sub }));
-        nav.appendChild(btn);
+        head.appendChild(navIcon(g.icon));
+        head.appendChild(el("span", { className: "nav-label", text: g.label }));
+        head.appendChild(el("span", { className: "nav-chev", text: open ? "▾" : "▸" }));
+        nav.appendChild(head);
+        if (!open) return;
+        const kids = el("div", { className: "nav-kids" });
+        g.kids.forEach(function (id) {
+          const r = ROUTES.find(function (x) { return x.id === id; });
+          if (!r) return;
+          const btn = el("button", {
+            type: "button",
+            className: "nav-item" + (state.ui.route === r.id ? " active" : ""),
+            onclick: function () { go(r.id); }
+          });
+          btn.appendChild(el("span", { className: "nav-ico" }));
+          btn.appendChild(el("span", { className: "nav-label", text: r.label }));
+          kids.appendChild(btn);
+        });
+        nav.appendChild(kids);
       });
     }
 
@@ -676,9 +995,56 @@
 
     function stubPanel(route) {
       const wrap = el("div", { className: "panel active" });
-      wrap.appendChild(el("h1", { text: route.label }));
-      wrap.appendChild(el("p", { className: "lede", text: "Simulated stub panel — interactive depth lives in OUs, Drive, DLP, Users, and Scenarios." }));
+      wrap.appendChild(crumbBar(route));
+      wrap.appendChild(pageHead(route.label));
+      wrap.appendChild(el("p", { className: "lede", text: "This page matches the Admin console location. Hands-on controls for this topic live in the related lab and Study Desk notes." }));
       wrap.appendChild(tipBox(route.tip || "Use Study Desk for full notes.", route.href || "./index.html"));
+      wrap.appendChild(el("button", { type: "button", className: "btn primary", text: "Open matching lab", onclick: function () {
+        go("labs");
+      } }));
+      return wrap;
+    }
+
+    function panelHome() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(crumbBar(ROUTES.find(function (r) { return r.id === "home"; })));
+      wrap.appendChild(pageHead("Welcome to Admin"));
+      wrap.appendChild(el("p", { className: "lede", text: "Manage users, apps, devices, and security for exam-demo.example — the same places you click in a real Google Admin console." }));
+      const grid = el("div", { className: "home-grid" });
+      const cards = [
+        { title: "Users", body: state.users.filter(function (u) { return u.status !== "deleted"; }).length + " users in this tenant.", links: [
+          { t: "Add a user", fn: function () { go("users", { showAddUser: true }); } },
+          { t: "Manage users", fn: function () { go("users"); } },
+          { t: "Update a user’s OU", fn: function () { go("users"); } }
+        ]},
+        { title: "Billing", body: (state.tenant.edition === "enterprise" ? "Enterprise" : "Business Plus") + " · pooled storage.", links: [
+          { t: "Subscriptions", fn: function () { go("billing"); } }
+        ]},
+        { title: "Alerts", body: "No open alerts in this practice tenant.", links: [
+          { t: "Alert center", fn: function () { go("alerts"); } }
+        ]},
+        { title: "Domains", body: (state.domains || []).map(function (d) { return d.name; }).join(", "), links: [
+          { t: "Manage domains", fn: function () { go("domains"); } }
+        ]},
+        { title: "Apps", body: "Gmail, Drive, Calendar, Meet — on for the org.", links: [
+          { t: "Gmail", fn: function () { go("gmail"); } },
+          { t: "Drive and Docs", fn: function () { go("drive"); } }
+        ]},
+        { title: "Labs", body: "Associate tickets that use this console.", links: [
+          { t: "Open lab catalog", fn: function () { go("labs"); } },
+          { t: "Guided tour", fn: function () { document.getElementById("btnWalkthrough").click(); } }
+        ]}
+      ];
+      cards.forEach(function (c) {
+        const card = el("div", { className: "home-card" });
+        card.appendChild(el("h2", { text: c.title }));
+        card.appendChild(el("p", { text: c.body }));
+        c.links.forEach(function (l) {
+          card.appendChild(el("button", { type: "button", className: "ql", text: l.t, onclick: l.fn }));
+        });
+        grid.appendChild(card);
+      });
+      wrap.appendChild(grid);
       return wrap;
     }
 
@@ -825,64 +1191,255 @@
     }
 
     /* ---------- Users ---------- */
-    function panelUsers() {
+    function visibleUsers() {
+      const q = (state.ui.userQuery || "").toLowerCase();
+      const ou = state.ui.selectedOuId;
+      return state.users.filter(function (u) {
+        if (u.status === "deleted") return false;
+        if (ou && ou !== "ou_root") {
+          const chain = ancestors(u.ouId).map(function (o) { return o.id; });
+          if (u.ouId !== ou && chain.indexOf(ou) === -1) return false;
+        }
+        if (!q) return true;
+        return (u.name + " " + u.email).toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    function addUserModal() {
+      const scrim = el("div", { className: "modal-scrim" });
+      const box = el("div", { className: "modal" });
+      box.appendChild(el("h2", { text: "Add new user" }));
+      const fn = el("input", { type: "text", id: "nuFirst", placeholder: "First name" });
+      const ln = el("input", { type: "text", id: "nuLast", placeholder: "Last name" });
+      const em = el("input", { type: "text", id: "nuUser", placeholder: "username" });
+      const ouSel = el("select", { id: "nuOu" });
+      state.ous.forEach(function (o) {
+        const opt = el("option", { value: o.id, text: o.name });
+        if (o.id === (state.ui.selectedOuId || "ou_root")) opt.selected = true;
+        ouSel.appendChild(opt);
+      });
+      box.appendChild(el("div", { className: "field" }, [el("label", { text: "First name" }), fn]));
+      box.appendChild(el("div", { className: "field" }, [el("label", { text: "Last name" }), ln]));
+      const emailRow = el("div", { className: "field" });
+      emailRow.appendChild(el("label", { text: "Primary email" }));
+      const wrap = el("div", { className: "row" });
+      em.style.flex = "1";
+      wrap.appendChild(em);
+      wrap.appendChild(el("span", { text: "@" + state.tenant.domain }));
+      emailRow.appendChild(wrap);
+      box.appendChild(emailRow);
+      box.appendChild(el("div", { className: "field" }, [el("label", { text: "Organizational unit" }), ouSel]));
+      box.appendChild(el("p", { className: "muted", text: "Password will be auto-generated. Ask user to change it at next sign-in (exam habit)." }));
+      const actions = el("div", { className: "row" });
+      actions.appendChild(el("button", { type: "button", className: "btn", text: "Cancel", onclick: function () {
+        state.ui.showAddUser = false; saveState(); render();
+      } }));
+      actions.appendChild(el("button", { type: "button", className: "btn primary", text: "Add New User", onclick: function () {
+        const first = fn.value.trim();
+        const last = ln.value.trim();
+        const user = em.value.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+        if (!first || !last || !user) { toast("First name, last name, and email are required."); return; }
+        if (state.users.length >= MAX_USERS) { toast("Demo cap: " + MAX_USERS + " users."); return; }
+        const email = user + "@" + state.tenant.domain;
+        if (state.users.some(function (u) { return u.email === email; })) { toast("That email already exists."); return; }
+        const id = uid("u");
+        state.users.push({
+          id: id, name: first + " " + last, email: email, ouId: ouSel.value,
+          status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: []
+        });
+        audit("Created user", email);
+        state.ui.showAddUser = false;
+        state.ui.selectedUserId = id;
+        state.ui.userDetail = true;
+        saveState(); render();
+        toast("User added — " + email);
+      } }));
+      box.appendChild(actions);
+      scrim.appendChild(box);
+      scrim.addEventListener("click", function (e) {
+        if (e.target === scrim) { state.ui.showAddUser = false; saveState(); render(); }
+      });
+      return scrim;
+    }
+
+    function panelUserDetail(u) {
       const wrap = el("div", { className: "panel active" });
-      wrap.appendChild(el("h1", { text: "Users" }));
-      wrap.appendChild(el("p", { className: "lede", text: "Assign each account to exactly one OU. Holds and offboarding status show as badges." }));
+      const crumb = el("div", { className: "crumbs" });
+      crumb.appendChild(el("button", { type: "button", text: "Directory", onclick: function () { go("users", { userDetail: false }); } }));
+      crumb.appendChild(document.createTextNode("  >  "));
+      crumb.appendChild(el("button", { type: "button", text: "Users", onclick: function () { go("users", { userDetail: false }); } }));
+      crumb.appendChild(document.createTextNode("  >  " + u.name));
+      wrap.appendChild(crumb);
+      const hero = el("div", { className: "user-hero" });
+      hero.appendChild(avatarEl(u.name, true));
+      const meta = el("div");
+      meta.appendChild(el("h1", { text: u.name, style: "margin:0;font-weight:400" }));
+      meta.appendChild(el("p", { className: "muted", text: u.email }));
+      const badges = el("div", { className: "row" });
+      badges.appendChild(el("span", { className: "badge " + (u.status === "suspended" ? "suspended" : u.status === "archived" ? "aul" : "inherited"), text: u.status }));
+      if (u.vaultHold) badges.appendChild(el("span", { className: "badge hold", text: "Vault hold" }));
+      badges.appendChild(el("span", { className: "muted", text: (ouById(u.ouId) || {}).name || "" }));
+      meta.appendChild(badges);
+      hero.appendChild(meta);
+      wrap.appendChild(hero);
+      const actions = el("div", { className: "row" });
+      actions.appendChild(el("button", { type: "button", className: "btn", text: "Reset password", onclick: function () {
+        audit("Reset password", u.email);
+        toast("Temporary password set — ask to change at next sign-in.");
+      } }));
+      actions.appendChild(el("button", { type: "button", className: "btn", text: "Add alternate email", onclick: function () {
+        toast("Alias would be added on a domain you own — same mailbox, no extra license.");
+      } }));
+      wrap.appendChild(actions);
+      const card = el("div", { className: "card" });
+      card.appendChild(el("h2", { text: "User information" }));
+      const ouSel = el("select");
+      state.ous.forEach(function (o) {
+        const opt = el("option", { value: o.id, text: o.name });
+        if (o.id === u.ouId) opt.selected = true;
+        ouSel.appendChild(opt);
+      });
+      ouSel.addEventListener("change", function () {
+        u.ouId = ouSel.value;
+        audit("Moved user OU", u.email + " → " + ouById(u.ouId).name);
+        saveState(); render();
+      });
+      card.appendChild(el("div", { className: "field" }, [el("label", { text: "Organizational unit" }), ouSel]));
+      const eff = resolveUserSetting("drive.externalSharing", u.id);
+      card.appendChild(el("p", { className: "muted", text: "Effective Drive external sharing: " + eff.value + " (" + (eff.mode === "GROUP" ? "group wins" : eff.mode) + ")" }));
+      wrap.appendChild(card);
+      const more = el("div", { className: "card" });
+      more.appendChild(el("h2", { text: "More options" }));
+      const row = el("div", { className: "row" });
+      row.appendChild(el("button", { type: "button", className: "btn", text: u.status === "suspended" ? "Reactivate" : "Suspend user", onclick: function () {
+        u.status = u.status === "suspended" ? "active" : "suspended";
+        audit(u.status === "suspended" ? "Suspended user" : "Reactivated user", u.email);
+        saveState(); render();
+      } }));
+      row.appendChild(el("button", { type: "button", className: "btn", text: "Transfer data", onclick: function () {
+        go("offboard");
+      } }));
+      row.appendChild(el("button", { type: "button", className: "btn danger", text: "Delete user", onclick: function () {
+        if (u.vaultHold) { toast("Delete blocked — Vault hold is active."); return; }
+        if (!confirm("Delete " + u.email + "? Recoverable for 20 days in a real tenant.")) return;
+        u.status = "deleted";
+        audit("Deleted user", u.email);
+        state.ui.userDetail = false;
+        saveState(); render();
+      } }));
+      more.appendChild(row);
+      wrap.appendChild(more);
+      wrap.appendChild(tipBox("Suspend → transfer Drive → delete or Archived User License. Don’t delete before transfer.", "./index.html#m1-offboard"));
+      return wrap;
+    }
+
+    function panelUsers() {
+      const uSel = userById(state.ui.selectedUserId);
+      if (state.ui.userDetail && uSel && uSel.status !== "deleted") return panelUserDetail(uSel);
+
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(crumbBar(ROUTES.find(function (r) { return r.id === "users"; })));
+      const addBtn = el("button", { type: "button", className: "btn primary", text: "Add new user", onclick: function () {
+        state.ui.showAddUser = true; saveState(); render();
+      } });
+      wrap.appendChild(pageHead("Users", addBtn));
+
+      const tools = el("div", { className: "user-toolbar" });
+      const q = el("input", { type: "search", placeholder: "Search users", value: state.ui.userQuery || "" });
+      q.style.minWidth = "220px";
+      q.addEventListener("input", function () {
+        state.ui.userQuery = q.value;
+      });
+      q.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { saveState(); render(); }
+      });
+      tools.appendChild(q);
+      tools.appendChild(el("button", { type: "button", className: "filter-chip", text: "Add a filter", onclick: function () {
+        toast("Filter by OU on the left, or search name / email.");
+      } }));
+      tools.appendChild(el("span", { className: "muted", text: visibleUsers().length + " users" }));
+      wrap.appendChild(tools);
+
+      const layout = el("div", { className: "users-layout" });
+      const rail = el("div", { className: "ou-rail" });
+      rail.appendChild(el("h3", { text: "Filters / Organizational units" }));
+      const rootUl = el("ul", { className: "ou-tree" });
+      function paintOuPick(parentId, ul) {
+        state.ous.filter(function (o) { return o.parentId === parentId; }).forEach(function (ou) {
+          const li = el("li");
+          const node = el("div", {
+            className: "ou-node" + (state.ui.selectedOuId === ou.id ? " selected" : ""),
+            onclick: function () { state.ui.selectedOuId = ou.id; saveState(); render(); }
+          });
+          node.appendChild(el("span", { text: ou.name }));
+          li.appendChild(node);
+          const kids = childrenOf(ou.id);
+          if (kids.length) {
+            const sub = el("ul", { className: "ou-tree" });
+            paintOuPick(ou.id, sub);
+            li.appendChild(sub);
+          }
+          ul.appendChild(li);
+        });
+      }
+      const root = state.ous.find(function (o) { return !o.parentId; });
+      if (root) {
+        const li = el("li");
+        const node = el("div", {
+          className: "ou-node" + (state.ui.selectedOuId === root.id ? " selected" : ""),
+          onclick: function () { state.ui.selectedOuId = root.id; saveState(); render(); }
+        });
+        node.appendChild(el("span", { text: root.name + " (top-level)" }));
+        li.appendChild(node);
+        const sub = el("ul", { className: "ou-tree" });
+        paintOuPick(root.id, sub);
+        li.appendChild(sub);
+        rootUl.appendChild(li);
+      }
+      rail.appendChild(rootUl);
+      layout.appendChild(rail);
 
       const table = el("table", { className: "user-table" });
       const thead = el("thead");
       const hr = el("tr");
-      ["Name", "Email", "OU", "Status", "Effective Drive sharing", "Actions"].forEach((h) => hr.appendChild(el("th", { text: h })));
+      ["Name", "Email", "Status", "Organizational unit"].forEach(function (h) { hr.appendChild(el("th", { text: h })); });
       thead.appendChild(hr);
       table.appendChild(thead);
       const tbody = el("tbody");
-
-      state.users.forEach((u) => {
-        if (u.status === "deleted") return;
-        const tr = el("tr");
+      visibleUsers().forEach(function (u) {
+        const tr = el("tr", { className: state.ui.selectedUserId === u.id ? "picked" : "" });
+        tr.addEventListener("click", function () {
+          state.ui.selectedUserId = u.id;
+          state.ui.userDetail = true;
+          saveState();
+          render();
+        });
         const nameTd = el("td");
-        nameTd.appendChild(document.createTextNode(u.name + " "));
-        if (u.vaultHold) nameTd.appendChild(el("span", { className: "badge hold", text: "Hold" }));
-        if (u.status === "suspended") nameTd.appendChild(el("span", { className: "badge suspended", text: "Suspended" }));
-        if (u.status === "archived") nameTd.appendChild(el("span", { className: "badge aul", text: "AUL" }));
+        const cell = el("div", { className: "name-cell" });
+        cell.appendChild(avatarEl(u.name));
+        const who = el("div", { className: "who" });
+        const nm = el("b", { text: u.name + " " });
+        if (u.vaultHold) nm.appendChild(el("span", { className: "badge hold", text: "Hold" }));
+        who.appendChild(nm);
+        who.appendChild(el("span", { text: u.email }));
+        cell.appendChild(who);
+        nameTd.appendChild(cell);
         tr.appendChild(nameTd);
         tr.appendChild(el("td", { text: u.email }));
-        tr.appendChild(el("td", { text: (ouById(u.ouId) || {}).name || u.ouId }));
         tr.appendChild(el("td", { text: u.status }));
-
-        const eff = resolveUserSetting("drive.externalSharing", u.id);
-        const effTd = el("td");
-        effTd.appendChild(document.createTextNode(eff.value + " "));
-        effTd.appendChild(el("span", {
-          className: "badge " + (eff.mode === "GROUP" ? "group" : eff.mode === "OVERRIDDEN" ? "override" : "inherited"),
-          text: eff.mode === "GROUP" ? "GROUP WINS" : eff.mode
-        }));
-        tr.appendChild(effTd);
-
-        const act = el("td");
-        const sel = el("select");
-        state.ous.forEach((o) => {
-          const opt = el("option", { value: o.id, text: o.name });
-          if (o.id === u.ouId) opt.selected = true;
-          sel.appendChild(opt);
-        });
-        sel.addEventListener("change", () => {
-          u.ouId = sel.value;
-          audit("Moved user OU", u.email + " → " + ouById(u.ouId).name);
-          saveState(); render();
-        });
-        act.appendChild(sel);
-        act.appendChild(el("button", {
-          type: "button", className: "btn", text: "Select",
-          onclick: () => { state.ui.selectedUserId = u.id; saveState(); toast("Selected " + u.name); render(); }
-        }));
-        tr.appendChild(act);
+        tr.appendChild(el("td", { text: (ouById(u.ouId) || {}).name || "" }));
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
-      wrap.appendChild(el("div", { className: "card" }, [table]));
-      wrap.appendChild(tipBox("Suspend → transfer Drive → delete or Archived User License.", "./index.html#m1"));
+      const list = el("div");
+      list.appendChild(table);
+      layout.appendChild(list);
+      wrap.appendChild(layout);
+      wrap.appendChild(el("button", {
+        type: "button", className: "fab-add", text: "+", title: "Add new user",
+        onclick: function () { state.ui.showAddUser = true; saveState(); render(); }
+      }));
+      if (state.ui.showAddUser) wrap.appendChild(addUserModal());
       return wrap;
     }
 
@@ -3180,9 +3737,13 @@
       renderNav();
       const main = document.getElementById("main");
       clear(main);
+      NAV_TREE.forEach(function (g) {
+        if (g.kids && g.kids.indexOf(state.ui.route) >= 0) state.ui.navOpen[g.id] = true;
+      });
       const route = ROUTES.find((r) => r.id === state.ui.route) || ROUTES[0];
       let panel;
       switch (route.id) {
+        case "home": panel = panelHome(); break;
         case "ous": panel = panelOUs(); break;
         case "users": panel = panelUsers(); break;
         case "groups": panel = panelGroups(); break;
@@ -3200,6 +3761,9 @@
         case "offboard": panel = panelOffboard(); break;
         default: panel = stubPanel(route); break;
       }
+      if (route.id !== "home" && route.id !== "users" && !panel.querySelector(".crumbs")) {
+        panel.insertBefore(crumbBar(route), panel.firstChild);
+      }
       main.appendChild(panel);
       // Track OU visits for walkthrough
       if (state.ui.route === "ous") {
@@ -3213,6 +3777,102 @@
       document.body.classList.toggle("coach-minimized", !!(state.ui.labs && state.ui.labs.activeId && state.ui.labs.minimized) || (!!state.ui.walkthrough.active && !!state.ui.walkthrough.minimized && !labDockOpen()));
       maybeAutoAdvance();
     }
+
+    function searchHits(q) {
+      q = (q || "").trim().toLowerCase();
+      if (!q) return [];
+      const chip = state.ui.searchChip || "all";
+      const out = [];
+      if (chip === "all" || chip === "Users") {
+        state.users.forEach(function (u) {
+          if (u.status === "deleted") return;
+          if ((u.name + " " + u.email).toLowerCase().indexOf(q) >= 0) {
+            out.push({ kind: "Users", label: u.name, sub: u.email, go: function () { go("users", { selectedUserId: u.id, userDetail: true }); } });
+          }
+        });
+      }
+      if (chip === "all" || chip === "Settings" || chip === "Features") {
+        SEARCH_ALIASES.forEach(function (a) {
+          if (a.q.indexOf(q) >= 0 || q.indexOf(a.q) >= 0) {
+            if (chip !== "all" && a.kind !== chip) return;
+            out.push({ kind: a.kind, label: a.label, sub: "Admin console → " + a.id, go: function () { go(a.id); } });
+          }
+        });
+        ROUTES.forEach(function (r) {
+          if ((r.label + " " + (r.sec || "")).toLowerCase().indexOf(q) >= 0) {
+            out.push({ kind: "Features", label: r.label, sub: (r.crumb || []).join(" > "), go: function () { go(r.id); } });
+          }
+        });
+      }
+      const seen = {};
+      return out.filter(function (h) {
+        const k = h.kind + h.label;
+        if (seen[k]) return false;
+        seen[k] = true;
+        return true;
+      }).slice(0, 12);
+    }
+
+    function paintSearchPop() {
+      const pop = document.getElementById("searchPop");
+      const box = document.getElementById("adminSearch");
+      if (!pop || !box) return;
+      const q = box.value;
+      clear(pop);
+      if (!q.trim()) { pop.classList.remove("open"); return; }
+      const chips = el("div", { className: "search-chip-row" });
+      ["all", "Users", "Settings", "Features"].forEach(function (c) {
+        chips.appendChild(el("button", {
+          type: "button",
+          className: "search-chip" + ((state.ui.searchChip || "all") === c ? " on" : ""),
+          text: c === "all" ? "All" : c,
+          onclick: function () { state.ui.searchChip = c; paintSearchPop(); }
+        }));
+      });
+      pop.appendChild(chips);
+      const hits = searchHits(q);
+      if (!hits.length) pop.appendChild(el("p", { className: "muted", text: "No matches in this practice tenant." }));
+      hits.forEach(function (h) {
+        const b = el("button", { type: "button", className: "search-hit", onclick: function () {
+          pop.classList.remove("open");
+          box.blur();
+          h.go();
+        } });
+        const col = el("div");
+        col.appendChild(document.createTextNode(h.label));
+        col.appendChild(el("small", { text: h.kind + " · " + h.sub }));
+        b.appendChild(col);
+        pop.appendChild(b);
+      });
+      pop.classList.add("open");
+    }
+
+    document.getElementById("btnMenu").addEventListener("click", function () {
+      state.ui.navCollapsed = !state.ui.navCollapsed;
+      saveState();
+      renderNav();
+    });
+    document.getElementById("btnAvatar").addEventListener("click", function () {
+      document.getElementById("acctMenu").classList.toggle("open");
+    });
+    document.getElementById("btnHelp").addEventListener("click", function () {
+      toast("In a real console this opens Help. Here: search DKIM, Ada, wipe, or Vault.");
+    });
+    document.addEventListener("click", function (e) {
+      const pop = document.getElementById("searchPop");
+      const wrap = e.target.closest && e.target.closest(".admin-search-wrap");
+      if (pop && !wrap) pop.classList.remove("open");
+      const menu = document.getElementById("acctMenu");
+      if (menu && !e.target.closest("#acctMenu") && !e.target.closest("#btnAvatar")) menu.classList.remove("open");
+    });
+    document.getElementById("adminSearch").addEventListener("input", paintSearchPop);
+    document.getElementById("adminSearch").addEventListener("focus", paintSearchPop);
+    document.getElementById("adminSearch").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const hits = searchHits(e.target.value);
+        if (hits[0]) { document.getElementById("searchPop").classList.remove("open"); hits[0].go(); }
+      }
+    });
 
     document.getElementById("editionSelect").addEventListener("change", (e) => {
       state.tenant.edition = e.target.value === "enterprise" ? "enterprise" : "business_plus";
@@ -3280,9 +3940,11 @@
         state.ui.walkthrough.minimized = false;
       } else if (id === "labs") {
         state.ui.route = "labs";
+      } else if (id === "home") {
+        state.ui.route = "home";
       } else if (ROUTES.some((r) => r.id === id)) state.ui.route = id;
-    } else if (!state.ui.labs.activeId) {
-      state.ui.route = "labs";
+    } else if (!state.ui.labs.activeId && state.ui.route === "labs") {
+      state.ui.route = "home";
     }
     if (/[?&]wt=1/.test(location.search)) {
       state.ui.walkthrough.active = true;
