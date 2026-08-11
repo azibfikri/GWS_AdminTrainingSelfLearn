@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      try {
+        document.documentElement.classList.add(
+          localStorage.getItem("gws-auth-token-v1") ? "boot-session" : "boot-login"
+        );
+      } catch (e) {
+        document.documentElement.classList.add("boot-login");
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#12241e" />
@@ -794,6 +805,25 @@
     body.auth-gate .auth-modal { display: grid; }
     body.auth-gate .auth-modal .auth-backdrop { cursor: default; pointer-events: none; }
     .auth-modal.auth-required .auth-close { display: none; }
+    html.boot-login #styleGate,
+    html.boot-login .layout,
+    html.boot-login #kinderWorld,
+    html.boot-login #fabStyle,
+    html.boot-login .reading-bar,
+    html.boot-login .focus-exit,
+    html.boot-login .mobile-topbar,
+    html.boot-login .nav-backdrop,
+    html.boot-login .progress-mobile { display: none !important; }
+    html.boot-login #authModal { display: grid; }
+    html.boot-session:not(.auth-ready) body::after {
+      content: "Opening your desk…";
+      position: fixed; inset: 0; z-index: 400;
+      display: grid; place-items: center;
+      background: #eef3ef; color: #5a6b63;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-weight: 600; font-size: .95rem;
+      letter-spacing: .01em;
+    }
     .auth-backdrop {
       position: absolute; inset: 0; background: rgba(10, 20, 16, .55); border: 0; cursor: pointer;
     }
@@ -2023,11 +2053,6 @@
       },
       setJSON(k, d) { try { localStorage.setItem(k, JSON.stringify(d)); } catch (e) {} }
     };
-    window.addEventListener("gws-profile-loaded", (e) => {
-      if (e.detail && e.detail.changed === false) return;
-      window.location.reload();
-    });
-
     (function () {
       const CHECK_KEY = "gws-study-checks-v1";
       let saved = {};
@@ -2068,6 +2093,14 @@
         });
       });
       paintChecks();
+      window.gwsStorage?.onProgressRefresh?.(() => {
+        try {
+          saved = store.getJSON(CHECK_KEY, () => ({})) || {};
+        } catch (e) {
+          saved = {};
+        }
+        paintChecks();
+      });
 
       const search = document.getElementById("search");
       const modules = [...document.querySelectorAll(".module, .hero")];
@@ -2925,6 +2958,10 @@
 
       setMode(mode);
       paintStats();
+      window.gwsStorage?.onProgressRefresh?.(() => {
+        state = loadGame();
+        paintStats();
+      });
     })();
 
 
@@ -2952,9 +2989,15 @@
         date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false,
         focusModule: "m0", done: false, elapsed: 0
       }));
+      function persistSession(syncCloud) {
+        try {
+          localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        } catch (e) { /* ignore */ }
+        if (syncCloud) window.gwsStorage?.scheduleSync?.();
+      }
       if (session.date !== today) {
         session = { date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false, focusModule: pickFocusModule(), done: false, elapsed: 0 };
-        saveJSON(SESSION_KEY, session);
+        persistSession(true);
       }
 
       const MODULE_LABELS = {
@@ -3158,13 +3201,13 @@
           st.textContent = session.done ? "done ✓" : (session.running ? "timer running" : "ready");
           sideSession.appendChild(st);
         }
-        saveJSON(SESSION_KEY, session);
       }
 
       function stopTimer() {
         session.running = false;
         if (intervalId) { clearInterval(intervalId); intervalId = null; }
         paintSession();
+        persistSession(true);
       }
 
       function tick() {
@@ -3179,6 +3222,7 @@
         session.secondsLeft -= 1;
         session.elapsed = (session.elapsed || 0) + 1;
         paintSession();
+        if ((session.elapsed || 0) % 15 === 0) persistSession(false);
       }
 
       function startTimer() {
@@ -3188,6 +3232,7 @@
         if (intervalId) clearInterval(intervalId);
         intervalId = setInterval(tick, 1000);
         paintSession();
+        persistSession(true);
         toast("Timer on — deep work mode.");
       }
 
@@ -3199,6 +3244,7 @@
         session.elapsed = 0;
         session.done = false;
         paintSession();
+        persistSession(true);
       });
       document.getElementById("btnGoFocusModule")?.addEventListener("click", () => {
         const el = document.getElementById(session.focusModule);
@@ -3208,6 +3254,7 @@
         stopTimer();
         session.done = true;
         paintSession();
+        persistSession(true);
         toast("Session marked done. Come back tomorrow.");
       });
       document.getElementById("btnStartSession")?.addEventListener("click", () => {
@@ -3237,6 +3284,23 @@
         session.running = false;
       }
       paintSession();
+      window.gwsStorage?.onProgressRefresh?.(() => {
+        session = loadJSON(SESSION_KEY, () => ({
+          date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false,
+          focusModule: "m0", done: false, elapsed: 0
+        }));
+        if (session.date !== today) {
+          session = { date: today, minutesGoal: 25, secondsLeft: 25 * 60, running: false, focusModule: pickFocusModule(), done: false, elapsed: 0 };
+          persistSession(false);
+        }
+        if (session.running && session.secondsLeft > 0 && !session.done) {
+          if (!intervalId) intervalId = setInterval(tick, 1000);
+        } else {
+          session.running = false;
+          if (intervalId) { clearInterval(intervalId); intervalId = null; }
+        }
+        paintSession();
+      });
 
       /* Keyboard shortcuts — ignore when typing */
       function typingTarget(el) {
@@ -3584,6 +3648,11 @@
         tryBootStyle();
       }
       window.addEventListener("gws-auth-signed-in", tryBootStyle);
+      window.addEventListener("gws-auth-signed-out", () => {
+        state = { style: null, adultPath: null, kinderChapter: 0 };
+        applyStyle(null);
+      });
+      window.gwsStorage?.onProgressRefresh?.(tryBootStyle);
 
       /* Mobile nav drawer */
       function setNavOpen(open) {

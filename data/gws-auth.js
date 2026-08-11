@@ -18,11 +18,17 @@
   const anonKey = authCfg.anonKey || "";
   const configured = !!apiBase && apiBase.indexOf("YOUR_") === -1;
 
+  const LIVE_KEYS = { "gws-study-session-v1": true };
+  const IDLE_MS = 10 * 60 * 1000;
+
   let session = null;
   let syncTimer = null;
   let syncing = false;
   let ready = false;
   const readyCbs = [];
+  const progressRefreshers = [];
+  let lastActive = Date.now();
+  let idleTimer = null;
 
   function emitReady() {
     ready = true;
@@ -34,6 +40,56 @@
   function onReady(fn) {
     if (ready) fn();
     else readyCbs.push(fn);
+  }
+
+  function onProgressRefresh(fn) {
+    if (typeof fn === "function") progressRefreshers.push(fn);
+  }
+
+  function notifyProgressRefresh() {
+    progressRefreshers.forEach((fn) => {
+      try { fn(); } catch (e) { /* ignore */ }
+    });
+  }
+
+  function touchActivity() {
+    lastActive = Date.now();
+  }
+
+  function stopIdleWatch() {
+    if (idleTimer) {
+      clearInterval(idleTimer);
+      idleTimer = null;
+    }
+  }
+
+  function startIdleWatch() {
+    stopIdleWatch();
+    lastActive = Date.now();
+    idleTimer = setInterval(() => {
+      if (!session) return;
+      if (Date.now() - lastActive >= IDLE_MS) {
+        toast("Signed out after 10 minutes idle.");
+        window.gwsStorage.signOut();
+      }
+    }, 15000);
+  }
+
+  function shouldCloudSync(key) {
+    return SYNC_KEYS.indexOf(key) !== -1 && !LIVE_KEYS[key];
+  }
+
+  function releaseAuthGate() {
+    document.documentElement.classList.add("auth-ready");
+    document.documentElement.classList.remove("boot-login");
+    document.body.classList.remove("auth-gate");
+    if (modal) {
+      modal._required = false;
+      modal.classList.remove("open", "auth-required");
+      modal.setAttribute("aria-hidden", "true");
+    }
+    const closeBtn = document.getElementById("authModalClose");
+    if (closeBtn) closeBtn.hidden = false;
   }
 
   function getToken() {
@@ -126,24 +182,25 @@
   function scheduleSync() {
     if (!session) return;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(pushProgress, 1800);
+    syncTimer = setTimeout(function () { pushProgress({ silent: true }); }, 4000);
   }
 
-  async function pushProgress() {
+  async function pushProgress(opts) {
+    opts = opts || {};
     if (!session || syncing) return;
     syncing = true;
-    paintAccount();
+    if (!opts.silent) paintAccount();
     const payload = buildPayloadFromLocal();
     try {
       await api("/progress", { method: "PUT", body: JSON.stringify({ payload }) });
       setMeta({ lastPush: Date.now(), lastError: null });
-      toast("Progress saved to your profile.");
+      if (!opts.silent) toast("Progress saved to your profile.");
     } catch (e) {
       setMeta({ lastError: String(e.message || e) });
-      toast("Could not sync — still saved on this device.");
+      if (!opts.silent) toast("Could not sync — still saved on this device.");
     } finally {
       syncing = false;
-      paintAccount();
+      if (!opts.silent) paintAccount();
     }
   }
 
@@ -170,8 +227,6 @@
     session = { user: { id: user.id, username: user.username } };
     setMeta({ userId: user.id });
     paintAccount();
-    document.body.classList.remove("auth-gate");
-    if (modal) modal.classList.remove("auth-required");
 
     let pulledChanged = false;
     try {
@@ -180,33 +235,36 @@
       if (remoteHas) {
         pulledChanged = applyPayloadToLocal(row.payload, true);
         setMeta({ lastPull: Date.now(), remoteAt: row.updated_at });
-        if (pulledChanged) toast("Loaded progress from your profile.");
+        if (pulledChanged && opts.freshLogin) toast("Loaded progress from your profile.");
       } else if (opts.isNewAccount) {
         toast("Welcome — pick your learning style to begin.");
       }
     } catch (e) {
-      toast("Signed in — sync failed; using device storage.");
+      if (opts.freshLogin || opts.isNewAccount) toast("Signed in — sync failed; using device storage.");
     }
 
-    if (opts.reloadAfter) {
-      window.location.reload();
-      return;
-    }
+    document.body.classList.remove("auth-gate");
     if (clearedLocal || pulledChanged) {
+      notifyProgressRefresh();
       window.dispatchEvent(new CustomEvent("gws-profile-loaded", { detail: { changed: pulledChanged } }));
-    } else {
-      window.dispatchEvent(new CustomEvent("gws-auth-signed-in"));
     }
-    scheduleSync();
+    window.dispatchEvent(new CustomEvent("gws-auth-signed-in"));
+    releaseAuthGate();
+    startIdleWatch();
   }
 
   function handleSignedOut() {
     session = null;
     setToken(null);
     clearTimeout(syncTimer);
+    stopIdleWatch();
     clearLocalSyncKeys();
     setMeta({ userId: null, lastPull: null, lastPush: null, remoteAt: null });
     paintAccount();
+    document.documentElement.classList.remove("auth-ready", "boot-session");
+    document.documentElement.classList.add("boot-login");
+    notifyProgressRefresh();
+    window.dispatchEvent(new CustomEvent("gws-auth-signed-out"));
   }
 
   function toast(msg) {
@@ -222,17 +280,18 @@
     configured: configured,
     isLoggedIn: () => !!(session && session.user),
     onReady,
+    onProgressRefresh,
     scheduleSync,
     getItem(key) {
       try { return localStorage.getItem(key); } catch (e) { return null; }
     },
     setItem(key, value) {
       try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
-      if (SYNC_KEYS.indexOf(key) !== -1) scheduleSync();
+      if (shouldCloudSync(key)) scheduleSync();
     },
     removeItem(key) {
       try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
-      if (SYNC_KEYS.indexOf(key) !== -1) scheduleSync();
+      if (shouldCloudSync(key)) scheduleSync();
     },
     getJSON(key, fallback) {
       try {
@@ -248,7 +307,7 @@
     setJSON(key, data) {
       try {
         localStorage.setItem(key, JSON.stringify(data));
-        if (SYNC_KEYS.indexOf(key) !== -1) scheduleSync();
+        if (shouldCloudSync(key)) scheduleSync();
       } catch (e) { /* ignore */ }
     },
     openAuthModal(mode) {
@@ -256,7 +315,7 @@
     },
     signOut() {
       handleSignedOut();
-      if (configured) window.location.reload();
+      if (configured) showLoginGate();
     },
     uploadDeviceToCloud() {
       return pushProgress();
@@ -405,8 +464,7 @@
         method: "POST",
         body: JSON.stringify({ username, password })
       });
-      closeModal();
-      await handleSignedIn(data.user, data.token, { freshLogin: true, reloadAfter: true });
+      await handleSignedIn(data.user, data.token, { freshLogin: true });
     } catch (err) {
       setAuthError(err.message || "Could not log in.");
     }
@@ -423,14 +481,15 @@
         method: "POST",
         body: JSON.stringify({ username, password })
       });
-      closeModal();
-      await handleSignedIn(data.user, data.token, { isNewAccount: true, reloadAfter: true });
+      await handleSignedIn(data.user, data.token, { isNewAccount: true });
     } catch (err) {
       setAuthError(err.message || "Could not sign up.");
     }
   });
 
   function showLoginGate() {
+    document.documentElement.classList.remove("auth-ready", "boot-session");
+    document.documentElement.classList.add("boot-login");
     document.body.classList.add("auth-gate");
     const lede = document.getElementById("authLede");
     if (lede) {
@@ -459,6 +518,10 @@
     }
     emitReady();
   }
+
+  ["pointerdown", "keydown", "scroll", "touchstart"].forEach((ev) => {
+    document.addEventListener(ev, touchActivity, { passive: true, capture: true });
+  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initAuth);
