@@ -76,6 +76,104 @@
     }
     .hero h1 { font-family: var(--display); font-size: 1.45rem; margin: 0 0 .25rem; }
     .hero p { margin: 0; color: var(--muted); max-width: 78ch; }
+    .film-wrap { max-width: 1400px; margin: .85rem auto 0; padding: 0 1.1rem; }
+    .film {
+      background: #070b14; border-radius: 14px; overflow: hidden;
+      box-shadow: var(--shadow); color: #e8eefc;
+    }
+    .film-stage {
+      position: relative; aspect-ratio: 16 / 9; background:
+        radial-gradient(1200px 400px at 20% 0%, #1a2a4a 0%, transparent 55%), #070b14;
+      overflow: hidden;
+    }
+    .film-art { position: absolute; inset: 0; pointer-events: none; }
+    .film-caption {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.88) 42%);
+      padding: 3.2rem 1.15rem 3.35rem; font-size: 1.02rem; line-height: 1.4;
+      z-index: 2;
+    }
+    .film-caption b { display: block; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: #8ab4f8; margin-bottom: .3rem; }
+    .film-play {
+      position: absolute; inset: 0; z-index: 3; border: 0; background: rgba(7,11,20,.28);
+      color: #fff; cursor: pointer; display: grid; place-items: center;
+    }
+    .film-play span {
+      width: 74px; height: 74px; border-radius: 50%; background: var(--blue);
+      display: grid; place-items: center; font-size: 1.6rem; box-shadow: 0 8px 24px rgba(26,115,232,.45);
+    }
+    .film-play.hidden { display: none; }
+    .film-bar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .65rem;
+      padding: .55rem .8rem; background: #121a2b; border-top: 1px solid #243049;
+    }
+    .film-bar input[type="range"] { flex: 1; min-width: 140px; accent-color: var(--blue); }
+    .film-time { font-size: .78rem; color: #9aa8c2; font-variant-numeric: tabular-nums; min-width: 5.6rem; }
+    .chapters {
+      display: flex; flex-wrap: wrap; gap: .35rem; padding: .55rem .7rem .7rem; background: #0b1220;
+    }
+    .chapters button {
+      border: 1px solid #243049; background: #121a2b; color: #c5d0e6;
+      border-radius: 999px; padding: .22rem .55rem; font-size: .75rem; cursor: pointer;
+    }
+    .chapters button.on { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .google-clips {
+      display: flex; flex-wrap: wrap; gap: .45rem; align-items: center;
+      padding: .55rem .8rem .75rem; background: #0b1220; border-top: 1px solid #243049;
+      font-size: .8rem; color: #9aa8c2;
+    }
+    .google-clips a { color: #8ab4f8; }
+    .art-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .7rem; padding: 1rem 1rem 5.5rem;
+      text-align: center;
+    }
+    .big-domain {
+      font-family: var(--display); font-size: clamp(1.6rem, 5vw, 3rem); font-weight: 700;
+      letter-spacing: -.02em;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+    .pill {
+      border: 1px solid #3c4b66; background: #121a2b; border-radius: 10px;
+      padding: .65rem .85rem; min-width: 140px; text-align: left;
+    }
+    .pill small { display: block; color: #9aa8c2; font-size: .72rem; }
+    .pill.admin { border-color: #1a73e8; }
+    .pill.dns { border-color: #f48120; }
+    .pill.gmail { border-color: #ea4335; }
+    .rec {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(.78rem, 2vw, 1rem);
+      background: #121a2b; border: 1px dashed #fbbc04; border-radius: 8px; padding: .55rem .75rem;
+    }
+    .env {
+      position: absolute; font-size: 2rem; animation: flymail 2.8s ease-in-out infinite;
+      z-index: 1;
+    }
+    .node {
+      position: absolute; top: 28%; padding: .45rem .7rem; border-radius: 10px;
+      background: #121a2b; border: 1px solid #3c4b66; font-size: .82rem;
+    }
+    .node.a { left: 8%; }
+    .node.b { left: 42%; top: 22%; border-color: #1a73e8; }
+    .node.c { right: 8%; border-color: #34a853; }
+    @keyframes flymail {
+      0% { left: 10%; top: 34%; opacity: 0; }
+      12% { opacity: 1; }
+      48% { left: 44%; top: 26%; }
+      88% { left: 78%; top: 34%; opacity: 1; }
+      100% { left: 80%; top: 34%; opacity: 0; }
+    }
+    .keyspin { font-size: 2.4rem; animation: spin 6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .recap-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; max-width: 640px; width: 90%;
+      text-align: left; font-size: .82rem;
+    }
+    .recap-grid div { background: #121a2b; border-radius: 8px; padding: .45rem .55rem; border: 1px solid #243049; }
+    .recap-grid code { color: #fdd663; }
+    @media (prefers-reduced-motion: reduce) {
+      .env, .keyspin { animation: none; }
+    }
     .places {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: .55rem;
       max-width: 1400px; margin: .75rem auto 0; padding: 0 1.1rem;
@@ -222,6 +320,7 @@
     </a>
     <span class="sub">Demo only — you click Admin, then the DNS host, then Gmail. No real domain is changed.</span>
     <nav>
+      <a class="btn ghost" href="#watch">Watch explainer</a>
       <a class="btn ghost" href="./index.html#m2">Module 2 notes</a>
       <a class="btn ghost" href="./gws-admin-console.html#labs">Admin labs</a>
       <button type="button" class="btn" id="btnReset">Reset demo</button>
@@ -229,12 +328,38 @@
   </header>
 
   <div class="hero">
-    <h1>Watch where each setting actually lives</h1>
+    <h1>Watch how the domain and DNS records work</h1>
     <p>
-      Mail setup is not one screen. Google Admin <em>creates</em> the values. Your DNS host (GoDaddy, Cloudflare, etc.) is where you <em>publish</em> them.
-      Then a user mailbox is just a user in Directory. Walk the 10 steps — the demo will tell you when to leave Admin and open DNS.
+      Play the short film first. It shows what a domain is, then each record — verification TXT, MX, SPF, DKIM, DMARC — and whether it lives in <strong>Admin</strong> or at the <strong>DNS host</strong>. After that, click the 10 steps yourself.
     </p>
   </div>
+
+  <section class="film-wrap" id="watch">
+    <div class="film" aria-label="Domain and mail records explainer">
+      <div class="film-stage" id="filmStage">
+        <div class="film-art" id="filmArt"></div>
+        <div class="film-caption" id="filmCap"><b>Explainer</b>Press play to watch how northwind.example gets mail.</div>
+        <button type="button" class="film-play" id="filmPlayOverlay" aria-label="Play explainer"><span>▶</span></button>
+      </div>
+      <div class="film-bar">
+        <button type="button" class="btn primary" id="filmPlay">Play</button>
+        <button type="button" class="btn" id="filmRestart">Restart</button>
+        <button type="button" class="btn" id="filmMute">Mute</button>
+        <input type="range" id="filmSeek" min="0" max="1000" value="0" aria-label="Explainer timeline" />
+        <span class="film-time" id="filmTime">0:00 / 1:36</span>
+        <button type="button" class="btn" id="filmTry">Try this step</button>
+      </div>
+      <div class="chapters" id="filmChapters"></div>
+      <div class="google-clips">
+        Official Google clips (opens YouTube):
+        <a href="https://www.youtube.com/watch?v=G4RJucbeFf8" target="_blank" rel="noopener">Set up SPF</a>
+        ·
+        <a href="https://www.youtube.com/watch?v=GEsXogRshpM" target="_blank" rel="noopener">Set up DKIM</a>
+        ·
+        <a href="https://support.google.com/a/answer/11424845" target="_blank" rel="noopener">All Workspace videos</a>
+      </div>
+    </div>
+  </section>
 
   <div class="places" role="tablist" aria-label="Where you are">
     <button type="button" class="place-btn active" data-place="admin" id="tabAdmin">
@@ -1012,7 +1137,248 @@
       toast("Demo reset.");
     });
 
+    window.gwsMailDemo = {
+      goto: function (step, place) {
+        const st = STEPS.find(function (x) { return x.id === step; });
+        s.place = place || (st && st.place) || "admin";
+        if (st && unlocked(st.id)) s.step = st.id;
+        else if (st && !unlocked(st.id)) toast("You can browse that place. Finish earlier steps to unlock the action.");
+        save();
+        render();
+        document.querySelector(".layout")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
     render();
+  })();
+
+  (function () {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const CHAPTERS = [
+      {
+        id: "name", demoStep: 1, place: "admin", dur: 9,
+        title: "The domain is a name",
+        cap: "northwind.example is just a name people type after @. It is not the inbox yet. DNS is the internet’s phone book for that name.",
+        art: function () {
+          return '<div class="art-center"><div class="big-domain">northwind.example</div><div class="pill-row"><div class="pill">Type this in email<small>maya@northwind.example</small></div><div class="pill">Not a mailbox yet<small>A user in Admin creates the inbox</small></div></div></div>';
+        }
+      },
+      {
+        id: "book", demoStep: 2, place: "dns", dur: 9,
+        title: "DNS is the phone book",
+        cap: "Computers do not guess. They look up records at the DNS host: MX for where mail goes, TXT for extra facts like “I own this” and “these servers may send”.",
+        art: function () {
+          return '<div class="art-center"><div class="pill-row"><div class="pill dns"><b>MX</b><small>Where inbound mail is delivered</small></div><div class="pill dns"><b>TXT</b><small>Verification, SPF, DKIM, DMARC</small></div><div class="pill dns"><b>A / CNAME</b><small>Websites — not Gmail setup</small></div></div></div>';
+        }
+      },
+      {
+        id: "two", demoStep: 1, place: "admin", dur: 9,
+        title: "Two places, not one screen",
+        cap: "Google Admin creates the values. The DNS host publishes them. Gmail is only the inbox after you create a user. Most mix-ups happen when people look for MX inside Admin.",
+        art: function () {
+          return '<div class="art-center"><div class="pill-row"><div class="pill admin"><b>Google Admin</b><small>Add domain · generate DKIM · create user</small></div><div class="pill dns"><b>DNS host</b><small>Paste MX and TXT — this is live internet</small></div><div class="pill gmail"><b>Gmail</b><small>The mailbox = a Directory user</small></div></div></div>';
+        }
+      },
+      {
+        id: "txt", demoStep: 2, place: "dns", dur: 10,
+        title: "TXT proves you own the domain",
+        cap: "Admin gives you a google-site-verification= token. That TXT must exist at the DNS host. Then Admin looks it up. If it finds the token, ownership is verified.",
+        art: function () {
+          return '<div class="art-center"><div class="rec">TXT @ google-site-verification=abc123-demo</div><div class="pill-row"><div class="pill admin">Admin creates the token</div><div class="pill dns">DNS publishes it</div><div class="pill admin">Admin clicks Verify</div></div></div>';
+        }
+      },
+      {
+        id: "mx", demoStep: 5, place: "dns", dur: 11,
+        title: "MX = inbound delivery only",
+        cap: "When someone sends mail to you@northwind.example, their server reads MX. Modern Google MX is smtp.google.com, priority 1. Delete old MX or mail may stay at the old host. MX does not stop outbound spam.",
+        art: function () {
+          return '<div class="node a">Sender</div><div class="node b">MX lookup → smtp.google.com</div><div class="node c">Google Gmail</div><div class="env" aria-hidden="true">✉️</div>';
+        }
+      },
+      {
+        id: "user", demoStep: 6, place: "admin", dur: 8,
+        title: "The inbox is a user",
+        cap: "MX only delivers to Google. A mailbox appears when you add a user in Directory — maya@northwind.example. No user, nowhere for the message to land.",
+        art: function () {
+          return '<div class="art-center"><div class="pill admin"><b>Directory → Users → Add</b><small>Maya Chen · maya@northwind.example</small></div><p>That user object is the Gmail inbox.</p></div>';
+        }
+      },
+      {
+        id: "spf", demoStep: 7, place: "dns", dur: 10,
+        title: "SPF is a TXT: who may send",
+        cap: "SPF lists servers allowed to send as your domain. For Workspace only: v=spf1 include:_spf.google.com ~all. One SPF TXT per domain. Extra SPF records break SPF. This is DNS, not a Gmail toggle.",
+        art: function () {
+          return '<div class="art-center"><div class="rec">TXT @ v=spf1 include:_spf.google.com ~all</div><p>Receivers ask: may Google send as northwind.example?</p></div>';
+        }
+      },
+      {
+        id: "dkim", demoStep: 8, place: "admin", dur: 12,
+        title: "DKIM: generate, publish, start",
+        cap: "Admin generates a key. You publish TXT at google._domainkey on DNS. Then back in Admin click Start authentication. Skip that last click and outbound mail is still unsigned.",
+        art: function () {
+          return '<div class="art-center"><div class="keyspin" aria-hidden="true">🔑</div><div class="pill-row"><div class="pill admin">1. Generate</div><div class="pill dns">2. Publish google._domainkey</div><div class="pill admin">3. Start authentication</div></div><div class="rec">TXT google._domainkey v=DKIM1; k=rsa; p=…</div></div>';
+        }
+      },
+      {
+        id: "dmarc", demoStep: 9, place: "dns", dur: 10,
+        title: "DMARC says what to do on fail",
+        cap: "DMARC is TXT at _dmarc. Start p=none — monitor and collect reports. Later quarantine, then reject. DMARC uses SPF and DKIM results. Do not jump to reject on day one.",
+        art: function () {
+          return '<div class="art-center"><div class="rec">TXT _dmarc v=DMARC1; p=none; rua=mailto:dmarc-reports@northwind.example</div><div class="pill-row"><div class="pill">p=none monitor</div><div class="pill">p=quarantine spam</div><div class="pill">p=reject drop</div></div></div>';
+        }
+      },
+      {
+        id: "recap", demoStep: 10, place: "gmail", dur: 10,
+        title: "Inbound vs outbound",
+        cap: "Inbound follows MX into the user inbox. Outbound trust is SPF + DKIM + DMARC. If the trio is incomplete, the customer spam-folders you — even when Gmail looks fine.",
+        art: function () {
+          return '<div class="art-center"><div class="recap-grid"><div><b>Inbound</b><br/>MX → Google → user</div><div><b>Outbound</b><br/>SPF + DKIM + DMARC</div><div><code>MX</code> smtp.google.com</div><div><code>TXT</code> verify / SPF / DKIM / DMARC</div></div></div>';
+        }
+      }
+    ];
+
+    let t0 = 0;
+    CHAPTERS.forEach(function (c) {
+      c.start = t0;
+      t0 += c.dur;
+      c.end = t0;
+    });
+    const TOTAL = t0;
+
+    const artEl = document.getElementById("filmArt");
+    const capEl = document.getElementById("filmCap");
+    const playBtn = document.getElementById("filmPlay");
+    const overlay = document.getElementById("filmPlayOverlay");
+    const seek = document.getElementById("filmSeek");
+    const timeEl = document.getElementById("filmTime");
+    const muteBtn = document.getElementById("filmMute");
+    const chWrap = document.getElementById("filmChapters");
+    const tryBtn = document.getElementById("filmTry");
+    let time = 0;
+    let playing = false;
+    let muted = false;
+    let last = 0;
+    let lastChapter = "";
+    let seeking = false;
+    seek.max = String(Math.round(TOTAL * 10));
+
+    CHAPTERS.forEach(function (c, i) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = (i + 1) + " · " + c.title;
+      b.addEventListener("click", function () {
+        time = c.start;
+        speakChapter(c);
+        paint(true);
+      });
+      chWrap.appendChild(b);
+    });
+
+    function fmt(sec) {
+      const s = Math.max(0, Math.min(TOTAL, sec));
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return m + ":" + String(r).padStart(2, "0");
+    }
+    function chapterAt(sec) {
+      for (let i = CHAPTERS.length - 1; i >= 0; i--) {
+        if (sec >= CHAPTERS[i].start) return CHAPTERS[i];
+      }
+      return CHAPTERS[0];
+    }
+    function stopVoice() {
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+    }
+    function speakChapter(c) {
+      stopVoice();
+      if (muted || reduceMotion || !window.speechSynthesis) return;
+      const u = new SpeechSynthesisUtterance(c.title + ". " + c.cap);
+      u.rate = 1.02;
+      u.lang = "en-US";
+      window.speechSynthesis.speak(u);
+    }
+    function paint(forceArt) {
+      const c = chapterAt(time);
+      capEl.innerHTML = "<b>" + c.title + "</b>" + c.cap;
+      if (forceArt || c.id !== lastChapter) {
+        artEl.innerHTML = c.art();
+        lastChapter = c.id;
+      }
+      timeEl.textContent = fmt(time) + " / " + fmt(TOTAL);
+      if (!seeking) seek.value = String(Math.round(time * 10));
+      playBtn.textContent = playing ? "Pause" : (time >= TOTAL - 0.05 ? "Replay" : "Play");
+      overlay.classList.toggle("hidden", playing);
+      Array.prototype.forEach.call(chWrap.children, function (b, i) {
+        b.classList.toggle("on", CHAPTERS[i].id === c.id);
+      });
+    }
+    function tick(now) {
+      if (!playing) return;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const prev = chapterAt(time);
+      time += dt;
+      if (time >= TOTAL) {
+        time = TOTAL;
+        playing = false;
+        stopVoice();
+      } else {
+        const cur = chapterAt(time);
+        if (cur.id !== prev.id) speakChapter(cur);
+      }
+      paint();
+      if (playing) requestAnimationFrame(tick);
+    }
+    function play() {
+      if (time >= TOTAL - 0.05) time = 0;
+      playing = true;
+      last = performance.now();
+      overlay.classList.add("hidden");
+      speakChapter(chapterAt(time));
+      paint(true);
+      requestAnimationFrame(tick);
+    }
+    function pause() {
+      playing = false;
+      stopVoice();
+      paint();
+    }
+
+    overlay.addEventListener("click", play);
+    playBtn.addEventListener("click", function () {
+      if (playing) pause();
+      else play();
+    });
+    document.getElementById("filmRestart").addEventListener("click", function () {
+      time = 0;
+      lastChapter = "";
+      play();
+    });
+    muteBtn.addEventListener("click", function () {
+      muted = !muted;
+      muteBtn.textContent = muted ? "Unmute" : "Mute";
+      if (muted) stopVoice();
+    });
+    seek.addEventListener("pointerdown", function () { seeking = true; });
+    seek.addEventListener("input", function () {
+      time = Number(seek.value) / 10;
+      paint(true);
+    });
+    seek.addEventListener("change", function () {
+      time = Number(seek.value) / 10;
+      seeking = false;
+      if (playing) speakChapter(chapterAt(time));
+      paint(true);
+    });
+    tryBtn.addEventListener("click", function () {
+      pause();
+      const c = chapterAt(time);
+      if (window.gwsMailDemo) window.gwsMailDemo.goto(c.demoStep, c.place);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden && playing) pause();
+    });
+    paint(true);
   })();
   </script>
 </body>
