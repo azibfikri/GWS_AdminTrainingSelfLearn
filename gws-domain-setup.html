@@ -41,6 +41,12 @@
     }
     button, input, select { font: inherit; }
     a { color: var(--blue); }
+    .ui-preview-banner {
+      background: #09090b; color: #fafafa;
+      font-size: .75rem; font-weight: 500;
+      padding: .4rem 1rem; text-align: center;
+    }
+    .ui-preview-banner a { color: #a1a1aa; }
     .app-bar {
       position: sticky; top: 0; z-index: 30;
       background: #fff; border-bottom: 1px solid var(--line);
@@ -540,6 +546,10 @@
   </style>
 </head>
 <body>
+  <div class="ui-preview-banner">
+    UI experiment branch · this demo still looks like Google Admin / DNS / Gmail on purpose ·
+    <a href="./index.html">back to Study Desk</a>
+  </div>
   <header class="app-bar">
     <a class="brand" href="./index.html">
       <span class="gmark">G</span>
