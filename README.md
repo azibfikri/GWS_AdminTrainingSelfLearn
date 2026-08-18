@@ -27,6 +27,7 @@
 | **Learning styles** | *Kindergarten* (story-based) or *Adult* (Sandbox + Focus paths) |
 | **Practice** | Mock 10, by domain, timed 50, **full 246-question exam**, answer key |
 | **Sandbox** | Interactive Admin Console simulator + guided walkthrough |
+| **Mail setup demo** | Separate page: add a domain, publish MX/SPF/DKIM/DMARC at a fake DNS host, create a mailbox, send tests |
 | **Cloud profile** | Username + password — sync progress across devices |
 
 ---
@@ -59,6 +60,7 @@
 gws-admin-study-guide/
 ├── index.html              # Main Study Desk
 ├── gws-admin-console.html  # Admin sandbox simulator
+├── gws-domain-setup.html   # Domain + MX/SPF/DKIM/DMARC walkthrough
 ├── data/
 │   ├── mock-bank.js        # 246-question bank
 │   └── gws-auth.js         # Login + cloud sync client

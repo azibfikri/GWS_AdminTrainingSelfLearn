@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Domain &amp; mail setup demo</title>
+  <link rel="icon" href="./favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #202124;
+      --muted: #5f6368;
+      --line: #dadce0;
+      --bg: #f0f2f5;
+      --surface: #fff;
+      --blue: #1a73e8;
+      --blue-dark: #174ea6;
+      --green: #188038;
+      --green-bg: #e6f4ea;
+      --amber: #ea8600;
+      --amber-bg: #fef7e0;
+      --red: #d93025;
+      --red-bg: #fce8e6;
+      --dns: #0b1220;
+      --dns-panel: #121a2b;
+      --dns-line: #243049;
+      --gmail: #ea4335;
+      --font: "Roboto", system-ui, sans-serif;
+      --display: "Google Sans", "Roboto", system-ui, sans-serif;
+      --shadow: 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+    button, input, select { font: inherit; }
+    a { color: var(--blue); }
+    .app-bar {
+      position: sticky; top: 0; z-index: 30;
+      background: #fff; border-bottom: 1px solid var(--line);
+      display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem;
+      padding: .65rem 1rem;
+    }
+    .brand {
+      display: flex; align-items: center; gap: .55rem; text-decoration: none; color: inherit;
+      font-family: var(--display); font-weight: 700;
+    }
+    .gmark {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, #4285f4, #34a853 55%, #fbbc04 78%, #ea4335);
+      color: #fff; display: grid; place-items: center; font-size: .72rem; font-weight: 700;
+    }
+    .app-bar .sub { font-size: .8rem; color: var(--muted); font-weight: 400; }
+    .app-bar nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: .4rem; }
+    .btn {
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      border-radius: 4px; padding: .42rem .8rem; cursor: pointer; font-weight: 500; font-size: .85rem;
+    }
+    .btn:hover { background: #f1f3f4; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .btn.primary:hover { background: var(--blue-dark); }
+    .btn.danger { background: var(--red); border-color: var(--red); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn.dns { background: #f48120; border-color: #f48120; color: #fff; }
+    .btn.gmail { background: var(--gmail); border-color: var(--gmail); color: #fff; }
+    a.btn { text-decoration: none; display: inline-block; }
+    .hero {
+      padding: 1rem 1.1rem .4rem; max-width: 1400px; margin: 0 auto;
+    }
+    .hero h1 { font-family: var(--display); font-size: 1.45rem; margin: 0 0 .25rem; }
+    .hero p { margin: 0; color: var(--muted); max-width: 78ch; }
+    .places {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: .55rem;
+      max-width: 1400px; margin: .75rem auto 0; padding: 0 1.1rem;
+    }
+    .place-btn {
+      text-align: left; border: 1px solid var(--line); background: #fff;
+      border-radius: 10px; padding: .7rem .8rem; cursor: pointer;
+    }
+    .place-btn small { display: block; color: var(--muted); font-size: .75rem; margin-top: .15rem; }
+    .place-btn.active { border-color: var(--blue); box-shadow: 0 0 0 2px #e8f0fe; }
+    .place-btn[data-place="dns"].active { border-color: #f48120; box-shadow: 0 0 0 2px #ffe8d2; }
+    .place-btn[data-place="gmail"].active { border-color: var(--gmail); box-shadow: 0 0 0 2px #fce8e6; }
+    .layout {
+      display: grid; grid-template-columns: 250px 1fr 300px;
+      gap: 1rem; max-width: 1400px; margin: .85rem auto 2rem; padding: 0 1.1rem;
+      align-items: start;
+    }
+    .steps {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: .7rem;
+      position: sticky; top: 68px;
+    }
+    .steps h2 { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: .2rem .35rem .45rem; }
+    .step {
+      width: 100%; text-align: left; border: 0; background: transparent;
+      padding: .45rem .5rem; border-radius: 8px; cursor: pointer; display: flex; gap: .45rem; align-items: flex-start;
+    }
+    .step:hover { background: #f8f9fa; }
+    .step.active { background: #e8f0fe; }
+    .step.locked { opacity: .45; cursor: not-allowed; }
+    .step.done .num { background: var(--green); }
+    .num {
+      flex: 0 0 1.35rem; height: 1.35rem; border-radius: 50%; background: #80868b; color: #fff;
+      font-size: .72rem; font-weight: 700; display: grid; place-items: center; margin-top: .1rem;
+    }
+    .step.active .num { background: var(--blue); }
+    .step b { display: block; font-size: .82rem; }
+    .step span { display: block; font-size: .72rem; color: var(--muted); }
+    .scene {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-height: 560px;
+    }
+    .chrome {
+      display: flex; align-items: center; gap: .55rem; padding: .55rem .8rem;
+      border-bottom: 1px solid var(--line); font-size: .8rem; color: var(--muted);
+    }
+    .chrome.admin { background: #fff; }
+    .chrome.dns { background: var(--dns); color: #c5d0e6; border-bottom-color: var(--dns-line); }
+    .chrome.gmail { background: #fff; }
+    .crumb { font-weight: 500; color: var(--ink); }
+    .chrome.dns .crumb { color: #fff; }
+    .stage { padding: 1rem 1.1rem 1.4rem; }
+    .dns .stage, .scene.is-dns { background: var(--dns); color: #e8eefc; }
+    .scene.is-dns .stage { color: #e8eefc; }
+    .lede { color: var(--muted); margin: 0 0 .85rem; }
+    .scene.is-dns .lede { color: #9aa8c2; }
+    .card {
+      border: 1px solid var(--line); border-radius: 10px; padding: .85rem .95rem; margin: .7rem 0; background: #fff;
+    }
+    .scene.is-dns .card { background: var(--dns-panel); border-color: var(--dns-line); }
+    .card h3 { margin: 0 0 .45rem; font-size: 1rem; font-weight: 500; }
+    .field { margin: .5rem 0; }
+    .field label { display: block; font-size: .75rem; font-weight: 500; color: var(--muted); margin-bottom: .22rem; }
+    .scene.is-dns .field label { color: #9aa8c2; }
+    .field input, .field select {
+      width: 100%; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 4px;
+    }
+    .scene.is-dns .field input, .scene.is-dns .field select {
+      background: #0b1220; color: #e8eefc; border-color: var(--dns-line);
+    }
+    .row { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin: .55rem 0; }
+    .tip, .warn, .ok, .bad {
+      border-radius: 8px; padding: .65rem .75rem; font-size: .86rem; margin: .55rem 0;
+    }
+    .tip { background: #e8f0fe; border: 1px solid #c2d7fc; }
+    .warn { background: var(--amber-bg); border: 1px solid #f9e3a0; }
+    .ok { background: var(--green-bg); border: 1px solid #a8dab5; }
+    .bad { background: var(--red-bg); border: 1px solid #f6aea9; }
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem;
+      background: #202124; color: #e8eaed; border-radius: 6px; padding: .55rem .7rem;
+      word-break: break-all; margin: .35rem 0;
+    }
+    .scene.is-dns .code { background: #070b14; }
+    .zone { width: 100%; border-collapse: collapse; font-size: .78rem; }
+    .zone th, .zone td { text-align: left; padding: .4rem .35rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .scene.is-dns .zone th, .scene.is-dns .zone td { border-bottom-color: var(--dns-line); }
+    .zone th { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .hl { outline: 2px solid #fbbc04; background: #fff8e1; }
+    .scene.is-dns .hl { background: #3a2f10; outline-color: #fbbc04; }
+    .zone tr.fail td { color: var(--red); text-decoration: line-through; }
+    .missing { color: var(--red); font-style: italic; }
+    .side {
+      display: grid; gap: .75rem; position: sticky; top: 68px;
+    }
+    .side .card h3 { font-size: .86rem; }
+    .path {
+      display: flex; flex-direction: column; gap: .35rem;
+    }
+    .hop {
+      border: 1px dashed var(--line); border-radius: 8px; padding: .4rem .5rem; font-size: .78rem;
+      background: #fafafa;
+    }
+    .hop.on { border-style: solid; border-color: var(--blue); background: #e8f0fe; font-weight: 500; }
+    .hop.fail { border-color: var(--red); background: var(--red-bg); }
+    .hop.ok { border-color: var(--green); background: var(--green-bg); }
+    .letter {
+      display: none; font-size: 1.1rem; margin: .2rem 0;
+    }
+    .letter.show { display: block; animation: fly .9s ease; }
+    @keyframes fly { from { transform: translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .inbox {
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff;
+    }
+    .mail-row {
+      display: grid; grid-template-columns: 140px 1fr 70px; gap: .5rem;
+      padding: .55rem .7rem; border-bottom: 1px solid var(--line); font-size: .84rem;
+    }
+    .mail-row.unread { font-weight: 600; background: #fff; }
+    .mail-row.spam { background: var(--red-bg); }
+    .empty { color: var(--muted); padding: 1.2rem; text-align: center; }
+    .coach { font-size: .86rem; }
+    .toast {
+      position: fixed; bottom: 1.1rem; left: 50%; transform: translateX(-50%) translateY(120%);
+      background: #323232; color: #fff; padding: .65rem 1rem; border-radius: 4px; z-index: 50;
+      font-size: .86rem; transition: transform .22s ease; max-width: 90vw; text-align: center;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .handoff {
+      display: flex; flex-wrap: wrap; gap: .45rem; align-items: center;
+      background: #fff8e1; border: 1px solid #f9e3a0; border-radius: 8px; padding: .65rem .75rem; margin: .6rem 0;
+      font-size: .86rem;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .steps, .side { position: static; }
+      .places { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <a class="brand" href="./index.html">
+      <span class="gmark">G</span>
+      Domain &amp; mail setup
+    </a>
+    <span class="sub">Demo only — you click Admin, then the DNS host, then Gmail. No real domain is changed.</span>
+    <nav>
+      <a class="btn ghost" href="./index.html#m2">Module 2 notes</a>
+      <a class="btn ghost" href="./gws-admin-console.html#labs">Admin labs</a>
+      <button type="button" class="btn" id="btnReset">Reset demo</button>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Watch where each setting actually lives</h1>
+    <p>
+      Mail setup is not one screen. Google Admin <em>creates</em> the values. Your DNS host (GoDaddy, Cloudflare, etc.) is where you <em>publish</em> them.
+      Then a user mailbox is just a user in Directory. Walk the 10 steps — the demo will tell you when to leave Admin and open DNS.
+    </p>
+  </div>
+
+  <div class="places" role="tablist" aria-label="Where you are">
+    <button type="button" class="place-btn active" data-place="admin" id="tabAdmin">
+      <b>1 · Google Admin</b>
+      <small>Account → Domains · Apps → Gmail · Directory → Users</small>
+    </button>
+    <button type="button" class="place-btn" data-place="dns" id="tabDns">
+      <b>2 · DNS host</b>
+      <small>Zone editor — MX / TXT records live here, not in Admin</small>
+    </button>
+    <button type="button" class="place-btn" data-place="gmail" id="tabGmail">
+      <b>3 · Gmail inbox</b>
+      <small>The mailbox after you create a user on the domain</small>
+    </button>
+  </div>
+
+  <div class="layout">
+    <aside class="steps" id="steps"></aside>
+    <main class="scene" id="scene"></main>
+    <aside class="side">
+      <div class="card">
+        <h3>Mail path</h3>
+        <div class="path" id="mailPath"></div>
+      </div>
+      <div class="card">
+        <h3>DNS zone (what the internet sees)</h3>
+        <p class="coach" id="zoneHint" style="margin:0 0 .45rem;color:var(--muted)">Empty until you publish at the DNS host.</p>
+        <div id="zoneMini"></div>
+      </div>
+      <div class="card coach" id="holding" hidden></div>
+    </aside>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+  (function () {
+    const KEY = "gwsMailSetupDemo.v1";
+    const STEPS = [
+      { id: 1, title: "Add the domain", where: "Admin", place: "admin" },
+      { id: 2, title: "Publish verification TXT", where: "DNS host", place: "dns" },
+      { id: 3, title: "Verify ownership", where: "Admin", place: "admin" },
+      { id: 4, title: "Activate Gmail", where: "Admin", place: "admin" },
+      { id: 5, title: "Point MX to Google", where: "DNS host", place: "dns" },
+      { id: 6, title: "Create a mailbox", where: "Admin", place: "admin" },
+      { id: 7, title: "Publish SPF", where: "DNS host", place: "dns" },
+      { id: 8, title: "Turn on DKIM", where: "Admin → DNS → Admin", place: "admin" },
+      { id: 9, title: "Publish DMARC (p=none)", where: "DNS host", place: "dns" },
+      { id: 10, title: "Send a test", where: "Gmail", place: "gmail" }
+    ];
+
+    function seed() {
+      return {
+        step: 1,
+        place: "admin",
+        domain: "northwind.example",
+        type: "secondary",
+        added: false,
+        verifyValue: "",
+        verifyPublished: false,
+        verified: false,
+        gmailOn: false,
+        oldMxPresent: true,
+        mxPublished: false,
+        mxMode: "modern",
+        user: null,
+        spfPublished: false,
+        dkimGenerated: false,
+        dkimValue: "",
+        dkimPublished: false,
+        dkimStarted: false,
+        dmarcPublished: false,
+        dmarcPolicy: "none",
+        inbox: [],
+        lastInbound: null,
+        lastOutbound: null,
+        holding: null
+      };
+    }
+
+    function load() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(KEY) || "null");
+        return raw && typeof raw === "object" ? Object.assign(seed(), raw) : seed();
+      } catch (e) { return seed(); }
+    }
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
+    }
+
+    let s = load();
+    const sceneEl = document.getElementById("scene");
+    const stepsEl = document.getElementById("steps");
+    const toastEl = document.getElementById("toast");
+    let toastTimer = null;
+
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2400);
+    }
+
+    function el(tag, attrs, kids) {
+      const n = document.createElement(tag);
+      if (attrs) {
+        Object.keys(attrs).forEach(function (k) {
+          if (k === "className") n.className = attrs[k];
+          else if (k === "text") n.textContent = attrs[k];
+          else if (k === "html") n.innerHTML = attrs[k];
+          else if (k.slice(0, 2) === "on") n.addEventListener(k.slice(2).toLowerCase(), attrs[k]);
+          else if (k === "disabled") n.disabled = !!attrs[k];
+          else if (k === "colSpan") n.colSpan = attrs[k];
+          else if (attrs[k] === false || attrs[k] == null) {}
+          else n.setAttribute(k, attrs[k]);
+        });
+      }
+      (kids || []).forEach(function (c) { if (c) n.appendChild(c); });
+      return n;
+    }
+
+    function unlocked(id) {
+      if (id === 1) return true;
+      if (id === 2) return s.added;
+      if (id === 3) return s.verifyPublished;
+      if (id === 4) return s.verified;
+      if (id === 5) return s.gmailOn;
+      if (id === 6) return s.mxPublished && !s.oldMxPresent;
+      if (id === 7) return !!s.user;
+      if (id === 8) return s.spfPublished;
+      if (id === 9) return s.dkimStarted;
+      if (id === 10) return s.dmarcPublished;
+      return false;
+    }
+    function done(id) {
+      if (id === 1) return s.added;
+      if (id === 2) return s.verifyPublished;
+      if (id === 3) return s.verified;
+      if (id === 4) return s.gmailOn;
+      if (id === 5) return s.mxPublished && !s.oldMxPresent;
+      if (id === 6) return !!s.user;
+      if (id === 7) return s.spfPublished;
+      if (id === 8) return s.dkimStarted;
+      if (id === 9) return s.dmarcPublished;
+      if (id === 10) return !!(s.lastInbound && s.lastInbound.ok && s.lastOutbound && s.lastOutbound.ok);
+      return false;
+    }
+
+    function mxValue() {
+      return s.mxMode === "legacy" ? "ASPMX.L.GOOGLE.COM (+ ALT1–ALT4)" : "smtp.google.com";
+    }
+    function spfValue() { return "v=spf1 include:_spf.google.com ~all"; }
+    function dmarcValue() {
+      return "v=DMARC1; p=" + (s.dmarcPolicy || "none") + "; rua=mailto:dmarc-reports@" + s.domain;
+    }
+    function dkimHost() { return "google._domainkey"; }
+
+    function zoneRows() {
+      const rows = [];
+      if (s.oldMxPresent) rows.push({ type: "MX", host: "@", prio: "10", value: "mail.oldhost.com", kind: "old" });
+      if (s.verifyPublished) rows.push({ type: "TXT", host: "@", prio: "—", value: s.verifyValue, kind: "ok" });
+      if (s.mxPublished) rows.push({ type: "MX", host: "@", prio: "1", value: s.mxMode === "legacy" ? "ASPMX.L.GOOGLE.COM" : "smtp.google.com", kind: "ok" });
+      if (s.spfPublished) rows.push({ type: "TXT", host: "@", prio: "—", value: spfValue(), kind: "ok" });
+      if (s.dkimPublished) rows.push({ type: "TXT", host: dkimHost(), prio: "—", value: s.dkimValue, kind: "ok" });
+      if (s.dmarcPublished) rows.push({ type: "TXT", host: "_dmarc", prio: "—", value: dmarcValue(), kind: "ok" });
+      return rows;
+    }
+
+    function inboundOk() {
+      return s.verified && s.gmailOn && s.mxPublished && !s.oldMxPresent && !!s.user;
+    }
+    function outboundOk() {
+      return s.spfPublished && s.dkimStarted && s.dmarcPublished;
+    }
+
+    function paintPlaces() {
+      document.querySelectorAll(".place-btn").forEach(function (b) {
+        b.classList.toggle("active", b.getAttribute("data-place") === s.place);
+      });
+    }
+
+    function paintSteps() {
+      stepsEl.innerHTML = "";
+      stepsEl.appendChild(el("h2", { text: "Setup journey" }));
+      STEPS.forEach(function (st) {
+        const open = unlocked(st.id);
+        const btn = el("button", {
+          type: "button",
+          className: "step" + (s.step === st.id ? " active" : "") + (done(st.id) ? " done" : "") + (!open ? " locked" : ""),
+          onclick: function () {
+            if (!open) { toast("Finish the previous step first."); return; }
+            s.step = st.id;
+            s.place = st.place;
+            if (st.id === 8 && s.dkimGenerated && !s.dkimPublished) s.place = "dns";
+            if (st.id === 8 && s.dkimPublished && !s.dkimStarted) s.place = "admin";
+            save(); render();
+          }
+        });
+        btn.appendChild(el("span", { className: "num", text: String(st.id) }));
+        const body = el("div");
+        body.appendChild(el("b", { text: st.title }));
+        body.appendChild(el("span", { text: st.where }));
+        btn.appendChild(body);
+        stepsEl.appendChild(btn);
+      });
+    }
+
+    function paintPath() {
+      const box = document.getElementById("mailPath");
+      box.innerHTML = "";
+      const hops = [
+        { id: "out", label: "Someone on the internet sends mail to you@" + s.domain },
+        { id: "mx", label: "MX: deliver to " + (s.mxPublished && !s.oldMxPresent ? mxValue() : (s.oldMxPresent ? "still mail.oldhost.com" : "no Google MX yet")) },
+        { id: "google", label: "Google accepts it (domain verified + Gmail on)" },
+        { id: "inbox", label: s.user ? ("Inbox: " + s.user.email) : "No mailbox yet — create a user" }
+      ];
+      hops.forEach(function (h) {
+        let cls = "hop";
+        if (h.id === "mx") cls += s.mxPublished && !s.oldMxPresent ? " ok" : (s.oldMxPresent && s.added ? " fail" : "");
+        if (h.id === "google") cls += s.verified && s.gmailOn ? " ok" : "";
+        if (h.id === "inbox") cls += s.user ? " ok" : "";
+        if (s.place === "gmail" && h.id === "inbox") cls += " on";
+        if (s.place === "dns" && h.id === "mx") cls += " on";
+        box.appendChild(el("div", { className: cls, text: h.label }));
+      });
+      box.appendChild(el("p", { className: "coach", text: "Outbound is a different path: Gmail → recipient checks SPF + DKIM + DMARC → inbox or spam." }));
+      const out = el("div", {
+        className: "hop" + (outboundOk() ? " ok" : (s.spfPublished || s.dkimGenerated ? " fail" : "")),
+        text: outboundOk()
+          ? "Outbound auth complete (SPF + DKIM started + DMARC)."
+          : "Outbound still incomplete — recipients may spam-folder you."
+      });
+      box.appendChild(out);
+    }
+
+    function paintZoneMini() {
+      const hint = document.getElementById("zoneHint");
+      const mini = document.getElementById("zoneMini");
+      const rows = zoneRows();
+      hint.textContent = rows.length
+        ? rows.length + " live record" + (rows.length === 1 ? "" : "s") + " at the DNS host for " + s.domain
+        : "Empty until you publish at the DNS host.";
+      mini.innerHTML = "";
+      if (!rows.length) {
+        mini.appendChild(el("p", { className: "missing", text: "No records published yet." }));
+        return;
+      }
+      const t = el("table", { className: "zone" });
+      const hr = el("tr");
+      ["Type", "Host", "Value"].forEach(function (h) { hr.appendChild(el("th", { text: h })); });
+      t.appendChild(el("thead", null, [hr]));
+      const tb = el("tbody");
+      rows.forEach(function (r) {
+        const tr = el("tr", { className: r.kind === "old" ? "fail" : "" });
+        tr.appendChild(el("td", { text: r.type }));
+        tr.appendChild(el("td", { text: r.host }));
+        tr.appendChild(el("td", { text: r.value.length > 42 ? r.value.slice(0, 42) + "…" : r.value }));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      mini.appendChild(t);
+    }
+
+    function paintHolding() {
+      const box = document.getElementById("holding");
+      if (!s.holding) { box.hidden = true; box.innerHTML = ""; return; }
+      box.hidden = false;
+      box.innerHTML = "";
+      box.appendChild(el("h3", { text: "You are holding a record" }));
+      box.appendChild(el("p", { text: "Copy this out of Admin. It does nothing until it exists at the DNS host." }));
+      box.appendChild(el("div", { className: "code", text: s.holding.type + "  " + s.holding.host + "  " + s.holding.value }));
+    }
+
+    function goPlace(place) {
+      s.place = place;
+      save();
+      render();
+    }
+
+    function handoff(text, place, label, cls) {
+      const row = el("div", { className: "handoff" });
+      row.appendChild(el("span", { text: text }));
+      row.appendChild(el("button", {
+        type: "button", className: "btn " + (cls || "dns"), text: label,
+        onclick: function () { goPlace(place); }
+      }));
+      return row;
+    }
+
+    function chromeBar(kind, crumb) {
+      const bar = el("div", { className: "chrome " + kind });
+      if (kind === "admin") bar.appendChild(el("span", { className: "gmark", text: "G" }));
+      if (kind === "dns") bar.appendChild(el("b", { text: "DNS host" }));
+      if (kind === "gmail") bar.appendChild(el("b", { style: "color:#ea4335", text: "Gmail" }));
+      bar.appendChild(el("span", { className: "crumb", text: crumb }));
+      return bar;
+    }
+
+    function zoneTable(highlight) {
+      const wrap = el("div", { className: "card" });
+      wrap.appendChild(el("h3", { text: "Zone · " + s.domain }));
+      const t = el("table", { className: "zone" });
+      const hr = el("tr");
+      ["Type", "Host", "Priority", "Value"].forEach(function (h) { hr.appendChild(el("th", { text: h })); });
+      t.appendChild(el("thead", null, [hr]));
+      const tb = el("tbody");
+      const rows = zoneRows();
+      if (!rows.length) {
+        const tr = el("tr");
+        tr.appendChild(el("td", { text: "—", colSpan: "4" }));
+        tb.appendChild(tr);
+      }
+      rows.forEach(function (r) {
+        const hit = highlight && r.type === highlight.type && r.host === highlight.host;
+        const tr = el("tr", { className: (r.kind === "old" ? "hl" : "") + (hit ? " hl" : "") });
+        tr.appendChild(el("td", { text: r.type }));
+        tr.appendChild(el("td", { text: r.host }));
+        tr.appendChild(el("td", { text: r.prio }));
+        tr.appendChild(el("td", { text: r.value }));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      wrap.appendChild(t);
+      if (s.oldMxPresent) wrap.appendChild(el("p", { className: "warn", text: "Old MX mail.oldhost.com is still here. Inbound mail may never reach Google until you delete it." }));
+      return wrap;
+    }
+
+    function nextStep(id) {
+      s.step = id;
+      const st = STEPS.find(function (x) { return x.id === id; });
+      if (st) s.place = st.place;
+      save(); render();
+    }
+
+    function renderScene() {
+      sceneEl.innerHTML = "";
+      sceneEl.className = "scene is-" + s.place;
+      const stage = el("div", { className: "stage" });
+
+      if (s.place === "admin") sceneEl.appendChild(chromeBar("admin", adminCrumb()));
+      if (s.place === "dns") sceneEl.appendChild(chromeBar("dns", s.domain + " · DNS zone editor"));
+      if (s.place === "gmail") sceneEl.appendChild(chromeBar("gmail", s.user ? s.user.email : "No mailbox yet"));
+
+      if (s.place === "admin") renderAdmin(stage);
+      else if (s.place === "dns") renderDns(stage);
+      else renderGmail(stage);
+      sceneEl.appendChild(stage);
+    }
+
+    function adminCrumb() {
+      if (s.step <= 3) return "Account → Domains → Manage domains";
+      if (s.step === 4) return "Apps → Google Workspace → Gmail → Set up Gmail";
+      if (s.step === 8) return "Apps → Google Workspace → Gmail → Authenticate email";
+      if (s.step === 6) return "Directory → Users → Add new user";
+      return "Admin console";
+    }
+
+    function renderAdmin(stage) {
+      if (s.step === 1) {
+        stage.appendChild(el("h2", { text: "Add a domain" }));
+        stage.appendChild(el("p", { className: "lede", text: "This happens in Google Admin. Adding a name here does not create DNS records. Admin only generates a verification token for you to publish elsewhere." }));
+        const card = el("div", { className: "card" });
+        const nameIn = el("input", { type: "text", value: s.domain });
+        const typeSel = el("select");
+        [["secondary", "Secondary — new user accounts (each needs a license)"], ["alias", "Domain alias — extra addresses for existing users, no new seats"]].forEach(function (p) {
+          const o = el("option", { value: p[0], text: p[1] });
+          if (s.type === p[0]) o.selected = true;
+          typeSel.appendChild(o);
+        });
+        card.appendChild(el("div", { className: "field" }, [el("label", { text: "Domain name" }), nameIn]));
+        card.appendChild(el("div", { className: "field" }, [el("label", { text: "Type" }), typeSel]));
+        card.appendChild(el("p", { className: "tip", text: "Exam trap: alias = same people, extra addresses. Secondary = a new set of accounts." }));
+        card.appendChild(el("button", {
+          type: "button", className: "btn primary", text: s.added ? "Domain already added" : "Add domain",
+          disabled: s.added,
+          onclick: function () {
+            const name = (nameIn.value || "").trim().toLowerCase();
+            if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(name)) { toast("Use a domain like northwind.example"); return; }
+            s.domain = name;
+            s.type = typeSel.value;
+            s.added = true;
+            s.verifyValue = "google-site-verification=" + Math.random().toString(36).slice(2, 10) + "-demo";
+            s.holding = { type: "TXT", host: "@", value: s.verifyValue };
+            toast("Admin created a verification TXT. It is not live until DNS has it.");
+            nextStep(2);
+          }
+        }));
+        stage.appendChild(card);
+        if (s.added) stage.appendChild(handoff("Leave Admin. Open the DNS host and paste the TXT.", "dns", "Go to DNS host", "dns"));
+        return;
+      }
+
+      if (s.step === 3) {
+        stage.appendChild(el("h2", { text: "Verify ownership" }));
+        stage.appendChild(el("p", { className: "lede", text: "Admin looks up the TXT on the public DNS. If it finds the token, Google believes you own " + s.domain + "." }));
+        const card = el("div", { className: "card" });
+        if (!s.verifyPublished) {
+          card.appendChild(el("div", { className: "warn", text: "The TXT is not at the DNS host yet. Verify will fail." }));
+          card.appendChild(handoff("Publish the TXT first.", "dns", "Go to DNS host", "dns"));
+        } else if (!s.verified) {
+          card.appendChild(el("div", { className: "ok", text: "DNS has the verification TXT. Click Verify." }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Verify domain",
+            onclick: function () {
+              s.verified = true;
+              s.holding = null;
+              toast("Verified. Next: turn Gmail on for this domain.");
+              nextStep(4);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: s.domain + " is verified." }));
+          card.appendChild(el("button", { type: "button", className: "btn primary", text: "Continue", onclick: function () { nextStep(4); } }));
+        }
+        stage.appendChild(card);
+        return;
+      }
+
+      if (s.step === 4) {
+        stage.appendChild(el("h2", { text: "Activate Gmail" }));
+        stage.appendChild(el("p", { className: "lede", text: "Ownership ≠ mail. You still switch Gmail on for the domain, then point MX so the internet delivers here." }));
+        const card = el("div", { className: "card" });
+        if (!s.verified) {
+          card.appendChild(el("div", { className: "warn", text: "Verify the domain first." }));
+        } else if (!s.gmailOn) {
+          card.appendChild(el("p", { text: "Apps → Google Workspace → Gmail → set up / activate for " + s.domain + "." }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Activate Gmail for this domain",
+            onclick: function () {
+              s.gmailOn = true;
+              toast("Gmail is on. Mail still will not arrive until MX points at Google.");
+              nextStep(5);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "Gmail is activated." }));
+          card.appendChild(handoff("Now change DNS MX records.", "dns", "Go to DNS host", "dns"));
+        }
+        stage.appendChild(card);
+        return;
+      }
+
+      if (s.step === 6) {
+        stage.appendChild(el("h2", { text: "Create the mailbox" }));
+        stage.appendChild(el("p", { className: "lede", text: "A Gmail inbox is a user in Directory. The address is name@" + s.domain + ". MX only delivers to Google; the user object is the inbox." }));
+        const card = el("div", { className: "card" });
+        if (s.user) {
+          card.appendChild(el("div", { className: "ok", text: "Mailbox exists: " + s.user.email }));
+          card.appendChild(handoff("Open Gmail to see the empty inbox — then come back for SPF.", "gmail", "Open Gmail inbox", "gmail"));
+          card.appendChild(el("button", { type: "button", className: "btn primary", text: "Next: SPF", onclick: function () { nextStep(7); } }));
+        } else {
+          const first = el("input", { type: "text", value: "Maya" });
+          const last = el("input", { type: "text", value: "Chen" });
+          const local = el("input", { type: "text", value: "maya" });
+          card.appendChild(el("div", { className: "field" }, [el("label", { text: "First name" }), first]));
+          card.appendChild(el("div", { className: "field" }, [el("label", { text: "Last name" }), last]));
+          card.appendChild(el("div", { className: "field" }, [el("label", { text: "Email (before @)" }), local]));
+          card.appendChild(el("p", { text: "Will be created as …@" + s.domain + " in the top OU, with a Workspace license." }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Add user / create inbox",
+            onclick: function () {
+              const loc = (local.value || "").trim().toLowerCase().replace(/[^a-z0-9.]/g, "") || "maya";
+              s.user = { first: first.value.trim() || "Maya", last: last.value.trim() || "Chen", email: loc + "@" + s.domain };
+              toast("User created. That is the mailbox.");
+              save(); render();
+            }
+          }));
+        }
+        stage.appendChild(card);
+        return;
+      }
+
+      if (s.step === 8) {
+        stage.appendChild(el("h2", { text: "Authenticate email · DKIM" }));
+        stage.appendChild(el("p", { className: "lede", text: "DKIM is the one people mix up. Generate in Admin → publish TXT at DNS → come back and click Start authentication. Skipping the last click means DKIM is not on." }));
+        const card = el("div", { className: "card" });
+        if (!s.dkimGenerated) {
+          card.appendChild(el("p", { text: "Select domain " + s.domain + " → Generate new record (2048-bit if DNS allows)." }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn primary", text: "Generate DKIM record",
+            onclick: function () {
+              s.dkimGenerated = true;
+              s.dkimValue = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A" + Math.random().toString(36).slice(2, 16).toUpperCase();
+              s.holding = { type: "TXT", host: dkimHost(), value: s.dkimValue };
+              toast("Key created in Admin. The internet cannot see it yet.");
+              save(); render();
+            }
+          }));
+        } else {
+          card.appendChild(el("p", { text: "Host" }));
+          card.appendChild(el("div", { className: "code", text: dkimHost() }));
+          card.appendChild(el("p", { text: "TXT value" }));
+          card.appendChild(el("div", { className: "code", text: s.dkimValue }));
+          if (!s.dkimPublished) {
+            card.appendChild(handoff("This TXT is only sitting in Admin. Publish it at the DNS host.", "dns", "Go to DNS host", "dns"));
+          } else if (!s.dkimStarted) {
+            card.appendChild(el("div", { className: "ok", text: "DNS has google._domainkey. Now start authentication here." }));
+            card.appendChild(el("button", {
+              type: "button", className: "btn primary", text: "Start authentication",
+              onclick: function () {
+                s.dkimStarted = true;
+                s.holding = null;
+                toast("DKIM is signing outbound mail.");
+                nextStep(9);
+              }
+            }));
+          } else {
+            card.appendChild(el("div", { className: "ok", text: "DKIM authentication started." }));
+            card.appendChild(el("button", { type: "button", className: "btn primary", text: "Next: DMARC", onclick: function () { nextStep(9); } }));
+          }
+        }
+        stage.appendChild(card);
+        return;
+      }
+
+      stage.appendChild(el("h2", { text: "Google Admin" }));
+      stage.appendChild(el("p", { className: "lede", text: "This step is done on the DNS host or in Gmail. Use the place buttons above, or the highlighted next action." }));
+      if (s.step === 2 || s.step === 5 || s.step === 7 || s.step === 9) {
+        stage.appendChild(handoff("This record is published at the DNS host, not in Admin.", "dns", "Go to DNS host", "dns"));
+      }
+      if (s.step === 10) stage.appendChild(handoff("Tests happen in the inbox.", "gmail", "Open Gmail", "gmail"));
+    }
+
+    function renderDns(stage) {
+      stage.appendChild(el("h2", { text: "DNS host — not Google Admin" }));
+      stage.appendChild(el("p", { className: "lede", text: "Pretend this is Cloudflare, GoDaddy, or Squarespace DNS. Google cannot write these records for you unless you use Google Domains / Cloud DNS with that permission. Most companies paste them here." }));
+      stage.appendChild(zoneTable(s.holding));
+
+      if (s.step === 2) {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h3", { text: "Add verification TXT" }));
+        if (!s.added || !s.verifyValue) {
+          card.appendChild(el("div", { className: "warn", text: "Add the domain in Admin first so you have a token to paste." }));
+          card.appendChild(handoff("Go generate the token.", "admin", "Back to Admin", "primary"));
+        } else if (!s.verifyPublished) {
+          card.appendChild(el("p", { text: "Type: TXT · Host: @ · Value:" }));
+          card.appendChild(el("div", { className: "code", text: s.verifyValue }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn dns", text: "Publish this TXT",
+            onclick: function () {
+              s.verifyPublished = true;
+              toast("TXT is live (simulated). Go back to Admin and click Verify.");
+              nextStep(3);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "Verification TXT is published." }));
+          card.appendChild(handoff("Admin must look it up next.", "admin", "Back to Admin and Verify", "primary"));
+        }
+        stage.appendChild(card);
+      }
+
+      if (s.step === 5) {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h3", { text: "Inbound MX" }));
+        card.appendChild(el("p", { text: "MX only answers: where should the internet deliver mail for this domain? It does not stop outbound spam." }));
+        const mode = el("select");
+        [["modern", "Modern: smtp.google.com  (priority 1)"], ["legacy", "Legacy ASPMX set (five records)"]].forEach(function (p) {
+          const o = el("option", { value: p[0], text: p[1] });
+          if (s.mxMode === p[0]) o.selected = true;
+          mode.appendChild(o);
+        });
+        mode.addEventListener("change", function () { s.mxMode = mode.value; s.mxPublished = false; save(); render(); });
+        card.appendChild(el("div", { className: "field" }, [el("label", { text: "Google MX style" }), mode]));
+        if (s.oldMxPresent) {
+          card.appendChild(el("button", {
+            type: "button", className: "btn danger", text: "Delete old MX (mail.oldhost.com)",
+            onclick: function () {
+              s.oldMxPresent = false;
+              toast("Old MX removed. Add Google MX next.");
+              save(); render();
+            }
+          }));
+        }
+        if (!s.mxPublished) {
+          card.appendChild(el("button", {
+            type: "button", className: "btn dns",
+            text: "Publish Google MX",
+            disabled: s.oldMxPresent,
+            onclick: function () {
+              if (s.oldMxPresent) { toast("Remove the old MX first or mail may stay at the old host."); return; }
+              s.mxPublished = true;
+              toast("Inbound mail can now reach Google.");
+              nextStep(6);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "Google MX is published." }));
+          card.appendChild(handoff("Create a user so there is an inbox to deliver into.", "admin", "Back to Admin → Users", "primary"));
+        }
+        stage.appendChild(card);
+      }
+
+      if (s.step === 7) {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h3", { text: "SPF — who may send as " + s.domain }));
+        card.appendChild(el("p", { text: "One SPF TXT per domain. Include Google. Extra SPF records break SPF." }));
+        card.appendChild(el("div", { className: "code", text: "TXT  @  " + spfValue() }));
+        if (!s.spfPublished) {
+          card.appendChild(el("button", {
+            type: "button", className: "btn dns", text: "Publish SPF TXT",
+            onclick: function () {
+              s.spfPublished = true;
+              toast("SPF published.");
+              nextStep(8);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "SPF is published." }));
+          card.appendChild(handoff("Generate DKIM in Admin next.", "admin", "Back to Admin → Authenticate email", "primary"));
+        }
+        stage.appendChild(card);
+      }
+
+      if (s.step === 8) {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h3", { text: "Publish DKIM TXT" }));
+        if (!s.dkimGenerated) {
+          card.appendChild(el("div", { className: "warn", text: "No DKIM value yet. Generate it in Admin first." }));
+          card.appendChild(handoff("Admin → Authenticate email → Generate.", "admin", "Back to Admin", "primary"));
+        } else if (!s.dkimPublished) {
+          card.appendChild(el("p", { text: "Host (this is not @)" }));
+          card.appendChild(el("div", { className: "code", text: dkimHost() }));
+          card.appendChild(el("p", { text: "TXT value" }));
+          card.appendChild(el("div", { className: "code", text: s.dkimValue }));
+          card.appendChild(el("button", {
+            type: "button", className: "btn dns", text: "Publish google._domainkey TXT",
+            onclick: function () {
+              s.dkimPublished = true;
+              toast("DKIM TXT is live. Return to Admin and Start authentication.");
+              s.place = "admin";
+              save(); render();
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "DKIM TXT is published. Admin still needs Start authentication." }));
+          card.appendChild(handoff("Finish the last click in Admin.", "admin", "Back to Admin", "primary"));
+        }
+        stage.appendChild(card);
+      }
+
+      if (s.step === 9) {
+        const card = el("div", { className: "card" });
+        card.appendChild(el("h3", { text: "DMARC — what receivers do on fail" }));
+        card.appendChild(el("p", { text: "Start at p=none (monitor + reports). Later quarantine, then reject. Do not jump to reject on day one." }));
+        const pol = el("select");
+        ["none", "quarantine", "reject"].forEach(function (p) {
+          const o = el("option", { value: p, text: "p=" + p });
+          if ((s.dmarcPolicy || "none") === p) o.selected = true;
+          pol.appendChild(o);
+        });
+        pol.addEventListener("change", function () { s.dmarcPolicy = pol.value; s.dmarcPublished = false; save(); render(); });
+        card.appendChild(el("div", { className: "field" }, [el("label", { text: "Policy" }), pol]));
+        card.appendChild(el("div", { className: "code", text: "TXT  _dmarc  " + dmarcValue() }));
+        if (!s.dmarcPublished) {
+          card.appendChild(el("button", {
+            type: "button", className: "btn dns", text: "Publish DMARC TXT",
+            onclick: function () {
+              s.dmarcPublished = true;
+              toast("DMARC published. Time to test mail.");
+              nextStep(10);
+            }
+          }));
+        } else {
+          card.appendChild(el("div", { className: "ok", text: "DMARC is published." }));
+          card.appendChild(handoff("Open the inbox and send tests.", "gmail", "Open Gmail", "gmail"));
+        }
+        stage.appendChild(card);
+      }
+
+      if (s.step !== 2 && s.step !== 5 && s.step !== 7 && s.step !== 8 && s.step !== 9) {
+        stage.appendChild(el("p", { className: "tip", text: "You can browse the zone any time. The current journey step lives in Admin or Gmail — use the place buttons." }));
+      }
+    }
+
+    function renderGmail(stage) {
+      stage.appendChild(el("h2", { text: "Gmail inbox" }));
+      if (!s.user) {
+        stage.appendChild(el("div", { className: "warn", text: "No mailbox yet. Create a user in Admin → Directory → Users." }));
+        stage.appendChild(handoff("Create the user first.", "admin", "Go to Admin Users", "primary"));
+        return;
+      }
+      stage.appendChild(el("p", { className: "lede", text: "Signed in as " + s.user.email + ". This is what staff see. Setup still happened in Admin + DNS — not in Gmail settings." }));
+
+      const tests = el("div", { className: "card" });
+      tests.appendChild(el("h3", { text: "Send test messages (simulated)" }));
+      tests.appendChild(el("div", { className: "row" }, [
+        el("button", {
+          type: "button", className: "btn gmail", text: "Partner sends inbound mail",
+          onclick: function () {
+            const ok = inboundOk();
+            const msg = ok
+              ? { from: "vendor@partner.test", subject: "Quote for Northwind", body: "Please find the quote attached.", folder: "inbox", ok: true }
+              : { from: "vendor@partner.test", subject: "Quote for Northwind", body: "Delivery failed.", folder: "failed", ok: false };
+            if (ok) s.inbox.unshift(msg);
+            s.lastInbound = {
+              ok: ok,
+              detail: ok
+                ? "DELIVERED via Google MX into " + s.user.email
+                : (!s.verified ? "FAIL — domain not verified"
+                  : !s.gmailOn ? "FAIL — Gmail not activated"
+                  : s.oldMxPresent ? "FAIL — old MX still points at mail.oldhost.com"
+                  : !s.mxPublished ? "FAIL — no Google MX"
+                  : "FAIL — no mailbox / user")
+            };
+            toast(s.lastInbound.detail);
+            save(); render();
+          }
+        }),
+        el("button", {
+          type: "button", className: "btn", text: s.user.first + " sends to a customer",
+          onclick: function () {
+            const ok = outboundOk();
+            s.lastOutbound = {
+              ok: ok,
+              detail: ok
+                ? "ACCEPTED — SPF pass, DKIM pass, DMARC aligned (p=" + s.dmarcPolicy + ")"
+                : "LANDED IN SPAM — incomplete SPF / DKIM / DMARC trio"
+            };
+            s.inbox.unshift({
+              from: s.user.email,
+              subject: "Thanks for your order",
+              body: ok ? "Delivered to customer inbox." : "Customer spam folder.",
+              folder: ok ? "sent" : "spam-out",
+              ok: ok
+            });
+            toast(s.lastOutbound.detail);
+            save(); render();
+          }
+        })
+      ]));
+      if (s.lastInbound) tests.appendChild(el("div", { className: s.lastInbound.ok ? "ok" : "bad", text: "Inbound: " + s.lastInbound.detail }));
+      if (s.lastOutbound) tests.appendChild(el("div", { className: s.lastOutbound.ok ? "ok" : "bad", text: "Outbound: " + s.lastOutbound.detail }));
+      stage.appendChild(tests);
+
+      const box = el("div", { className: "inbox" });
+      box.appendChild(el("div", { className: "mail-row", html: "<b>Inbox / activity</b>" }));
+      if (!s.inbox.length) box.appendChild(el("div", { className: "empty", text: "Inbox empty. Run an inbound test after MX + user exist." }));
+      s.inbox.forEach(function (m) {
+        const row = el("div", { className: "mail-row" + (m.ok ? " unread" : " spam") });
+        row.appendChild(el("span", { text: m.from }));
+        row.appendChild(el("span", { text: m.subject + " — " + m.body }));
+        row.appendChild(el("span", { text: m.folder }));
+        box.appendChild(row);
+      });
+      stage.appendChild(box);
+
+      if (s.lastInbound && s.lastInbound.ok && s.lastOutbound && s.lastOutbound.ok) {
+        stage.appendChild(el("div", { className: "ok", html: "<strong>Setup complete.</strong> Inbound follows MX. Outbound trust follows SPF + DKIM + DMARC. Cross-check Module 2 notes when you want the exam wording." }));
+        stage.appendChild(el("div", { className: "row" }, [
+          el("a", { className: "btn primary", href: "./index.html#m2", text: "Module 2 notes" }),
+          el("a", { className: "btn", href: "./gws-admin-console.html#gmail", text: "Same settings in Admin labs" })
+        ]));
+      }
+    }
+
+    function render() {
+      paintPlaces();
+      paintSteps();
+      paintPath();
+      paintZoneMini();
+      paintHolding();
+      renderScene();
+    }
+
+    document.querySelectorAll(".place-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        goPlace(b.getAttribute("data-place"));
+      });
+    });
+    document.getElementById("btnReset").addEventListener("click", function () {
+      if (!confirm("Reset this mail-setup demo? (Does not touch Study Desk or Admin labs progress.)")) return;
+      s = seed();
+      save();
+      render();
+      toast("Demo reset.");
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>
