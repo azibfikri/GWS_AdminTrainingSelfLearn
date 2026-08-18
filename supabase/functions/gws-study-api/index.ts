@@ -11,11 +11,26 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:4173",
 ]);
 
+/** Vercel branch previews use gws-admin-study-guide-*.vercel.app hostnames. */
+function isAllowedOrigin(origin: string): boolean {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  try {
+    const u = new URL(origin);
+    if (u.protocol !== "https:") return false;
+    const host = u.hostname;
+    if (host === "gws-admin-study-guide.vercel.app") return true;
+    return host.startsWith("gws-admin-study-guide-") && host.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+}
+
 type JwtPayload = { sub: string; username: string };
 
 function corsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
-  const allow = ALLOWED_ORIGINS.has(origin) ? origin : "https://gws-admin-study-guide.vercel.app";
+  const allow = isAllowedOrigin(origin) ? origin : "https://gws-admin-study-guide.vercel.app";
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Headers": "authorization, content-type, apikey, x-client-info",
