@@ -7,7 +7,7 @@
   <link rel="icon" href="./favicon.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Google+Sans:wght@500;700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #202124;
@@ -234,8 +234,14 @@
     .film-stage:not(.is-playing) .spark,
     .film-stage:not(.is-playing) .pkt,
     .film-stage:not(.is-playing) .house .win,
+    .film-stage:not(.is-playing) .house .roof,
     .film-stage:not(.is-playing) .film-layer,
-    .film-stage:not(.is-playing)::before {
+    .film-stage:not(.is-playing)::before,
+    .film-stage:not(.is-playing) .sun,
+    .film-stage:not(.is-playing) .cloud,
+    .film-stage:not(.is-playing) .tech-scan,
+    .film-stage:not(.is-playing) .tech-grid,
+    .film-stage:not(.is-playing) .orb {
       animation-play-state: paused;
     }
     .film-bar {
@@ -258,6 +264,381 @@
       font-size: .8rem; color: #9aa8c2;
     }
     .google-clips a { color: #8ab4f8; }
+
+    .skin-layman, .skin-tech { display: none; pointer-events: none; }
+    .film[data-voice="layman"] .skin-layman { display: block; }
+    .film[data-voice="technical"] .skin-tech { display: block; }
+
+    /* ===== LAYMAN: storybook ===== */
+    .film[data-voice="layman"] {
+      background: #fff6e8; color: #3a2a18; border-radius: 28px;
+      box-shadow: 0 12px 0 #f0d2b0, 0 18px 40px rgba(90,50,20,.12);
+    }
+    .film[data-voice="layman"] .film-voices,
+    .film[data-voice="layman"] .film-voice-hint,
+    .film[data-voice="layman"] .film-bar,
+    .film[data-voice="layman"] .chapters,
+    .film[data-voice="layman"] .google-clips {
+      background: #fff9f0; color: #6a4a32;
+    }
+    .film[data-voice="layman"] .film-voices { border-bottom: 3px solid #f0d2b0; }
+    .film[data-voice="layman"] .film-voices button {
+      background: #fff; border: 3px solid #f0c9a0; border-radius: 18px; color: #3a2a18;
+      font-family: "Fredoka", system-ui, sans-serif;
+    }
+    .film[data-voice="layman"] .film-voices button small { color: #9a6a40; }
+    .film[data-voice="layman"] .film-voices button.on {
+      background: #e07a3a; border-color: #e07a3a; color: #fff;
+    }
+    .film[data-voice="layman"] .film-voices button.on small { color: #ffe8d2; }
+    .film[data-voice="layman"] .film-voice-hint { font-family: "Fredoka", system-ui, sans-serif; }
+    .film[data-voice="layman"] .google-clips { border-top: 3px solid #f0d2b0; }
+    .film[data-voice="layman"] .google-clips a { color: #c45c18; }
+    .film[data-voice="layman"] .film-stage {
+      background: linear-gradient(180deg, #8ec8f5 0%, #c7e7ff 38%, #ffe7b0 72%, #c8e8a8 100%);
+    }
+    .film[data-voice="layman"] .film-stage::before {
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.55), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(255,210,120,.4), transparent 32%);
+    }
+    .film[data-voice="layman"] .spark { background: #fff6b0; width: 8px; height: 8px; }
+    .film[data-voice="layman"] .sun {
+      position: absolute; right: 8%; top: 8%; width: 64px; height: 64px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff6b0, #ffb703);
+      box-shadow: 0 0 0 10px rgba(255,183,3,.25), 0 0 40px #ffb703;
+      animation: sunPulse 4s ease-in-out infinite;
+    }
+    .film[data-voice="layman"] .cloud {
+      position: absolute; background: #fff; border-radius: 40px; height: 28px;
+      animation: cloudDrift 18s linear infinite;
+      box-shadow: 18px 8px 0 #fff, -16px 6px 0 #fff;
+      opacity: .9;
+    }
+    .film[data-voice="layman"] .cloud.c1 { width: 70px; left: 8%; top: 16%; animation-duration: 22s; }
+    .film[data-voice="layman"] .cloud.c2 { width: 54px; left: 48%; top: 10%; animation-duration: 16s; animation-delay: -6s; }
+    .film[data-voice="layman"] .cloud.c3 { width: 62px; left: 72%; top: 20%; animation-duration: 20s; animation-delay: -11s; }
+    .film[data-voice="layman"] .hill {
+      position: absolute; left: -8%; right: -8%; bottom: 0; height: 28%;
+      background: radial-gradient(120% 80% at 50% 120%, #7ec37a 40%, #5fa86a 70%, transparent 71%);
+    }
+    .film[data-voice="layman"] .wire { display: none; }
+    .film[data-voice="layman"] .pkt {
+      width: 18px; height: 18px; border-radius: 50%; bottom: 34%;
+      background: #e07a3a; box-shadow: 0 4px 0 #c45c18;
+    }
+    .film[data-voice="layman"] .pkt.b { background: #5b9fd4; box-shadow: 0 4px 0 #3a7eb0; }
+    .film[data-voice="layman"] .pkt.c { background: #e8c547; box-shadow: 0 4px 0 #c9a62a; }
+    .film[data-voice="layman"] .house {
+      border-radius: 22px 22px 12px 12px; height: 72%;
+      background: #fffdf8; border: 4px solid #f0c9a0;
+      box-shadow: 0 8px 0 #e0c4a0;
+    }
+    .film[data-voice="layman"] .house.admin { background: #d6f0ff; border-color: #5b9fd4; box-shadow: 0 8px 0 #3d86b8; }
+    .film[data-voice="layman"] .house.dns { background: #ffe7c2; border-color: #e07a3a; box-shadow: 0 8px 0 #c45c18; }
+    .film[data-voice="layman"] .house.gmail { background: #e4f8e8; border-color: #5fa86a; box-shadow: 0 8px 0 #3e8a4a; }
+    .film[data-voice="layman"] .house .roof { background: #e07a3a; top: -20px; height: 22px; }
+    .film[data-voice="layman"] .house.admin .roof { background: #5b9fd4; }
+    .film[data-voice="layman"] .house.gmail .roof { background: #5fa86a; }
+    .film[data-voice="layman"] .house .label {
+      color: #3a2a18; font-family: "Fredoka", system-ui, sans-serif; font-size: .8rem;
+    }
+    .film[data-voice="layman"] .house .win {
+      width: 16px; height: 16px; border-radius: 50%; background: #fff8dc; border: 2px solid rgba(58,42,24,.15);
+    }
+    .film[data-voice="layman"] .film-stage[data-focus="admin"] .house.admin,
+    .film[data-voice="layman"] .film-stage[data-focus="dns"] .house.dns,
+    .film[data-voice="layman"] .film-stage[data-focus="gmail"] .house.gmail {
+      color: inherit; box-shadow: 0 12px 0 currentColor;
+    }
+    .film[data-voice="layman"] .film-caption {
+      background: linear-gradient(transparent, rgba(255,246,232,.97) 42%);
+      color: #3a2a18; font-family: "Fredoka", system-ui, sans-serif; font-size: 1.08rem;
+    }
+    .film[data-voice="layman"] .film-caption b {
+      color: #e07a3a; text-transform: none; letter-spacing: 0; font-size: 1.05rem;
+    }
+    .film[data-voice="layman"] .film-play { background: rgba(255,246,232,.2); }
+    .film[data-voice="layman"] .film-play span {
+      background: #e07a3a; border-radius: 22px; box-shadow: 0 8px 0 #c45c18;
+    }
+    .film[data-voice="layman"] .film-bar { border-top: 3px solid #f0d2b0; }
+    .film[data-voice="layman"] .film-bar .btn {
+      border-radius: 999px; border-width: 2px; font-family: "Fredoka", system-ui, sans-serif;
+    }
+    .film[data-voice="layman"] .film-bar .btn.primary { background: #e07a3a; border-color: #e07a3a; }
+    .film[data-voice="layman"] .film-bar input[type="range"] { accent-color: #e07a3a; }
+    .film[data-voice="layman"] .film-time { color: #9a6a40; }
+    .film[data-voice="layman"] .chapters button {
+      border-radius: 999px; border: 2px solid #f0c9a0; background: #fff; color: #3a2a18;
+      font-family: "Fredoka", system-ui, sans-serif;
+    }
+    .film[data-voice="layman"] .chapters button.on { background: #5b9fd4; border-color: #5b9fd4; color: #fff; }
+    .film[data-voice="layman"] .chip-fly {
+      background: #fff; border: 2px solid #f0c9a0; color: #3a2a18; border-radius: 999px;
+      font-family: "Fredoka", system-ui, sans-serif;
+    }
+    .film[data-voice="layman"] .chip-fly.mx { background: #d6f0ff; border-color: #5b9fd4; color: #1a4f78; }
+    .film[data-voice="layman"] .chip-fly.txt { background: #ffe7c2; border-color: #e07a3a; color: #8a3a10; }
+    .film[data-voice="layman"] .chip-fly.ok { background: #e4f8e8; border-color: #5fa86a; color: #2a6a34; }
+    .film[data-voice="layman"] .chip-fly.web { background: #fff; color: #6a4a32; }
+    .film[data-voice="layman"] .chip-fly.bad { background: #ffe0d8; border-color: #e07a3a; color: #9a2a18; }
+    .film[data-voice="layman"] .big-domain {
+      font-family: "Fredoka", system-ui, sans-serif; color: #3a2a18;
+      text-shadow: 3px 4px 0 rgba(224,122,58,.25); border-right-color: #e07a3a;
+    }
+    .film[data-voice="layman"] .token {
+      font-family: "Fredoka", system-ui, sans-serif; background: #fff; color: #8a3a10;
+      border: 3px dashed #e07a3a; border-radius: 16px;
+    }
+    .film[data-voice="layman"] .stamp {
+      border: 4px solid #5fa86a; color: #3e8a4a; border-radius: 12px;
+      font-family: "Fredoka", system-ui, sans-serif;
+    }
+    .film[data-voice="layman"] .seal {
+      background: radial-gradient(circle at 35% 30%, #ffd28a, #e07a3a);
+      box-shadow: 0 8px 0 #c45c18;
+    }
+    .film[data-voice="layman"] .person {
+      background: linear-gradient(180deg, #ffe08a, #e07a3a);
+    }
+    .film[data-voice="layman"] .inbox-slot {
+      border-radius: 16px; border: 3px solid #5b9fd4; color: #1a4f78;
+    }
+    .film[data-voice="layman"] .lane {
+      background: #fffdf8; border: 3px solid #f0c9a0; border-radius: 18px; color: #3a2a18;
+    }
+    .film[data-voice="layman"] .lane.inb { border-color: #5fa86a; }
+    .film[data-voice="layman"] .lane.out { border-color: #e07a3a; }
+    .film[data-voice="layman"] .letter-path .lab { color: #6a4a32; font-family: "Fredoka", system-ui, sans-serif; }
+
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes cloudDrift {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(28px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ===== TECHNICAL: neon HUD ===== */
+    .film[data-voice="technical"] {
+      background: #050010; color: #e9faff; border-radius: 6px;
+      box-shadow: 0 0 0 1px #ff2bd6, 0 0 40px rgba(255,43,214,.22);
+    }
+    .film[data-voice="technical"] .film-voices,
+    .film[data-voice="technical"] .film-voice-hint,
+    .film[data-voice="technical"] .film-bar,
+    .film[data-voice="technical"] .chapters,
+    .film[data-voice="technical"] .google-clips {
+      background: #0a0018; color: #9ef6ff;
+      font-family: "Space Grotesk", ui-sans-serif, sans-serif;
+    }
+    .film[data-voice="technical"] .film-voices { border-bottom: 1px solid #ff2bd6; }
+    .film[data-voice="technical"] .film-voices button {
+      background: #120024; border: 1px solid #3a1a55; border-radius: 2px; color: #c8f7ff;
+    }
+    .film[data-voice="technical"] .film-voices button small { color: #7a8aa8; }
+    .film[data-voice="technical"] .film-voices button.on {
+      background: linear-gradient(90deg, #ff2bd6, #7b2cff);
+      border-color: #c8ff00; color: #fff;
+      box-shadow: 0 0 16px rgba(255,43,214,.45);
+    }
+    .film[data-voice="technical"] .film-voices button.on small { color: #c8ff00; }
+    .film[data-voice="technical"] .google-clips { border-top: 1px solid #00f0ff; }
+    .film[data-voice="technical"] .google-clips a { color: #c8ff00; }
+    .film[data-voice="technical"] .film-stage {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,43,214,.35), transparent 42%),
+        radial-gradient(ellipse at 90% 20%, rgba(0,240,255,.28), transparent 40%),
+        radial-gradient(ellipse at 50% 100%, rgba(200,255,0,.16), transparent 45%),
+        #070014;
+    }
+    .film[data-voice="technical"] .film-stage::before {
+      background:
+        repeating-linear-gradient(90deg, rgba(0,240,255,.07) 0 1px, transparent 1px 48px),
+        repeating-linear-gradient(0deg, rgba(255,43,214,.07) 0 1px, transparent 1px 48px);
+      animation: gridPan 12s linear infinite;
+    }
+    .film[data-voice="technical"] .tech-grid {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, transparent 55%, rgba(0,240,255,.12)),
+        repeating-linear-gradient(to right, transparent 0 38px, rgba(0,240,255,.12) 38px 39px);
+      transform: perspective(420px) rotateX(58deg) translateY(38%);
+      transform-origin: bottom center; height: 70%; top: auto; bottom: -10%;
+      animation: gridRush 6s linear infinite;
+    }
+    .film[data-voice="technical"] .tech-scan {
+      position: absolute; left: 0; right: 0; height: 28%;
+      background: linear-gradient(180deg, transparent, rgba(0,240,255,.18), transparent);
+      animation: scanSweep 3.2s linear infinite;
+    }
+    .film[data-voice="technical"] .orb {
+      position: absolute; width: 10px; height: 10px; border-radius: 50%;
+      background: #c8ff00; box-shadow: 0 0 16px #c8ff00;
+      animation: orbFloat 5s ease-in-out infinite;
+    }
+    .film[data-voice="technical"] .orb.o1 { left: 12%; top: 22%; }
+    .film[data-voice="technical"] .orb.o2 { left: 70%; top: 14%; background: #ff2bd6; box-shadow: 0 0 16px #ff2bd6; animation-delay: -1.4s; }
+    .film[data-voice="technical"] .orb.o3 { left: 88%; top: 40%; background: #00f0ff; box-shadow: 0 0 16px #00f0ff; animation-delay: -2.6s; }
+    .film[data-voice="technical"] .tech-hud {
+      position: absolute; top: 10px; left: 12px; z-index: 2;
+      font-family: ui-monospace, Menlo, monospace; font-size: .68rem; letter-spacing: .16em;
+      color: #c8ff00; border: 1px solid #c8ff00; padding: .2rem .45rem;
+      box-shadow: 0 0 12px rgba(200,255,0,.35);
+    }
+    .film[data-voice="technical"] .spark {
+      width: 3px; height: 14px; border-radius: 0; background: #00f0ff; box-shadow: 0 0 8px #00f0ff;
+    }
+    .film[data-voice="technical"] .wire {
+      height: 2px; opacity: 1;
+      background: linear-gradient(90deg, transparent, #00f0ff, #ff2bd6, #c8ff00, transparent);
+      box-shadow: 0 0 10px #00f0ff;
+    }
+    .film[data-voice="technical"] .pkt {
+      width: 12px; height: 12px; border-radius: 0; transform: rotate(45deg);
+      background: #00f0ff; box-shadow: 0 0 14px #00f0ff;
+    }
+    .film[data-voice="technical"] .pkt.b { background: #ff2bd6; box-shadow: 0 0 14px #ff2bd6; }
+    .film[data-voice="technical"] .pkt.c { background: #c8ff00; box-shadow: 0 0 14px #c8ff00; }
+    .film[data-voice="technical"] .houses { height: 48%; bottom: 24%; }
+    .film[data-voice="technical"] .house {
+      height: 100%; max-width: 170px; border-radius: 2px;
+      background: linear-gradient(180deg, #22003a 0%, #0a0018 100%);
+      border: 1px solid #00f0ff;
+      box-shadow: 0 0 18px rgba(0,240,255,.35), inset 0 0 24px rgba(255,43,214,.12);
+      clip-path: polygon(12% 0, 88% 0, 100% 12%, 100% 100%, 0 100%, 0 12%);
+    }
+    .film[data-voice="technical"] .house.admin { border-color: #00f0ff; }
+    .film[data-voice="technical"] .house.dns { border-color: #ff2bd6; }
+    .film[data-voice="technical"] .house.gmail { border-color: #c8ff00; }
+    .film[data-voice="technical"] .house .roof {
+      clip-path: none; left: 18%; right: 18%; top: 6px; height: 5px; border-radius: 0;
+      background: linear-gradient(90deg, #00f0ff, #ff2bd6, #c8ff00);
+      animation: neonBar 1.6s linear infinite;
+      background-size: 200% 100%;
+    }
+    .film[data-voice="technical"] .house .label {
+      font-family: "Space Grotesk", sans-serif; letter-spacing: .12em; text-transform: uppercase;
+      font-size: .62rem; color: #9ef6ff;
+    }
+    .film[data-voice="technical"] .house .win {
+      width: 7px; height: 7px; border-radius: 0; background: #00f0ff; box-shadow: 0 0 8px #00f0ff;
+    }
+    .film[data-voice="technical"] .house.dns .win { background: #ff2bd6; box-shadow: 0 0 8px #ff2bd6; }
+    .film[data-voice="technical"] .house.gmail .win { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
+    .film[data-voice="technical"] .film-stage[data-focus="admin"] .house.admin,
+    .film[data-voice="technical"] .film-stage[data-focus="dns"] .house.dns,
+    .film[data-voice="technical"] .film-stage[data-focus="gmail"] .house.gmail {
+      transform: translateY(-12px) scale(1.08);
+      box-shadow: 0 0 28px currentColor, 0 0 0 1px currentColor;
+    }
+    .film[data-voice="technical"] .film-stage[data-focus="admin"] .house.admin { color: #00f0ff; }
+    .film[data-voice="technical"] .film-stage[data-focus="dns"] .house.dns { color: #ff2bd6; }
+    .film[data-voice="technical"] .film-stage[data-focus="gmail"] .house.gmail { color: #c8ff00; }
+    .film[data-voice="technical"] .film-caption {
+      background: linear-gradient(transparent, rgba(5,0,16,.94) 36%);
+      font-family: "Space Grotesk", sans-serif; color: #e9faff;
+      border-top: 1px solid rgba(0,240,255,.25);
+    }
+    .film[data-voice="technical"] .film-caption b {
+      color: #c8ff00; letter-spacing: .18em; font-size: .68rem;
+    }
+    .film[data-voice="technical"] .film-play { background: rgba(5,0,16,.35); }
+    .film[data-voice="technical"] .film-play span {
+      width: 82px; height: 82px; border-radius: 0; font-size: 1.35rem;
+      clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+      background: linear-gradient(135deg, #ff2bd6, #7b2cff);
+      box-shadow: 0 0 28px rgba(255,43,214,.55);
+    }
+    .film[data-voice="technical"] .film-bar { border-top: 1px solid #ff2bd6; }
+    .film[data-voice="technical"] .film-bar .btn {
+      border-radius: 2px; border-color: #00f0ff; background: #120024; color: #9ef6ff;
+    }
+    .film[data-voice="technical"] .film-bar .btn.primary {
+      background: #ff2bd6; border-color: #c8ff00; color: #fff;
+    }
+    .film[data-voice="technical"] .film-bar input[type="range"] { accent-color: #c8ff00; }
+    .film[data-voice="technical"] .film-time { color: #00f0ff; }
+    .film[data-voice="technical"] .chapters button {
+      border-radius: 2px; border: 1px solid #3a1a55; background: #120024; color: #9ef6ff;
+      font-family: "Space Grotesk", sans-serif; text-transform: uppercase; letter-spacing: .04em; font-size: .68rem;
+    }
+    .film[data-voice="technical"] .chapters button.on {
+      background: #00f0ff; border-color: #00f0ff; color: #050010;
+    }
+    .film[data-voice="technical"] .chip-fly {
+      border-radius: 0; font-family: ui-monospace, Menlo, monospace; font-size: .72rem;
+      letter-spacing: .03em; text-transform: uppercase;
+      background: rgba(0,240,255,.08); animation: popChipTech .5s cubic-bezier(.2,.9,.2,1) both;
+    }
+    .film[data-voice="technical"] .chip-fly.mx { border-color: #00f0ff; color: #00f0ff; }
+    .film[data-voice="technical"] .chip-fly.txt { border-color: #ff2bd6; color: #ff9de8; }
+    .film[data-voice="technical"] .chip-fly.web { border-color: #7a8aa8; color: #c5d0e6; }
+    .film[data-voice="technical"] .chip-fly.ok { border-color: #c8ff00; color: #c8ff00; }
+    .film[data-voice="technical"] .chip-fly.bad { border-color: #ff4d6d; color: #ff4d6d; }
+    .film[data-voice="technical"] .big-domain {
+      font-family: "Space Grotesk", sans-serif; color: #fff;
+      text-shadow: 3px 0 #ff2bd6, -3px 0 #00f0ff, 0 0 22px #00f0ff;
+      border-right-color: #c8ff00; animation: type 2.1s steps(18) both, caret .7s step-end infinite, glitch 2.8s steps(2) infinite;
+    }
+    .film[data-voice="technical"] .token {
+      background: #120024; border: 1px solid #00f0ff; color: #00f0ff;
+      border-radius: 0; box-shadow: 0 0 18px rgba(0,240,255,.28);
+    }
+    .film[data-voice="technical"] .stamp {
+      border: 2px solid #c8ff00; color: #c8ff00; border-radius: 0;
+      box-shadow: 0 0 16px rgba(200,255,0,.4);
+      font-family: "Space Grotesk", sans-serif;
+    }
+    .film[data-voice="technical"] .seal {
+      background: radial-gradient(circle at 35% 30%, #ff9de8, #7b2cff 55%, #050010);
+      box-shadow: 0 0 24px #ff2bd6; border-radius: 8px;
+    }
+    .film[data-voice="technical"] .person {
+      background: linear-gradient(180deg, #00f0ff, #7b2cff); border-radius: 8px;
+      box-shadow: 0 0 20px #00f0ff;
+    }
+    .film[data-voice="technical"] .inbox-slot {
+      background: #050010; color: #c8ff00; border: 1px solid #c8ff00; border-radius: 0;
+      font-family: ui-monospace, Menlo, monospace;
+    }
+    .film[data-voice="technical"] .lane {
+      background: rgba(10,0,24,.8); border-radius: 0; border-width: 1px;
+      font-family: "Space Grotesk", sans-serif;
+    }
+    .film[data-voice="technical"] .lane.inb { border-color: #00f0ff; box-shadow: 0 0 12px rgba(0,240,255,.2); }
+    .film[data-voice="technical"] .lane.out { border-color: #ff2bd6; box-shadow: 0 0 12px rgba(255,43,214,.2); }
+    .film[data-voice="technical"] .letter-path .lab {
+      color: #9ef6ff; font-family: ui-monospace, Menlo, monospace; letter-spacing: .04em;
+    }
+    .film[data-voice="technical"] .light.none { background: #c8ff00; box-shadow: 0 0 10px #c8ff00; }
+    .film[data-voice="technical"] .light.q { background: #ff2bd6; box-shadow: 0 0 10px #ff2bd6; }
+    .film[data-voice="technical"] .light.r { background: #ff4d6d; box-shadow: 0 0 10px #ff4d6d; }
+
+    @keyframes gridPan { to { transform: translate3d(48px, 24px, 0); } }
+    @keyframes gridRush { to { background-position: 0 80px, 40px 0; } }
+    @keyframes scanSweep {
+      0% { top: -20%; opacity: 0; }
+      15% { opacity: 1; }
+      100% { top: 90%; opacity: 0; }
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    @keyframes neonBar { to { background-position: 200% 0; } }
+    @keyframes glitch {
+      0%, 90%, 100% { transform: none; }
+      92% { transform: translate(-2px, 1px); }
+      94% { transform: translate(2px, -1px); }
+    }
+    @keyframes popChipTech {
+      from { opacity: 0; transform: translateY(16px) skewX(-10deg) scale(.8); }
+      to { opacity: 1; transform: skewX(-10deg); }
+    }
     .art-center {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: flex-start; gap: .55rem;
@@ -416,8 +797,9 @@
     .lane .mini-env { display: inline-block; animation: bounce 1.2s ease-in-out infinite; }
     @keyframes bounce { 50% { transform: translateY(-5px); } }
     @media (prefers-reduced-motion: reduce) {
-      .film-stage::before, .spark, .pkt, .house .win, .film-layer, .big-domain, .token,
-      .env2, .chip-fly, .person, .inbox-slot, .stamp, .seal, .light, .lane, .float-at, .film-play span {
+      .film-stage::before, .spark, .pkt, .house .win, .house .roof, .film-layer, .big-domain, .token,
+      .env2, .chip-fly, .person, .inbox-slot, .stamp, .seal, .light, .lane, .float-at, .film-play span,
+      .sun, .cloud, .tech-scan, .tech-grid, .orb {
         animation: none !important;
       }
     }
@@ -577,29 +959,44 @@
   <div class="hero">
     <h1>Watch how the domain and DNS records work</h1>
     <p>
-      Pick a version of the short film: <strong>Layman</strong> (everyday story), <strong>Simple</strong> (plain English), or <strong>Technical</strong> (records and hostnames). Same pictures — different words. Then click the 10 steps yourself.
+      Pick a version: <strong>Layman</strong> (storybook), <strong>Simple</strong> (calm desk), or <strong>Technical</strong> (neon HUD). Each one looks different — not just the words. Then click the 10 steps yourself.
     </p>
   </div>
 
   <section class="film-wrap" id="watch">
-    <div class="film" aria-label="Domain and mail records explainer">
+    <div class="film" data-voice="simple" aria-label="Domain and mail records explainer">
       <div class="film-voices" role="tablist" aria-label="Explainer version">
         <button type="button" data-voice="layman" id="voiceLayman">
           <b>1 · Layman</b>
-          <small>Shop name, address book, mailboxes</small>
+          <small>Storybook town</small>
         </button>
         <button type="button" data-voice="simple" id="voiceSimple" class="on">
           <b>2 · Simple</b>
-          <small>Plain English for the exam</small>
+          <small>Calm desk stage</small>
         </button>
         <button type="button" data-voice="technical" id="voiceTechnical">
           <b>3 · Technical</b>
-          <small>MX, TXT, SPF, DKIM, DMARC values</small>
+          <small>Neon HUD · vibrant</small>
         </button>
       </div>
       <p class="film-voice-hint" id="filmVoiceHint">Simple: what each record does, in everyday exam language.</p>
       <div class="film-stage" id="filmStage">
         <div class="film-world" aria-hidden="true">
+          <div class="skin-layman">
+            <span class="sun"></span>
+            <span class="cloud c1"></span>
+            <span class="cloud c2"></span>
+            <span class="cloud c3"></span>
+            <span class="hill"></span>
+          </div>
+          <div class="skin-tech">
+            <div class="tech-grid"></div>
+            <div class="tech-scan"></div>
+            <span class="orb o1"></span>
+            <span class="orb o2"></span>
+            <span class="orb o3"></span>
+            <div class="tech-hud">MAIL PATH · LIVE</div>
+          </div>
           <span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span>
           <div class="wire"></div>
           <span class="pkt"></span><span class="pkt b"></span><span class="pkt c"></span>
@@ -1444,13 +1841,13 @@
     const VOICE_KEY = "gwsMailFilmVoice.v1";
     const VOICE_META = {
       layman: {
-        hint: "Layman: a shop name, an address book, and mailboxes — almost no jargon."
+        hint: "Layman look: storybook town — sun, clouds, round houses."
       },
       simple: {
-        hint: "Simple: what each record does, in everyday exam language."
+        hint: "Simple look: calm Admin-style stage."
       },
       technical: {
-        hint: "Technical: zone, RRSets, hostnames, and the exact values you publish."
+        hint: "Technical look: neon HUD — grid, scanline, glowing racks."
       }
     };
     const HOUSE = {
@@ -1745,6 +2142,9 @@
         b.classList.toggle("on", b.getAttribute("data-voice") === mode);
       });
       if (hintEl) hintEl.textContent = VOICE_META[mode].hint;
+      const filmEl = document.querySelector(".film");
+      if (filmEl) filmEl.setAttribute("data-voice", mode);
+      stageEl.setAttribute("data-voice", mode);
       paintHouses();
       rebuildChapters();
       lastChapter = "";
