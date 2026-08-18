@@ -76,6 +76,26 @@
     }
     .hero h1 { font-family: var(--display); font-size: 1.45rem; margin: 0 0 .25rem; }
     .hero p { margin: 0; color: var(--muted); max-width: 78ch; }
+    .film-voices {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .4rem;
+      padding: .65rem .7rem .3rem; background: #0b1220;
+    }
+    .film-voices button {
+      border: 1px solid #243049; background: #121a2b; color: #c5d0e6;
+      border-radius: 10px; padding: .55rem .6rem; cursor: pointer; text-align: left; font: inherit;
+    }
+    .film-voices button:hover { background: #182235; }
+    .film-voices button b { display: block; font-size: .88rem; font-weight: 700; }
+    .film-voices button small { display: block; color: #9aa8c2; font-size: .72rem; margin-top: .18rem; line-height: 1.35; }
+    .film-voices button.on { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .film-voices button.on small { color: #d2e3fc; }
+    .film-voice-hint {
+      margin: 0; padding: 0 .8rem .6rem; background: #0b1220;
+      font-size: .8rem; color: #9aa8c2;
+    }
+    @media (max-width: 720px) {
+      .film-voices { grid-template-columns: 1fr; }
+    }
     .film-wrap { max-width: 1400px; margin: .85rem auto 0; padding: 0 1.1rem; }
     .film {
       background: #070b14; border-radius: 14px; overflow: hidden;
@@ -557,12 +577,27 @@
   <div class="hero">
     <h1>Watch how the domain and DNS records work</h1>
     <p>
-      Play the short film first. It shows what a domain is, then each record — verification TXT, MX, SPF, DKIM, DMARC — and whether it lives in <strong>Admin</strong> or at the <strong>DNS host</strong>. After that, click the 10 steps yourself.
+      Pick a version of the short film: <strong>Layman</strong> (everyday story), <strong>Simple</strong> (plain English), or <strong>Technical</strong> (records and hostnames). Same pictures — different words. Then click the 10 steps yourself.
     </p>
   </div>
 
   <section class="film-wrap" id="watch">
     <div class="film" aria-label="Domain and mail records explainer">
+      <div class="film-voices" role="tablist" aria-label="Explainer version">
+        <button type="button" data-voice="layman" id="voiceLayman">
+          <b>1 · Layman</b>
+          <small>Shop name, address book, mailboxes</small>
+        </button>
+        <button type="button" data-voice="simple" id="voiceSimple" class="on">
+          <b>2 · Simple</b>
+          <small>Plain English for the exam</small>
+        </button>
+        <button type="button" data-voice="technical" id="voiceTechnical">
+          <b>3 · Technical</b>
+          <small>MX, TXT, SPF, DKIM, DMARC values</small>
+        </button>
+      </div>
+      <p class="film-voice-hint" id="filmVoiceHint">Simple: what each record does, in everyday exam language.</p>
       <div class="film-stage" id="filmStage">
         <div class="film-world" aria-hidden="true">
           <span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span>
@@ -1406,85 +1441,246 @@
 
   (function () {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const VOICE_KEY = "gwsMailFilmVoice.v1";
+    const VOICE_META = {
+      layman: {
+        hint: "Layman: a shop name, an address book, and mailboxes — almost no jargon."
+      },
+      simple: {
+        hint: "Simple: what each record does, in everyday exam language."
+      },
+      technical: {
+        hint: "Technical: zone, RRSets, hostnames, and the exact values you publish."
+      }
+    };
+    const HOUSE = {
+      layman: { admin: "Google office", dns: "Address book", gmail: "Mailboxes" },
+      simple: { admin: "Admin", dns: "DNS host", gmail: "Gmail" },
+      technical: { admin: "Admin console", dns: "Authoritative DNS", gmail: "Mailbox" }
+    };
+    let mode = "simple";
+    try {
+      const saved = localStorage.getItem(VOICE_KEY);
+      if (saved && VOICE_META[saved]) mode = saved;
+    } catch (e) { /* ignore */ }
+
+    function pick(map) {
+      return map[mode] || map.simple;
+    }
+    function chips(items) {
+      return '<div class="chip-row">' + items.map(function (item, i) {
+        const t = typeof item === "string" ? { text: item, cls: "" } : item;
+        return '<span class="chip-fly' + (t.cls ? " " + t.cls : "") + '">' + t.text + "</span>";
+      }).join("") + "</div>";
+    }
+
     const CHAPTERS = [
       {
         id: "name", demoStep: 1, place: "admin", dur: 9,
-        title: "The domain is a name",
-        cap: "northwind.example is just a name people type after @. It is not the inbox yet. DNS is the internet’s phone book for that name.",
+        title: {
+          layman: "Your shop name on the internet",
+          simple: "The domain is a name",
+          technical: "A domain is a DNS zone name"
+        },
+        cap: {
+          layman: "northwind.example is like the name on a shop sign — what people type after @. It is not the mailbox yet. Someone still has to say where letters should go.",
+          simple: "northwind.example is just a name people type after @. It is not the inbox yet. DNS is the internet’s phone book for that name.",
+          technical: "northwind.example is an identifier in DNS, not a mailbox. Inbound routing is later defined by MX in that zone. Until records exist, the name does not deliver mail."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><span class="float-at a">@</span><span class="float-at b">@</span><span class="float-at c">@</span><div class="big-domain">northwind.example</div><div class="chip-row"><span class="chip-fly">a name people type</span><span class="chip-fly">not an inbox yet</span></div></div></div>';
+          return '<div class="film-layer"><div class="art-center"><span class="float-at a">@</span><span class="float-at b">@</span><span class="float-at c">@</span><div class="big-domain">northwind.example</div>' + chips(pick({
+            layman: [{ text: "shop sign people type", cls: "web" }, { text: "not a mailbox yet", cls: "txt" }],
+            simple: [{ text: "a name people type", cls: "web" }, { text: "not an inbox yet", cls: "txt" }],
+            technical: [{ text: "DNS zone name", cls: "web" }, { text: "mailbox comes later", cls: "txt" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "book", demoStep: 2, place: "dns", dur: 9,
-        title: "DNS is the phone book",
-        cap: "Computers do not guess. They look up records at the DNS host: MX for where mail goes, TXT for extra facts like “I own this” and “these servers may send”.",
+        title: {
+          layman: "The address book of the internet",
+          simple: "DNS is the phone book",
+          technical: "Authoritative DNS answers the zone"
+        },
+        cap: {
+          layman: "Computers do not guess. They look in an address book at your DNS company. That book says where mail should go, and extra notes like “this shop is ours”.",
+          simple: "Computers do not guess. They look up records at the DNS host: MX for where mail goes, TXT for extra facts like “I own this” and “these servers may send”.",
+          technical: "Authoritative DNS answers queries for the zone. MX = inbound mail hosts. TXT = unstructured facts (verify, SPF, DKIM, DMARC). A/CNAME are for websites, not mail routing."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="chip-row"><span class="chip-fly mx">MX · where mail goes</span><span class="chip-fly txt">TXT · extra facts</span><span class="chip-fly web">A / CNAME · websites</span></div></div></div>';
+          return '<div class="film-layer"><div class="art-center">' + chips(pick({
+            layman: [{ text: "where mail goes", cls: "mx" }, { text: "extra notes", cls: "txt" }, { text: "website addresses", cls: "web" }],
+            simple: [{ text: "MX · where mail goes", cls: "mx" }, { text: "TXT · extra facts", cls: "txt" }, { text: "A / CNAME · websites", cls: "web" }],
+            technical: [{ text: "MX inbound", cls: "mx" }, { text: "TXT verify / auth", cls: "txt" }, { text: "A / CNAME HTTP", cls: "web" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "two", demoStep: 1, place: "admin", dur: 9,
-        title: "Two places, not one screen",
-        cap: "Google Admin creates the values. The DNS host publishes them. Gmail is only the inbox after you create a user. Most mix-ups happen when people look for MX inside Admin.",
+        title: {
+          layman: "Two shops, not one screen",
+          simple: "Two places, not one screen",
+          technical: "Control plane vs data plane"
+        },
+        cap: {
+          layman: "Google writes the secret. You paste it in the address book. Mailboxes appear in Gmail only after you make a person. The usual mix-up: hunting for mail settings only inside Google.",
+          simple: "Google Admin creates the values. The DNS host publishes them. Gmail is only the inbox after you create a user. Most mix-ups happen when people look for MX inside Admin.",
+          technical: "Admin is the control plane (tokens, keys, users). The DNS host publishes RRSets. Gmail is the mailbox after a Directory user exists. MX is never authored inside Admin."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="chip-row"><span class="chip-fly mx">Admin creates</span><span class="chip-fly txt">DNS publishes</span><span class="chip-fly">Gmail is the inbox</span></div></div></div>';
+          return '<div class="film-layer"><div class="art-center">' + chips(pick({
+            layman: [{ text: "Google writes it", cls: "mx" }, { text: "address book publishes", cls: "txt" }, { text: "mailbox is a person", cls: "ok" }],
+            simple: [{ text: "Admin creates", cls: "mx" }, { text: "DNS publishes", cls: "txt" }, { text: "Gmail is the inbox", cls: "ok" }],
+            technical: [{ text: "Admin: tokens / keys", cls: "mx" }, { text: "DNS: published RRSets", cls: "txt" }, { text: "Directory user = MBOX", cls: "ok" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "txt", demoStep: 2, place: "dns", dur: 10,
-        title: "TXT proves you own the domain",
-        cap: "Admin gives you a google-site-verification= token. That TXT must exist at the DNS host. Then Admin looks it up. If it finds the token, ownership is verified.",
+        title: {
+          layman: "A sticker that proves the shop is yours",
+          simple: "TXT proves you own the domain",
+          technical: "Apex TXT ownership token"
+        },
+        cap: {
+          layman: "Google gives you a sticker. You put it in the address book. Google then looks in that book. If the sticker is there, they believe the shop is yours.",
+          simple: "Admin gives you a google-site-verification= token. That TXT must exist at the DNS host. Then Admin looks it up. If it finds the token, ownership is verified.",
+          technical: "Publish TXT google-site-verification=… at the zone apex (@). Admin queries public DNS; exact match → verified. Wrong host, TTL lag, or missing RR → verify fails."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="token">TXT @ google-site-verification=…</div><div class="chip-row"><span class="chip-fly mx">create in Admin</span><span class="chip-fly txt">publish at DNS</span><span class="chip-fly ok">Verify</span></div></div></div>';
+          const token = pick({
+            layman: "sticker: this shop is yours",
+            simple: "TXT @ google-site-verification=…",
+            technical: "TXT @ google-site-verification=<token>"
+          });
+          return '<div class="film-layer"><div class="art-center"><div class="token">' + token + "</div>" + chips(pick({
+            layman: [{ text: "Google gives sticker", cls: "mx" }, { text: "you paste it", cls: "txt" }, { text: "Google checks", cls: "ok" }],
+            simple: [{ text: "create in Admin", cls: "mx" }, { text: "publish at DNS", cls: "txt" }, { text: "Verify", cls: "ok" }],
+            technical: [{ text: "Admin issues token", cls: "mx" }, { text: "publish apex TXT", cls: "txt" }, { text: "DNS lookup OK", cls: "ok" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "mx", demoStep: 5, place: "dns", dur: 11,
-        title: "MX = inbound delivery only",
-        cap: "When someone sends mail to you@northwind.example, their server reads MX. Modern Google MX is smtp.google.com, priority 1. Delete old MX or mail may stay at the old host. MX does not stop outbound spam.",
+        title: {
+          layman: "Where incoming letters should be delivered",
+          simple: "MX = inbound delivery only",
+          technical: "MX: inbound MX 1 smtp.google.com"
+        },
+        cap: {
+          layman: "When someone writes to you@northwind.example, their post office reads the address book: “deliver to Google”. Wipe old addresses or letters still go to the old house. This does not stop your outgoing mail looking like spam.",
+          simple: "When someone sends mail to you@northwind.example, their server reads MX. Modern Google MX is smtp.google.com, priority 1. Delete old MX or mail may stay at the old host. MX does not stop outbound spam.",
+          technical: "Inbound only: MX 1 smtp.google.com (current Workspace). Remove legacy MX / priority conflicts. MX does not authenticate outbound — that is SPF + DKIM + DMARC."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="letter-path"><span class="dot s"></span><span class="dot m"></span><span class="dot g"></span><span class="lab s">Sender</span><span class="lab m">MX smtp.google.com</span><span class="lab g">Gmail</span><span class="env2">✉️</span></div></div>';
+          const labs = pick({
+            layman: { s: "Sender", m: "Address book → Google", g: "Mailbox" },
+            simple: { s: "Sender", m: "MX smtp.google.com", g: "Gmail" },
+            technical: { s: "Sender MTA", m: "MX smtp.google.com p=1", g: "Inbox" }
+          });
+          return '<div class="film-layer"><div class="letter-path"><span class="dot s"></span><span class="dot m"></span><span class="dot g"></span><span class="lab s">' + labs.s + '</span><span class="lab m">' + labs.m + '</span><span class="lab g">' + labs.g + '</span><span class="env2">✉️</span></div></div>';
         }
       },
       {
         id: "user", demoStep: 6, place: "admin", dur: 8,
-        title: "The inbox is a user",
-        cap: "MX only delivers to Google. A mailbox appears when you add a user in Directory — maya@northwind.example. No user, nowhere for the message to land.",
+        title: {
+          layman: "A mailbox needs a person",
+          simple: "The inbox is a user",
+          technical: "Directory user = SMTP mailbox"
+        },
+        cap: {
+          layman: "Google has the building. You still need a named box, like maya@northwind.example. If nobody lives there, the letter has nowhere to sit.",
+          simple: "MX only delivers to Google. A mailbox appears when you add a user in Directory — maya@northwind.example. No user, nowhere for the message to land.",
+          technical: "MX delivers to Google inbound. The mailbox object is a Directory user (primary SMTP). No user → bounce, not a silent Gmail inbox."
+        },
         art: function () {
           return '<div class="film-layer"><div class="art-center"><div class="person">👤</div><div class="inbox-slot">maya@northwind.example</div></div></div>';
         }
       },
       {
         id: "spf", demoStep: 7, place: "dns", dur: 10,
-        title: "SPF is a TXT: who may send",
-        cap: "SPF lists servers allowed to send as your domain. For Workspace only: v=spf1 include:_spf.google.com ~all. One SPF TXT per domain. Extra SPF records break SPF. This is DNS, not a Gmail toggle.",
+        title: {
+          layman: "Who is allowed to send using your name",
+          simple: "SPF is a TXT: who may send",
+          technical: "One SPF TXT: include:_spf.google.com"
+        },
+        cap: {
+          layman: "A list of who may send letters using your shop name. Put Google on that list. Keep one list only — two lists confuse the checkers. This lives in the address book, not a Gmail button.",
+          simple: "SPF lists servers allowed to send as your domain. For Workspace only: v=spf1 include:_spf.google.com ~all. One SPF TXT per domain. Extra SPF records break SPF. This is DNS, not a Gmail toggle.",
+          technical: "Apex SPF: v=spf1 include:_spf.google.com ~all for Workspace-only. One v=spf1 RR per name. Multiple SPF TXT = PermError. Not configured in Gmail settings."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="stamp">SPF PASS</div><div class="chip-row"><span class="chip-fly txt">v=spf1 include:_spf.google.com ~all</span></div></div></div>';
+          const stamp = pick({
+            layman: "ALLOWED TO SEND",
+            simple: "SPF PASS",
+            technical: "SPF pass"
+          });
+          return '<div class="film-layer"><div class="art-center"><div class="stamp">' + stamp + "</div>" + chips(pick({
+            layman: [{ text: "one list · Google may send", cls: "txt" }],
+            simple: [{ text: "v=spf1 include:_spf.google.com ~all", cls: "txt" }],
+            technical: [{ text: "v=spf1 include:_spf.google.com ~all", cls: "txt" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "dkim", demoStep: 8, place: "admin", dur: 12,
-        title: "DKIM: generate, publish, start",
-        cap: "Admin generates a key. You publish TXT at google._domainkey on DNS. Then back in Admin click Start authentication. Skip that last click and outbound mail is still unsigned.",
+        title: {
+          layman: "A wax seal on outgoing letters",
+          simple: "DKIM: generate, publish, start",
+          technical: "DKIM: generate → TXT → Start auth"
+        },
+        cap: {
+          layman: "Google makes a seal. You put the public picture of that seal in the address book. Then you tell Google: start stamping mail. Forget that last click and letters leave without a seal.",
+          simple: "Admin generates a key. You publish TXT at google._domainkey on DNS. Then back in Admin click Start authentication. Skip that last click and outbound mail is still unsigned.",
+          technical: "Admin generates the key → publish TXT at google._domainkey (selector) → Start authentication. Until Start, outbound has no DKIM-Signature."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="seal">DK</div><div class="chip-row"><span class="chip-fly mx">1 Generate</span><span class="chip-fly txt">2 Publish TXT</span><span class="chip-fly ok">3 Start auth</span></div></div></div>';
+          return '<div class="film-layer"><div class="art-center"><div class="seal">DK</div>' + chips(pick({
+            layman: [{ text: "1 Make the seal", cls: "mx" }, { text: "2 Show it in the book", cls: "txt" }, { text: "3 Start stamping", cls: "ok" }],
+            simple: [{ text: "1 Generate", cls: "mx" }, { text: "2 Publish TXT", cls: "txt" }, { text: "3 Start auth", cls: "ok" }],
+            technical: [{ text: "1 Generate key", cls: "mx" }, { text: "2 google._domainkey TXT", cls: "txt" }, { text: "3 Start authentication", cls: "ok" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "dmarc", demoStep: 9, place: "dns", dur: 10,
-        title: "DMARC says what to do on fail",
-        cap: "DMARC is TXT at _dmarc. Start p=none — monitor and collect reports. Later quarantine, then reject. DMARC uses SPF and DKIM results. Do not jump to reject on day one.",
+        title: {
+          layman: "What others should do if a letter looks fake",
+          simple: "DMARC says what to do on fail",
+          technical: "DMARC TXT _dmarc: start p=none"
+        },
+        cap: {
+          layman: "A note for other post offices: if a letter fails the checks, what should they do? Start with “just watch”. Later “put in junk”. Last “refuse it”. Do not refuse everything on day one.",
+          simple: "DMARC is TXT at _dmarc. Start p=none — monitor and collect reports. Later quarantine, then reject. DMARC uses SPF and DKIM results. Do not jump to reject on day one.",
+          technical: "TXT _dmarc: v=DMARC1; p=none; rua=… Aligns SPF/DKIM to the org domain. Escalate p=quarantine then p=reject after reports are clean. Day-one reject is a common outage."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="lights"><span class="light none"></span><span class="light q"></span><span class="light r"></span></div><div class="chip-row"><span class="chip-fly txt">p=none</span><span class="chip-fly">then quarantine</span><span class="chip-fly bad">then reject</span></div></div></div>';
+          return '<div class="film-layer"><div class="art-center"><div class="lights"><span class="light none"></span><span class="light q"></span><span class="light r"></span></div>' + chips(pick({
+            layman: [{ text: "just watch", cls: "txt" }, { text: "then junk folder", cls: "web" }, { text: "then refuse", cls: "bad" }],
+            simple: [{ text: "p=none", cls: "txt" }, { text: "then quarantine", cls: "web" }, { text: "then reject", cls: "bad" }],
+            technical: [{ text: "p=none + rua", cls: "txt" }, { text: "p=quarantine", cls: "web" }, { text: "p=reject", cls: "bad" }]
+          })) + "</div></div>";
         }
       },
       {
         id: "recap", demoStep: 10, place: "gmail", dur: 10,
-        title: "Inbound vs outbound",
-        cap: "Inbound follows MX into the user inbox. Outbound trust is SPF + DKIM + DMARC. If the trio is incomplete, the customer spam-folders you — even when Gmail looks fine.",
+        title: {
+          layman: "Incoming vs outgoing",
+          simple: "Inbound vs outbound",
+          technical: "Inbound MX vs outbound auth trio"
+        },
+        cap: {
+          layman: "Incoming: follow the address book to Google, then to the person’s box. Outgoing: prove it is really you, or other companies dump you in spam — even if Gmail looks fine on your side.",
+          simple: "Inbound follows MX into the user inbox. Outbound trust is SPF + DKIM + DMARC. If the trio is incomplete, the customer spam-folders you — even when Gmail looks fine.",
+          technical: "Inbound: MX → Google inbound → Directory user. Outbound: SPF + DKIM + DMARC alignment. Incomplete trio → spam/reject at receivers even when Gmail accepted the send."
+        },
         art: function () {
-          return '<div class="film-layer"><div class="art-center"><div class="split"><div class="lane inb"><span class="mini-env">✉️</span> <b>Inbound</b><br/>MX → Google → user inbox</div><div class="lane out"><span class="mini-env">✉️</span> <b>Outbound</b><br/>SPF + DKIM + DMARC or spam</div></div></div></div>';
+          const lanes = pick({
+            layman: { inb: "<b>Incoming</b><br/>address book → Google → person’s box", out: "<b>Outgoing</b><br/>prove it’s you, or spam" },
+            simple: { inb: "<b>Inbound</b><br/>MX → Google → user inbox", out: "<b>Outbound</b><br/>SPF + DKIM + DMARC or spam" },
+            technical: { inb: "<b>Inbound</b><br/>MX → Google MTA → user", out: "<b>Outbound</b><br/>SPF + DKIM + DMARC align" }
+          });
+          return '<div class="film-layer"><div class="art-center"><div class="split"><div class="lane inb"><span class="mini-env">✉️</span> ' + lanes.inb + '</div><div class="lane out"><span class="mini-env">✉️</span> ' + lanes.out + "</div></div></div></div>";
         }
       }
     ];
@@ -1507,6 +1703,7 @@
     const muteBtn = document.getElementById("filmMute");
     const chWrap = document.getElementById("filmChapters");
     const tryBtn = document.getElementById("filmTry");
+    const hintEl = document.getElementById("filmVoiceHint");
     let time = 0;
     let playing = false;
     let muted = false;
@@ -1515,16 +1712,50 @@
     let seeking = false;
     seek.max = String(Math.round(TOTAL * 10));
 
-    CHAPTERS.forEach(function (c, i) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = (i + 1) + " · " + c.title;
-      b.addEventListener("click", function () {
-        time = c.start;
-        speakChapter(c);
-        paint(true);
+    function chapterTitle(c) { return pick(c.title); }
+    function chapterCap(c) { return pick(c.cap); }
+
+    function paintHouses() {
+      const h = HOUSE[mode] || HOUSE.simple;
+      const map = { admin: h.admin, dns: h.dns, gmail: h.gmail };
+      Object.keys(map).forEach(function (k) {
+        const el = stageEl.querySelector(".house." + k + " .label");
+        if (el) el.textContent = map[k];
       });
-      chWrap.appendChild(b);
+    }
+    function rebuildChapters() {
+      chWrap.innerHTML = "";
+      CHAPTERS.forEach(function (c, i) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = (i + 1) + " · " + chapterTitle(c);
+        b.addEventListener("click", function () {
+          time = c.start;
+          speakChapter(c);
+          paint(true);
+        });
+        chWrap.appendChild(b);
+      });
+    }
+    function applyMode(next) {
+      if (!VOICE_META[next]) return;
+      mode = next;
+      try { localStorage.setItem(VOICE_KEY, mode); } catch (e) { /* ignore */ }
+      document.querySelectorAll("[data-voice]").forEach(function (b) {
+        b.classList.toggle("on", b.getAttribute("data-voice") === mode);
+      });
+      if (hintEl) hintEl.textContent = VOICE_META[mode].hint;
+      paintHouses();
+      rebuildChapters();
+      lastChapter = "";
+      if (playing) speakChapter(chapterAt(time));
+      paint(true);
+    }
+
+    document.querySelectorAll("[data-voice]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        applyMode(b.getAttribute("data-voice"));
+      });
     });
 
     function fmt(sec) {
@@ -1545,7 +1776,7 @@
     function speakChapter(c) {
       stopVoice();
       if (muted || reduceMotion || !window.speechSynthesis) return;
-      const u = new SpeechSynthesisUtterance(c.title + ". " + c.cap);
+      const u = new SpeechSynthesisUtterance(chapterTitle(c) + ". " + chapterCap(c));
       u.rate = 1.02;
       u.lang = "en-US";
       window.speechSynthesis.speak(u);
@@ -1554,7 +1785,7 @@
       const c = chapterAt(time);
       if (forceArt || c.id !== lastChapter) {
         capEl.classList.remove("swap");
-        capEl.innerHTML = "<b>" + c.title + "</b>" + c.cap;
+        capEl.innerHTML = "<b>" + chapterTitle(c) + "</b>" + chapterCap(c);
         void capEl.offsetWidth;
         capEl.classList.add("swap");
         artEl.innerHTML = c.art();
@@ -1638,7 +1869,7 @@
     document.addEventListener("visibilitychange", function () {
       if (document.hidden && playing) pause();
     });
-    paint(true);
+    applyMode(mode);
   })();
   </script>
 </body>
