@@ -182,6 +182,11 @@
       position: sticky;
       top: 0;
       z-index: 3;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .65rem 1rem;
       padding: 1.15rem 0 .85rem;
       margin: 0 -0.15rem .75rem;
       padding-left: 0.15rem;
@@ -189,6 +194,7 @@
       background: linear-gradient(180deg, rgba(238,243,239,.98) 75%, rgba(238,243,239,0));
       backdrop-filter: blur(6px);
     }
+    .desk-chrome-copy { flex: 1; min-width: 12rem; }
     .desk-kicker {
       margin: 0 0 .25rem;
       font-size: .68rem;
@@ -623,7 +629,7 @@
         radial-gradient(900px 500px at 10% 0%, rgba(91,159,212,.25), transparent 55%),
         radial-gradient(700px 420px at 95% 10%, rgba(224,122,58,.18), transparent 50%),
         linear-gradient(180deg, #fff9f0 0%, var(--kinder-bg) 40%, #f3ffe8 100%);
-      padding: 1.25rem 1.25rem 6rem;
+      padding: 1.25rem 1.25rem 2.5rem;
     }
     .kinder-shell { max-width: 820px; margin: 0 auto; }
     .kinder-top {
@@ -727,23 +733,25 @@
     }
     body.style-adult .adult-path-badge { display: block; }
 
-    /* Floating style switcher */
+    /* Style switcher — sits in the desk header (adult) or story header (kinder) */
     #fabStyle {
-      position: fixed; right: 1rem; bottom: 1rem; z-index: 120;
-      display: flex; flex-direction: column; align-items: flex-end; gap: .45rem;
+      position: relative; z-index: 4;
+      display: flex; flex-direction: column; align-items: flex-end; gap: .35rem;
+      flex: 0 0 auto;
     }
     #fabStyleMain {
-      border: 0; border-radius: 999px; padding: .7rem 1.05rem; font: inherit; font-weight: 700;
-      font-size: .88rem; cursor: pointer; background: #12241e; color: #e8f2ed;
-      box-shadow: 0 8px 24px rgba(18,36,30,.28); min-height: 48px;
+      border: 1px solid var(--line); border-radius: 9px; padding: .45rem .75rem; font: inherit; font-weight: 600;
+      font-size: .82rem; cursor: pointer; background: #fff; color: var(--ink);
+      min-height: 40px;
     }
     body.style-kinder #fabStyleMain {
-      background: var(--kinder-accent); font-family: var(--kinder-font);
+      background: var(--kinder-accent); border-color: var(--kinder-accent); color: #fff;
+      font-family: var(--kinder-font); border-radius: 999px;
     }
     #fabStyleMenu {
-      display: none; flex-direction: column; gap: .35rem; min-width: 220px;
-      background: #fff; border: 1px solid var(--line); border-radius: 14px;
-      padding: .55rem; box-shadow: var(--shadow);
+      display: none; flex-direction: column; gap: .35rem; min-width: 200px;
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      padding: .45rem; box-shadow: var(--shadow);
     }
     #fabStyleMenu.open { display: flex; }
     #fabStyleMenu button {
@@ -801,28 +809,9 @@
     body.style-kinder .progress-mobile,
     body.auth-gate .profile-panel { display: none !important; }
     @media (min-width: 901px) {
-      body.style-adult .profile-panel {
-        padding-bottom: 5.75rem;
-      }
       body.style-adult #accountBar {
         margin-top: auto;
-        margin-bottom: .35rem;
-        position: relative;
-        z-index: 2;
       }
-      body.style-adult #fabStyle {
-        position: fixed;
-        right: 1rem;
-        bottom: max(1rem, env(safe-area-inset-bottom));
-        width: calc(var(--profile-w) - 2rem);
-        max-width: calc(var(--profile-w) - 2rem);
-        align-items: stretch;
-        z-index: 50;
-      }
-      body.style-adult #fabStyleMain {
-        width: 100%; border-radius: 12px; box-shadow: 0 4px 16px rgba(18,36,30,.12);
-      }
-      body.style-adult #fabStyleMenu { width: 100%; box-sizing: border-box; }
     }
     #accountMobile { display: none; }
     #accountMobile .account-row { justify-content: flex-end; }
@@ -999,11 +988,7 @@
       td:last-child, th:last-child { white-space: normal; min-width: 12rem; }
       .journey-step { flex-direction: column; align-items: stretch; }
       .journey-step .game-btn, .journey-step a.game-btn { width: 100%; text-align: center; box-sizing: border-box; }
-      #fabStyle {
-        right: max(.75rem, env(safe-area-inset-right));
-        bottom: max(.85rem, env(safe-area-inset-bottom));
-      }
-      #fabStyleMain { min-height: 48px; padding: .75rem 1.1rem; }
+      #fabStyleMain { min-height: 44px; }
       #fabStyleMenu { min-width: min(78vw, 240px); }
       #fabStyleMenu button { min-height: 44px; font-size: .92rem; }
       .focus-exit {
@@ -1023,9 +1008,9 @@
       .gate-choice { min-height: 0; padding: 1.1rem 1rem; }
       .gate-choice h2 { font-size: 1.2rem; }
       #kinderWorld {
-        padding: 1rem .85rem 6rem;
+        padding: 1rem .85rem 2rem;
         padding-top: max(1rem, env(safe-area-inset-top));
-        padding-bottom: max(6rem, calc(env(safe-area-inset-bottom) + 5.5rem));
+        padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1.25rem));
       }
       .kinder-lesson { padding: 1.15rem 1rem; border-radius: 18px; }
       .kinder-lesson .story { font-size: 1.02rem; }
@@ -1102,16 +1087,6 @@
   <div class="reading-bar" id="readingBar" aria-hidden="true"></div>
   <button type="button" class="game-btn focus-exit" id="btnFocusExit">Exit focus</button>
   <div class="study-toast" id="studyToast" role="status" aria-live="polite"></div>
-
-  <!-- Floating style switcher -->
-  <div id="fabStyle">
-    <div id="fabStyleMenu" role="menu" aria-label="Switch learning style">
-      <button type="button" data-fab="kinder" role="menuitem">Kindergarten style</button>
-      <button type="button" data-fab="adult" role="menuitem">Adult style</button>
-      <button type="button" data-fab="gate" role="menuitem">Choose again…</button>
-    </div>
-    <button type="button" id="fabStyleMain" aria-haspopup="true" aria-expanded="false">Switch style</button>
-  </div>
 
   <button type="button" class="nav-backdrop" id="navBackdrop" aria-label="Close menu"></button>
   <div class="mobile-topbar" id="mobileTopbar">
@@ -1198,9 +1173,19 @@
 
     <main class="main desk-shell" id="content">
       <div class="desk-chrome" id="deskChrome">
-        <p class="desk-kicker">Study desk</p>
-        <h2 class="desk-title" id="deskPageTitle">Home</h2>
-        <p class="desk-sub" id="deskPageSub">Overview and today’s session</p>
+        <div class="desk-chrome-copy">
+          <p class="desk-kicker">Study desk</p>
+          <h2 class="desk-title" id="deskPageTitle">Home</h2>
+          <p class="desk-sub" id="deskPageSub">Overview and today’s session</p>
+        </div>
+        <div id="fabStyle">
+          <button type="button" id="fabStyleMain" aria-haspopup="true" aria-expanded="false">Switch style</button>
+          <div id="fabStyleMenu" role="menu" aria-label="Switch learning style">
+            <button type="button" data-fab="kinder" role="menuitem">Kindergarten style</button>
+            <button type="button" data-fab="adult" role="menuitem">Adult style</button>
+            <button type="button" data-fab="gate" role="menuitem">Choose again…</button>
+          </div>
+        </div>
       </div>
       <!-- Adult path picker: Sandbox journey vs Focus -->
       <section id="adultPathHub" data-desk-page="home" aria-label="Adult learning paths">
@@ -4271,6 +4256,15 @@
         window.gwsDesk?.refresh?.();
       }
 
+      function placeStyleSwitcher(style) {
+        const fab = document.getElementById("fabStyle");
+        if (!fab) return;
+        const chrome = document.getElementById("deskChrome");
+        const kinderTop = document.querySelector(".kinder-top");
+        if (style === "kinder" && kinderTop) kinderTop.appendChild(fab);
+        else if (chrome) chrome.appendChild(fab);
+      }
+
       function applyStyle(style, opts) {
         opts = opts || {};
         state.style = style;
@@ -4282,9 +4276,11 @@
           document.body.classList.add("style-picking");
           if (fabMenu) fabMenu.classList.remove("open");
           if (fabMain) fabMain.setAttribute("aria-expanded", "false");
+          placeStyleSwitcher("adult");
           return;
         }
         document.body.classList.add(style === "kinder" ? "style-kinder" : "style-adult");
+        placeStyleSwitcher(style);
         if (style === "kinder") paintLesson();
         if (style === "adult") {
           paintAdultPathUI();
