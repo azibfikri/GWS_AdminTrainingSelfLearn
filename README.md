@@ -10,10 +10,10 @@
 
 <p align="center">
   <a href="https://gws-admin-study-guide.vercel.app/">
-    <img src="docs/screenshots/01-study-desk.png" alt="GWS Admin Study Desk — modules, session timer, and adult learning paths" width="920" />
+    <img src="docs/screenshots/01-study-desk.png" alt="GWS Admin Study Desk — Notes, Labs, and Prove start cards" width="920" />
   </a>
 </p>
-<p align="center"><em>Study desk with adult paths, 25-minute session timer, and module navigation.</em></p>
+<p align="center"><em>Adult study desk (Aug 2026): pick Notes, Labs, or Prove. Login is optional.</em></p>
 
 ---
 
@@ -24,12 +24,12 @@
 | Area | What you get |
 |------|----------------|
 | **Coverage map** | Official Associate objectives → notes + lab + prove quiz (Phase 1 mastery loop) |
-| **Study desk** | Searchable modules, focus mode, 25-minute session timer |
-| **Learning styles** | *Kindergarten* (story-based) or *Adult* (Sandbox + Focus paths) |
-| **Practice** | Mock 10, by domain, timed 50, **full 246-question exam**, answer key |
-| **Sandbox** | Interactive Admin Console simulator + guided walkthrough |
+| **Study desk** | Searchable modules; optional 25-minute timer |
+| **Learning styles** | *Kindergarten* (story-based) or *Adult* exam desk |
+| **Practice** | Start with 10 questions; timed mock and full **246-question** bank in other modes |
+| **Sandbox** | Interactive Admin Console simulator + 30 labs |
 | **Mail setup demo** | Separate page: add a domain, publish MX/SPF/DKIM/DMARC at a fake DNS host, create a mailbox, send tests |
-| **Cloud profile** | Username + password — sync progress across devices |
+| **Cloud profile** | Optional — study on this device, or log in to sync |
 
 ---
 
@@ -126,10 +126,10 @@ Optional env overrides:
 
 | | |
 |:---:|:---:|
-| **Learning styles** — Kindergarten stories or adult exam desk | **Practice arena** — mock bank drills with XP |
+| **Learning styles** — Kindergarten stories or adult exam desk | **Practice arena** — Start 10 questions |
 | [![Learning style gate](docs/screenshots/04-learning-styles.png)](https://gws-admin-study-guide.vercel.app/) | [![Practice arena quiz](docs/screenshots/02-practice-arena.png)](https://gws-admin-study-guide.vercel.app/#practice) |
-| **Admin sandbox** — OU inheritance & policy inspector | **Study desk** — focus mode & session flow |
-| [![Admin console simulator](docs/screenshots/03-admin-sandbox.png)](https://gws-admin-study-guide.vercel.app/gws-admin-console.html) | [![Study desk overview](docs/screenshots/01-study-desk.png)](https://gws-admin-study-guide.vercel.app/) |
+| **Admin sandbox** — lab catalog in Google Admin chrome | **Study desk** — Notes / Labs / Prove |
+| [![Admin console simulator](docs/screenshots/03-admin-sandbox.png)](https://gws-admin-study-guide.vercel.app/gws-admin-console.html#labs) | [![Study desk overview](docs/screenshots/01-study-desk.png)](https://gws-admin-study-guide.vercel.app/) |
 
 All captures from the [live demo](https://gws-admin-study-guide.vercel.app/). Full-size files live in [`docs/screenshots/`](docs/screenshots/).
 
