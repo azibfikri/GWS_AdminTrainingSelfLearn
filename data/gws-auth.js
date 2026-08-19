@@ -19,7 +19,7 @@
   const configured = !!apiBase && apiBase.indexOf("YOUR_") === -1;
 
   const LIVE_KEYS = { "gws-study-session-v1": true };
-  const IDLE_MS = 10 * 60 * 1000;
+  const IDLE_MS = 2 * 60 * 1000;
 
   let session = null;
   let syncTimer = null;
@@ -69,7 +69,7 @@
     idleTimer = setInterval(() => {
       if (!session) return;
       if (Date.now() - lastActive >= IDLE_MS) {
-        toast("Signed out after 10 minutes idle.");
+        toast("Signed out after 2 minutes idle.");
         window.gwsStorage.signOut();
       }
     }, 15000);
