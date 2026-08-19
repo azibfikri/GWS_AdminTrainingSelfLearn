@@ -89,6 +89,9 @@
     .film-voices button small { display: block; color: #9aa8c2; font-size: .72rem; margin-top: .18rem; line-height: 1.35; }
     .film-voices button.on { background: #1a73e8; border-color: #1a73e8; color: #fff; }
     .film-voices button.on small { color: #d2e3fc; }
+    .film-more { margin: .35rem .7rem .7rem; color: #c5d0e6; font-size: .85rem; }
+    .film-more > summary { cursor: pointer; font-weight: 600; }
+    .film-more .chapters { margin-top: .45rem; }
     .film-voice-hint {
       margin: 0; padding: 0 .8rem .6rem; background: #0b1220;
       font-size: .8rem; color: #9aa8c2;
@@ -957,10 +960,8 @@
   </header>
 
   <div class="hero">
-    <h1>Watch how the domain and DNS records work</h1>
-    <p>
-      Pick a version: <strong>Layman</strong> (storybook), <strong>Simple</strong> (calm desk), or <strong>Technical</strong> (neon HUD). Each one looks different — not just the words. Then click the 10 steps yourself.
-    </p>
+    <h1>Watch, then click the 10 steps</h1>
+    <p>Press Play. Pick Layman, Simple, or Technical if you want a different look. Then use Try this step.</p>
   </div>
 
   <section class="film-wrap" id="watch">
@@ -1027,21 +1028,24 @@
       </div>
       <div class="film-bar">
         <button type="button" class="btn primary" id="filmPlay">Play</button>
-        <button type="button" class="btn" id="filmRestart">Restart</button>
-        <button type="button" class="btn" id="filmMute">Mute</button>
         <input type="range" id="filmSeek" min="0" max="1000" value="0" aria-label="Explainer timeline" />
         <span class="film-time" id="filmTime">0:00 / 1:36</span>
         <button type="button" class="btn" id="filmTry">Try this step</button>
       </div>
-      <div class="chapters" id="filmChapters"></div>
-      <div class="google-clips">
-        Official Google clips (opens YouTube):
-        <a href="https://www.youtube.com/watch?v=G4RJucbeFf8" target="_blank" rel="noopener">Set up SPF</a>
-        ·
-        <a href="https://www.youtube.com/watch?v=GEsXogRshpM" target="_blank" rel="noopener">Set up DKIM</a>
-        ·
-        <a href="https://support.google.com/a/answer/11424845" target="_blank" rel="noopener">All Workspace videos</a>
-      </div>
+      <details class="film-more">
+        <summary>Chapters, restart, mute</summary>
+        <button type="button" class="btn" id="filmRestart">Restart</button>
+        <button type="button" class="btn" id="filmMute">Mute</button>
+        <div class="chapters" id="filmChapters"></div>
+        <div class="google-clips">
+          Official Google clips (opens YouTube):
+          <a href="https://www.youtube.com/watch?v=G4RJucbeFf8" target="_blank" rel="noopener">Set up SPF</a>
+          ·
+          <a href="https://www.youtube.com/watch?v=GEsXogRshpM" target="_blank" rel="noopener">Set up DKIM</a>
+          ·
+          <a href="https://support.google.com/a/answer/11424845" target="_blank" rel="noopener">All Workspace videos</a>
+        </div>
+      </details>
     </div>
   </section>
 

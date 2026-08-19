@@ -4,12 +4,10 @@
   <script>
     (function () {
       try {
-        document.documentElement.classList.add(
-          localStorage.getItem("gws-auth-token-v1") ? "boot-session" : "boot-login"
-        );
-      } catch (e) {
-        document.documentElement.classList.add("boot-login");
-      }
+        if (localStorage.getItem("gws-auth-token-v1")) {
+          document.documentElement.classList.add("boot-session");
+        }
+      } catch (e) {}
     })();
   </script>
   <meta charset="UTF-8" />
@@ -27,7 +25,7 @@
       --paper: #fbf8f2;
       --surface: #fffcf7;
       --ink: #15241e;
-      --muted: #5a6b63;
+      --muted: #3d4f47;
       --line: #c5d2ca;
       --accent: #0c6550;
       --accent-2: #1f8f72;
@@ -105,7 +103,7 @@
       font-size: .88rem; margin-bottom: 2px;
     }
     .nav a:hover, .nav a.active { background: #1c3a2f; color: #fff; }
-    .nav a .w { float: right; color: #7f9a8e; font-size: .72rem; }
+    .nav a .w { float: right; color: #7f9a8e; font-size: .65rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
     .progress-box {
       margin-top: auto; padding: .75rem .8rem; border-radius: 10px;
       background: rgba(255,255,255,.72); border: 1px solid var(--line);
@@ -319,7 +317,8 @@
       font-family: var(--font); font-size: .75rem; font-weight: 700; color: var(--accent);
       background: var(--accent-soft); padding: .2rem .5rem; border-radius: 6px;
     }
-    .goal { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
+    .module p, .module li, .module td { color: var(--ink); }
+    .goal { color: #2a3d36; margin: 0 0 1rem; font-size: .95rem; }
     h3 { font-size: 1.05rem; margin: 1.35rem 0 .55rem; }
     .module h2[id], .module h3[id], .module h4[id] { scroll-margin-top: 4.75rem; }
     h4 { font-size: .92rem; margin: 1rem 0 .4rem; color: #2a3d36; }
@@ -469,7 +468,7 @@
     }
     .cov-dot.on { background: var(--ok-bg, #e6f4ea); color: #0d652d; border-color: #a8dab5; }
     .cov-sec { margin: 1.25rem 0 .35rem; font-size: 1rem; }
-    .cov-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .cov-mark.game-btn { min-height: 36px; }
     .cov-actions a, .cov-actions button { font-size: .78rem; }
     .cov-mark { font: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 6px; background: #fff; padding: .25rem .45rem; }
     .cov-mark[aria-pressed="true"] { background: #e6f4ea; border-color: #a8dab5; }
@@ -1119,7 +1118,7 @@
   <div id="styleGate" role="dialog" aria-labelledby="gateTitle">
     <div class="gate-card">
       <h1 id="gateTitle">How do you want to learn today?</h1>
-      <p class="gate-lede">Pick a style. You can switch anytime with the button at the bottom-right.</p>
+      <p class="gate-lede">Pick a style. You can switch anytime from Switch style on the desk.</p>
       <div class="gate-choices">
         <button type="button" class="gate-choice kinder-pick" id="pickKinder" data-style="kinder">
           <span class="gc-kicker">Style 1</span>
@@ -1178,8 +1177,8 @@
     <button type="button" class="auth-backdrop" id="authModalBackdrop" aria-label="Close"></button>
     <div class="auth-card">
       <button type="button" class="auth-close" id="authModalClose" aria-label="Close">×</button>
-      <h2 id="authModalTitle">Your study profile</h2>
-      <p class="auth-lede" id="authLede">Sign in to sync checklist, practice XP, session timer, and style across devices.</p>
+      <h2 id="authModalTitle">Save across devices</h2>
+      <p class="auth-lede" id="authLede">Optional. You can study now — this computer keeps your ticks. Log in only to sync to another device.</p>
       <div class="auth-tabs" role="tablist">
         <button type="button" class="active" data-auth-tab="signin">Log in</button>
         <button type="button" data-auth-tab="signup">Sign up</button>
@@ -1207,6 +1206,7 @@
         </div>
         <button type="submit" class="game-btn primary" style="width:100%;min-height:44px">Create account</button>
       </form>
+      <button type="button" class="game-btn ghost" id="authSkip" style="width:100%;min-height:44px;margin-top:.65rem">Study on this device</button>
     </div>
   </div>
 
@@ -1229,12 +1229,12 @@
         <a href="./gws-domain-setup.html">Domain &amp; mail demo</a>
         <div class="nav-sec">Modules</div>
         <a href="#m0">0 · Foundations</a>
-        <a href="#m1">1 · Users <span class="w">20%</span></a>
-        <a href="#m2">2 · Services <span class="w">23%</span></a>
-        <a href="#m3">3 · Compliance <span class="w">15%</span></a>
-        <a href="#m4">4 · Security <span class="w">20%</span></a>
-        <a href="#m5">5 · Devices <span class="w">10%</span></a>
-        <a href="#m6">6 · Monitoring <span class="w">13%</span></a>
+        <a href="#m1">1 · Users <span class="w" title="Share of the exam, not your progress">exam 20%</span></a>
+        <a href="#m2">2 · Services <span class="w" title="Share of the exam, not your progress">exam 23%</span></a>
+        <a href="#m3">3 · Compliance <span class="w" title="Share of the exam, not your progress">exam 15%</span></a>
+        <a href="#m4">4 · Security <span class="w" title="Share of the exam, not your progress">exam 20%</span></a>
+        <a href="#m5">5 · Devices <span class="w" title="Share of the exam, not your progress">exam 10%</span></a>
+        <a href="#m6">6 · Monitoring <span class="w" title="Share of the exam, not your progress">exam 13%</span></a>
         <a href="#m7">7 · Strategy</a>
         <div class="nav-sec">Cheat sheets</div>
         <a href="#heuristics">Heuristics</a>
@@ -1284,31 +1284,29 @@
           <a href="#coverage">Coverage map</a>
           <a href="./gws-domain-setup.html">Mail demo</a>
           <a href="#lastMinute">Night-before cram</a>
-          <a href="#heuristics">Heuristics</a>
-          <button type="button" class="linkish" id="btnStartSession">Start 25 min</button>
-          <button type="button" class="linkish" id="btnFocusFromHero">Focus mode</button>
         </p>
-        <p class="kbd-hint">Shortcuts: <kbd>F</kbd> focus · <kbd>T</kbd> timer · <kbd>P</kbd> practice</p>
       </header>
 
       <section class="study-session module" id="studySession" data-desk-page="home" data-search="session timer pomodoro today focus study ritual">
-        <h2>25-minute timer</h2>
-        <p class="goal" id="sessionGoalText">Optional. One module, then stop.</p>
-        <div class="session-row">
-          <div class="session-timer" id="sessionTimer" aria-live="polite">25:00</div>
-          <div class="session-goal">
-            Next: <b id="sessionFocusLabel">Module 0 · Foundations</b><br />
-            <span id="sessionGoalLabel">Read Foundations + tick one checkbox</span>
+        <details class="study-reveal">
+          <summary>Optional 25-minute timer</summary>
+          <p class="goal" id="sessionGoalText">One module, then stop. Shortcuts: F focus · T timer · P practice</p>
+          <div class="session-row">
+            <div class="session-timer" id="sessionTimer" aria-live="polite">25:00</div>
+            <div class="session-goal">
+              Next: <b id="sessionFocusLabel">Module 0 · Foundations</b><br />
+              <span id="sessionGoalLabel">Read Foundations + tick one checkbox</span>
+            </div>
           </div>
-        </div>
-        <div class="session-progress" aria-hidden="true"><i id="sessionProg"></i></div>
-        <div class="game-actions">
-          <button type="button" class="game-btn primary" id="btnTimerStart">Start</button>
-          <button type="button" class="game-btn" id="btnTimerPause">Pause</button>
-          <button type="button" class="game-btn" id="btnTimerReset">Reset</button>
-          <button type="button" class="game-btn" id="btnGoFocusModule">Open module</button>
-          <button type="button" class="game-btn" id="btnSessionDone">Done</button>
-        </div>
+          <div class="session-progress" aria-hidden="true"><i id="sessionProg"></i></div>
+          <div class="game-actions">
+            <button type="button" class="game-btn primary" id="btnTimerStart">Start</button>
+            <button type="button" class="game-btn" id="btnTimerPause">Pause</button>
+            <button type="button" class="game-btn" id="btnTimerReset">Reset</button>
+            <button type="button" class="game-btn" id="btnGoFocusModule">Open module</button>
+            <button type="button" class="game-btn" id="btnSessionDone">Done</button>
+          </div>
+        </details>
       </section>
 
       <section class="module" id="how-to-study" data-desk-page="home" data-search="study method checklist">
@@ -1366,24 +1364,23 @@
 
       <section class="module" id="coverage" data-desk-page="coverage" data-search="exam coverage map official objectives mastery loop notes lab quiz">
         <h2>Exam coverage map</h2>
-        <p class="goal">Phase 1 mastery loop: an official Associate objective is done only when you have read the notes, finished the lab, and proven it with a scenario question. This is exam-complete — not a substitute for a real Super Admin tenant.</p>
+        <p class="goal">Official Associate bullets. An objective is done when Notes, Lab, and Prove are all green. Open the next action in the last column — not every button at once.</p>
         <div class="cov-hero">
           <div class="cov-meter">
-            <div><strong id="covDoneLabel">0 / 0</strong> objectives fully done (read + lab + prove)</div>
+            <div><strong id="covDoneLabel">0 / 0</strong> objectives fully done</div>
             <div class="session-progress" aria-hidden="true"><i id="covProg"></i></div>
-            <p class="game-rules" id="covHint">Mark notes as read here. Labs save in the Admin sandbox. Prove quizzes save in Practice.</p>
+            <p class="game-rules" id="covHint">Tick notes here after you read. Labs save in the Admin sandbox. Quizzes save in Practice.</p>
           </div>
           <div class="game-actions">
             <a class="game-btn primary" href="./gws-admin-console.html#labs">Open labs</a>
-            <a class="game-btn" href="#practice">Practice / Mock</a>
-            <button type="button" class="game-btn" id="btnCovRefresh">Refresh status</button>
+            <a class="game-btn" href="#practice">Prove with a quiz</a>
           </div>
         </div>
         <div id="covBody">Loading map…</div>
       </section>
 
       <!-- LAST-MINUTE REVIEW -->
-      <section class="module" id="lastMinute" data-desk-page="practice" data-search="last minute cram review night before memorize recovery windows vault dlp mock manuals where to look status dashboard">
+      <section class="module" id="lastMinute" data-desk-page="cram" data-search="last minute cram review night before memorize recovery windows vault dlp mock manuals where to look status dashboard">
         <h2>Last-minute review</h2>
         <p class="goal">Full cram from your <em>Notes &amp; Manuals</em> PDF (20 pages). Read once the night before; the right rail always shows “where to click” for the page you are on.</p>
 
@@ -1463,7 +1460,7 @@
       <!-- PRACTICE ARENA -->
       <section class="module" id="practice" data-desk-page="practice" data-search="practice game quiz scenario xp streak drill arena exam mix heuristics mock">
         <h2>Practice arena</h2>
-        <p class="goal">Learn by playing: curated drills + your full 246-question mock bank. Practice aid only — not affiliated with Google or the official exam.</p>
+        <p class="goal">One round at a time. Start with 10 questions. Open other modes only if you need a timed mock or one module.</p>
 
         <div id="gameLobby">
           <div class="game-stats" id="gameStats" aria-live="polite">
@@ -1474,6 +1471,13 @@
             <div class="game-stat"><b id="statAcc">—</b><span>Accuracy</span></div>
           </div>
 
+          <div class="game-actions">
+            <button type="button" class="game-btn primary" id="btnStart">Start 10 questions</button>
+          </div>
+          <p class="game-rules" id="gameRules">Correct: +10 XP. Miss resets streak.</p>
+
+          <details class="study-reveal" id="practiceMoreModes">
+            <summary>Other modes (timed mock, one module…)</summary>
           <h3>Mode</h3>
           <div class="mode-row" id="modeRow" role="group" aria-label="Practice mode">
             <button type="button" class="mode-btn active" data-mode="quick">Quick 10</button>
@@ -1502,11 +1506,11 @@
             </label>
           </div>
 
-          <p class="game-rules" id="gameRules">Correct: +10 XP (+5 if hard, +10 if expert). Miss resets streak. Level = 1 + floor(XP ÷ 100).</p>
+          <p class="game-rules">Timed mock and full bank live here. The green button above still starts whatever mode you pick.</p>
           <div class="game-actions">
-            <button type="button" class="game-btn primary" id="btnStart">Start round</button>
             <button type="button" class="game-btn ghost" id="btnResetGame">Reset game progress</button>
           </div>
+          </details>
           <div class="memo" style="margin-top:1rem">
             <strong>Disclaimer</strong><br />
             This is a personal study drill, not Google’s official exam and not affiliated with Google.
@@ -2593,7 +2597,8 @@
       const MODULE_IDS = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"];
       const REF_IDS = ["heuristics", "glossary", "tools", "dns"];
       const HOME_IDS = new Set(["adultPathHub", "overview", "studySession", "how-to-study", "deskFooter"]);
-      const PRACTICE_IDS = new Set(["lastMinute", "practice"]);
+      const PRACTICE_IDS = new Set(["practice"]);
+      const CRAM_IDS = new Set(["lastMinute"]);
 
       const contentEl = document.getElementById("content");
       let deskPage = "home";
@@ -2621,9 +2626,19 @@
           title: "Where to drill",
           more: { href: "#heuristics", label: "Heuristics sheet →" },
           rows: [
-            { q: "Night before", a: "Read Last-minute cram once, then Mock 50 timed" },
-            { q: "Weak module", a: "Open that module → arena at the bottom (this module only)" },
-            { q: "Tool picker", a: "Heuristics page — if/then only" }
+            { q: "Default", a: "Start 10 questions" },
+            { q: "Night before", a: "Last-minute cram, then open Other modes → Mock 50 timed" },
+            { q: "Weak module", a: "That module’s arena at the bottom of the notes" }
+          ]
+        },
+        cram: {
+          here: "Last-minute cram",
+          title: "Night before",
+          more: { href: "#practice", label: "Then prove →" },
+          rows: [
+            { q: "Tonight", a: "Read this page once" },
+            { q: "Then", a: "Practice → Other modes → Mock 50 timed" },
+            { q: "Sleep", a: "Do not start a new module after midnight" }
           ]
         },
         coverage: {
@@ -2787,6 +2802,7 @@
         const key = deskPage === "module" ? deskModuleId
           : deskPage === "reference" ? deskRefId
           : deskPage === "practice" ? "practice"
+          : deskPage === "cram" ? "cram"
           : deskPage === "coverage" ? "coverage"
           : "home";
         const pack = LOOK[key] || LOOK.home;
@@ -2826,7 +2842,10 @@
           subEl.textContent = "Pick one thing and start";
         } else if (deskPage === "practice") {
           titleEl.textContent = "Practice";
-          subEl.textContent = "Last-minute review, mock bank, and drills";
+          subEl.textContent = "Start 10 questions — or open other modes";
+        } else if (deskPage === "cram") {
+          titleEl.textContent = "Last-minute cram";
+          subEl.textContent = "Read once the night before";
         } else if (deskPage === "coverage") {
           titleEl.textContent = "Exam coverage";
           subEl.textContent = "Notes → lab → prove quiz for every official objective";
@@ -2862,6 +2881,8 @@
             show = true;
           } else if (deskPage === "practice" && PRACTICE_IDS.has(id)) {
             show = true;
+          } else if (deskPage === "cram" && CRAM_IDS.has(id)) {
+            show = true;
           } else if (deskPage === "module" && (id === deskModuleId || id === "modulePractice")) {
             show = true;
           } else if (deskPage === "reference" && REF_IDS.includes(id)) {
@@ -2887,6 +2908,7 @@
         paintDeskVisibility();
         let hash = "#overview";
         if (page === "practice") hash = opts.hash || "#practice";
+        else if (page === "cram") hash = "#lastMinute";
         else if (page === "coverage") hash = "#coverage";
         else if (page === "module") hash = "#" + deskModuleId;
         else if (page === "reference") hash = "#" + deskRefId;
@@ -2919,11 +2941,11 @@
           });
           return;
         }
+        if (id === "lastMinute" || CRAM_IDS.has(id)) {
+          return showDesk("cram", { skipHash: !!skipHash });
+        }
         if (PRACTICE_IDS.has(id)) {
           showDesk("practice", { skipHash: !!skipHash, hash: "#" + id });
-          if (id === "lastMinute") {
-            requestAnimationFrame(() => document.getElementById("lastMinute")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-          }
           return;
         }
         if (id === "coverage") return showDesk("coverage", { skipHash: !!skipHash });
@@ -2943,12 +2965,8 @@
         e.preventDefault();
         const id = href.slice(1);
         if (MODULE_IDS.includes(id)) showDesk("module", { moduleId: id });
-        else if (PRACTICE_IDS.has(id)) {
-          showDesk("practice", { hash: "#" + id });
-          if (id === "lastMinute") {
-            requestAnimationFrame(() => document.getElementById("lastMinute")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-          }
-        }
+        else if (id === "lastMinute") showDesk("cram");
+        else if (PRACTICE_IDS.has(id)) showDesk("practice", { hash: "#" + id });
         else if (id === "coverage") showDesk("coverage");
         else if (REF_IDS.includes(id)) showDesk("reference", { refId: id });
         else showDesk("home");
@@ -3049,10 +3067,20 @@
             const mod = (it.notes || "#m0").replace(/^#/, "").split("-")[0];
             prove.href = "#" + (mod || "practice");
             prove.textContent = "Prove";
-            acts.appendChild(mark);
-            acts.appendChild(notes);
-            acts.appendChild(labA);
-            acts.appendChild(prove);
+            if (!read) {
+              mark.classList.add("game-btn", "primary");
+              acts.appendChild(mark);
+            } else if (it.lab && !labOk) {
+              labA.classList.add("primary");
+              acts.appendChild(labA);
+              acts.appendChild(mark);
+            } else if (!quizOk) {
+              prove.classList.add("primary");
+              acts.appendChild(prove);
+              acts.appendChild(notes);
+            } else {
+              acts.appendChild(mark);
+            }
             td2.appendChild(acts);
             tr.appendChild(td0);
             tr.appendChild(td1);
@@ -3493,7 +3521,10 @@
           }
         }
         if (el.btnStart) {
-          el.btnStart.textContent = next === "answerKey" ? "Open answer key" : (next === "mockFull" ? "Start full mock" : "Start round");
+          el.btnStart.textContent = next === "answerKey" ? "Open answer key"
+            : (next === "mockFull" ? "Start full mock"
+            : (next === "mock50" ? "Start timed mock"
+            : (next === "quick" ? "Start 10 questions" : "Start round")));
         }
         const pool = filterBank();
         el.btnStart.disabled = pool.length === 0;
@@ -3503,6 +3534,8 @@
         const btn = e.target.closest(".mode-btn");
         if (!btn) return;
         setMode(btn.getAttribute("data-mode"));
+        const more = document.getElementById("practiceMoreModes");
+        if (more && btn.getAttribute("data-mode") !== "quick") more.open = true;
       });
       el.moduleSelect.addEventListener("change", () => {
         if (mode === "mockDomain" || mode === "answerKey") setMode(mode);
@@ -4545,9 +4578,7 @@
 
       function paintAdultPathUI() {
         if (badge) {
-          if (state.adultPath === "sandbox") badge.textContent = "Adult · Sandbox path";
-          else if (state.adultPath === "focus") badge.textContent = "Adult · Focus path";
-          else badge.textContent = "Adult style — pick a path";
+          badge.textContent = "Adult style";
         }
         if (!hub) return;
         if (state.style !== "adult") return;
@@ -4616,7 +4647,7 @@
       });
       document.getElementById("pickAdult")?.addEventListener("click", () => {
         applyStyle("adult");
-        toast("Adult style — pick Sandbox or Focus.");
+        toast("Adult study desk — pick Notes, Labs, or Prove.");
       });
 
       document.getElementById("pathSandbox")?.addEventListener("click", () => setAdultPath("sandbox"));

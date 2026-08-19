@@ -261,10 +261,12 @@
     clearLocalSyncKeys();
     setMeta({ userId: null, lastPull: null, lastPush: null, remoteAt: null });
     paintAccount();
-    document.documentElement.classList.remove("auth-ready", "boot-session");
-    document.documentElement.classList.add("boot-login");
+    document.documentElement.classList.remove("boot-session", "boot-login");
+    document.documentElement.classList.add("auth-ready");
     notifyProgressRefresh();
     window.dispatchEvent(new CustomEvent("gws-auth-signed-out"));
+    releaseAuthGate();
+    toast("Signed out. Log in again to restore cloud progress.");
   }
 
   function toast(msg) {
@@ -315,7 +317,6 @@
     },
     signOut() {
       handleSignedOut();
-      if (configured) showLoginGate();
     },
     uploadDeviceToCloud() {
       return pushProgress();
@@ -383,7 +384,7 @@
       if (!configured) {
         const p = document.createElement("p");
         p.className = "account-hint";
-        p.textContent = "Progress saves on this device. Cloud login is enabled on the live site.";
+        p.textContent = "Saves on this device. Log in to sync to another computer.";
         el.appendChild(p);
         return;
       }
@@ -425,6 +426,10 @@
         actions.appendChild(out);
         el.appendChild(actions);
       } else {
+        const hint = document.createElement("p");
+        hint.className = "account-hint";
+        hint.textContent = "Saves on this device. Log in to sync.";
+        el.appendChild(hint);
         const actions = document.createElement("div");
         actions.className = "account-actions";
         const inBtn = document.createElement("button");
@@ -451,6 +456,10 @@
   });
   document.getElementById("authModalClose")?.addEventListener("click", closeModal);
   document.getElementById("authModalBackdrop")?.addEventListener("click", closeModal);
+  document.getElementById("authSkip")?.addEventListener("click", () => {
+    closeModal();
+    releaseAuthGate();
+  });
   document.getElementById("btnAuthMobile")?.addEventListener("click", () => openModal("signin"));
 
   formSignIn?.addEventListener("submit", async (e) => {
@@ -488,14 +497,11 @@
   });
 
   function showLoginGate() {
-    document.documentElement.classList.remove("auth-ready", "boot-session");
-    document.documentElement.classList.add("boot-login");
-    document.body.classList.add("auth-gate");
     const lede = document.getElementById("authLede");
     if (lede) {
-      lede.textContent = "Log in or create an account first. Your progress and learning style save to your profile.";
+      lede.textContent = "Optional. Study on this device now, or log in to sync across computers.";
     }
-    openModal("signin", { required: true });
+    openModal("signin", { required: false });
   }
 
   async function initAuth() {
@@ -511,10 +517,11 @@
         await handleSignedIn(data.user, null);
       } catch (e) {
         setToken(null);
-        showLoginGate();
+        releaseAuthGate();
+        toast("Session ended. Continue here, or log in again.");
       }
     } else {
-      showLoginGate();
+      releaseAuthGate();
     }
     emitReady();
   }

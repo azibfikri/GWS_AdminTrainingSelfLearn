@@ -225,7 +225,20 @@
       background: #f1f3f4; color: var(--blue-dark); text-decoration: none; border: 1px solid var(--line);
     }
     .lab-reads a:hover { border-color: var(--blue); background: #e8f0fe; }
-    .lab-card .lab-sec { font-size: .72rem; color: var(--blue-dark); }
+    .lab-card.compact { min-height: 0; }
+    .lab-card.compact p, .lab-card.compact .lab-sec { display: none; }
+    .lab-filters { display: flex; flex-wrap: wrap; gap: .35rem; margin: .75rem 0 0; }
+    .lab-filters .btn.on { background: var(--g-blue, #1a73e8); color: #fff; border-color: var(--g-blue, #1a73e8); }
+    .lab-start {
+      display: flex; flex-wrap: wrap; align-items: center; gap: .65rem;
+      margin-top: .85rem; padding-top: .75rem; border-top: 1px solid var(--line);
+    }
+    .lab-mod-block { margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .lab-mod-block > summary {
+      cursor: pointer; list-style: none; padding: .75rem 1rem; font-family: var(--display); font-weight: 500;
+    }
+    .lab-mod-block > summary::-webkit-details-marker { display: none; }
+    .lab-mod-block .lab-grid { padding: 0 1rem 1rem; }
     .lab-task-body { flex: 1; min-width: 0; }
     .lab-task .btn { margin-top: .35rem; font-size: .75rem; padding: .25rem .5rem; }
     .lab-live {
@@ -2716,39 +2729,63 @@
       const wrap = el("div", { className: "panel active" });
       const hero = el("div", { className: "lab-hero" });
       hero.appendChild(el("p", { className: "chip blue", text: "Associate Google Workspace Administrator" }));
-      hero.appendChild(el("h1", { text: "Practice labs by module" }));
-      hero.appendChild(el("p", { className: "lede", text: "Every lab is a Northwind ticket you finish in this Admin console — flip the real settings. Study Desk is a cross-check after you click, not the lesson." }));
+      hero.appendChild(el("h1", { text: "Practice labs" }));
+      const firstOpen = LABS.find(function (l) { return !(state.ui.labs.completed && state.ui.labs.completed[l.id]); }) || LABS[0];
+      hero.appendChild(el("p", { className: "lede", text: "Start with one ticket. Finish it in this console — the cards below stay folded until you pick a module." }));
       const doneN = Object.keys(state.ui.labs.completed || {}).length;
-      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " labs completed · configure here, then optionally confirm names on the desk." }));
+      hero.appendChild(el("p", { className: "muted", text: doneN + " / " + LABS.length + " completed" }));
+      const startRow = el("div", { className: "lab-start" });
+      startRow.appendChild(el("button", {
+        type: "button",
+        className: "btn primary",
+        text: firstOpen ? ("Start " + firstOpen.code + " · " + firstOpen.title) : "All labs done",
+        onclick: function () { if (firstOpen) startLab(firstOpen.id); }
+      }));
+      hero.appendChild(startRow);
       wrap.appendChild(hero);
 
+      const filterMod = state.ui.labs.catalogMod || "m0";
+      const filters = el("div", { className: "lab-filters" });
+      [{ id: "all", title: "All" }].concat(LAB_MODULES).forEach(function (mod) {
+        const b = el("button", { type: "button", className: "btn" + (filterMod === mod.id ? " on" : ""), text: mod.id === "all" ? "All" : mod.id.toUpperCase() });
+        b.addEventListener("click", function () {
+          state.ui.labs.catalogMod = mod.id;
+          saveState();
+          render();
+        });
+        filters.appendChild(b);
+      });
+      wrap.appendChild(filters);
+
       LAB_MODULES.forEach(function (mod) {
+        if (filterMod !== "all" && filterMod !== mod.id) return;
         const labs = LABS.filter(function (l) { return l.module === mod.id; });
         if (!labs.length) return;
-        const h = el("h2", { className: "lab-mod-sec" });
-        h.appendChild(document.createTextNode(mod.title));
-        const a = el("a", { href: mod.href, text: "Open module →" });
+        const block = el("details", { className: "lab-mod-block" });
+        if (filterMod === mod.id || (filterMod === "all" && mod.id === "m0")) block.open = true;
+        const sum = el("summary");
+        sum.appendChild(document.createTextNode(mod.title + " · " + labs.length + " labs"));
+        const a = el("a", { href: mod.href, text: "Notes →" });
         a.target = "_blank";
         a.rel = "noopener";
-        h.appendChild(a);
-        wrap.appendChild(h);
+        a.addEventListener("click", function (e) { e.stopPropagation(); });
+        sum.appendChild(a);
+        block.appendChild(sum);
         const grid = el("div", { className: "lab-grid" });
         labs.forEach(function (lab) {
           const done = !!(state.ui.labs.completed && state.ui.labs.completed[lab.id]);
-          const card = el("button", { type: "button", className: "lab-card" + (done ? " done" : "") });
+          const card = el("button", { type: "button", className: "lab-card compact" + (done ? " done" : "") });
           card.appendChild(el("div", { className: "lab-card-meta" }, [
             el("span", { className: "lab-id", text: lab.code }),
-            el("span", { className: "badge", text: lab.minutes + " min" }),
-            el("span", { className: "badge inherited", text: lab.domain })
+            el("span", { className: "badge", text: lab.minutes + " min" })
           ]));
           card.appendChild(el("h3", { text: lab.title }));
-          card.appendChild(el("div", { className: "lab-sec", text: (lab.sections || []).join(" · ") }));
-          card.appendChild(el("p", { text: lab.scenario ? lab.scenario.ticket : "" }));
-          card.appendChild(el("div", { className: "muted", text: (done ? "Completed · " : "") + (lab.scenario ? lab.scenario.constraint : "") }));
+          card.appendChild(el("div", { className: "muted", text: done ? "Completed" : (lab.domain || "") }));
           card.addEventListener("click", function () { startLab(lab.id); });
           grid.appendChild(card);
         });
-        wrap.appendChild(grid);
+        block.appendChild(grid);
+        wrap.appendChild(block);
       });
 
       const tour = el("div", { className: "card" });
