@@ -405,6 +405,30 @@
     }
     #modulePractice h2 { margin-top: 0; }
     #modulePractice .goal { margin-bottom: .45rem; }
+    .cov-hero {
+      display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;
+      justify-content: space-between; margin: 0 0 1rem;
+    }
+    .cov-meter { min-width: 220px; flex: 1; }
+    .cov-meter .session-progress { height: 10px; margin: .35rem 0; }
+    .cov-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .cov-table th, .cov-table td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .cov-table th { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .cov-table tr.cov-done { background: #f3faf7; }
+    .cov-dots { display: flex; gap: .35rem; flex-wrap: wrap; }
+    .cov-dot {
+      font-size: .72rem; font-weight: 700; padding: .12rem .4rem; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--muted); background: #fff;
+    }
+    .cov-dot.on { background: var(--ok-bg, #e6f4ea); color: #0d652d; border-color: #a8dab5; }
+    .cov-sec { margin: 1.25rem 0 .35rem; font-size: 1rem; }
+    .cov-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .cov-actions a, .cov-actions button { font-size: .78rem; }
+    .cov-mark { font: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 6px; background: #fff; padding: .25rem .45rem; }
+    .cov-mark[aria-pressed="true"] { background: #e6f4ea; border-color: #a8dab5; }
+    @media (max-width: 720px) {
+      .cov-hide { display: none; }
+    }
     .game-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
     .module-pick { margin: .35rem 0 1rem; }
     .module-pick select {
@@ -1151,6 +1175,7 @@
       <nav class="nav" id="nav">
         <div class="nav-sec">Study</div>
         <a href="#overview">Home</a>
+        <a href="#coverage">Exam coverage map</a>
         <a href="#lastMinute">Last-minute cram</a>
         <a href="#practice">Practice &amp; mock</a>
         <a href="./gws-admin-console.html#labs">Admin labs</a>
@@ -1215,6 +1240,11 @@
           <h3 style="margin:0 0 .65rem;font-size:1rem">Sandbox journey</h3>
           <div class="journey-steps">
             <div class="journey-step">
+              <span class="js-num">0</span>
+              <div class="js-body"><strong>Coverage map</strong> — every official exam objective: read notes, run the lab, prove with a quiz.</div>
+              <a class="game-btn" href="#coverage">Open coverage map</a>
+            </div>
+            <div class="journey-step">
               <span class="js-num">1</span>
               <div class="js-body"><strong>Labs</strong> — start an Associate ticket in a practice tenant (OUs, mail auth, Vault, DLP, offboarding).</div>
               <a class="game-btn primary" href="./gws-admin-console.html#labs">Open labs</a>
@@ -1248,6 +1278,7 @@
         </p>
         <div class="hero-cta">
           <button type="button" class="game-btn primary" id="btnStartSession">Start today’s session</button>
+          <a class="game-btn" href="#coverage">Coverage map</a>
           <a class="game-btn" href="#lastMinute">Last-minute review</a>
           <a class="game-btn" href="#practice">Practice / Mock</a>
           <a class="game-btn" href="./gws-admin-console.html#labs">Admin labs</a>
@@ -1264,6 +1295,7 @@
             <span class="chip">admin.google.com</span>
           </div>
           <div class="toc-mini">
+            <a href="#coverage">Coverage map</a>
             <a href="#studySession">Today’s session</a>
             <a href="#practice">Practice arena</a>
             <a href="./gws-admin-console.html#labs">Admin labs</a>
@@ -1302,6 +1334,7 @@
       <section class="module" id="how-to-study" data-desk-page="home" data-search="study method checklist">
         <h2>How to use this guide</h2>
         <ol>
+          <li>Open the <a href="#coverage">exam coverage map</a> — every official objective needs notes + lab + a prove quiz before it counts as done.</li>
           <li>Read each module’s <em>plain English</em> box first — get the idea before the details.</li>
           <li>Learn the <em>exam tips</em> and decision tables — those decide most scenario questions.</li>
           <li>Tick the checkboxes as you go (saved in this browser).</li>
@@ -1316,6 +1349,24 @@
           The exam is scenario-based. Don’t memorize menus blindly. Ask: <em>What is the constraint?</em>
           (cost, data safe, only some users, managed devices, edition limits…) — then pick the tool that matches.
         </div>
+      </section>
+
+      <section class="module" id="coverage" data-desk-page="coverage" data-search="exam coverage map official objectives mastery loop notes lab quiz">
+        <h2>Exam coverage map</h2>
+        <p class="goal">Phase 1 mastery loop: an official Associate objective is done only when you have read the notes, finished the lab, and proven it with a scenario question. This is exam-complete — not a substitute for a real Super Admin tenant.</p>
+        <div class="cov-hero">
+          <div class="cov-meter">
+            <div><strong id="covDoneLabel">0 / 0</strong> objectives fully done (read + lab + prove)</div>
+            <div class="session-progress" aria-hidden="true"><i id="covProg"></i></div>
+            <p class="game-rules" id="covHint">Mark notes as read here. Labs save in the Admin sandbox. Prove quizzes save in Practice.</p>
+          </div>
+          <div class="game-actions">
+            <a class="game-btn primary" href="./gws-admin-console.html#labs">Open labs</a>
+            <a class="game-btn" href="#practice">Practice / Mock</a>
+            <button type="button" class="game-btn" id="btnCovRefresh">Refresh status</button>
+          </div>
+        </div>
+        <div id="covBody">Loading map…</div>
       </section>
 
       <!-- LAST-MINUTE REVIEW -->
@@ -1660,12 +1711,16 @@
         <table>
           <thead><tr><th>Type</th><th>What it’s for</th></tr></thead>
           <tbody>
-            <tr><td>Distribution list</td><td>Email many people via one address</td></tr>
-            <tr><td>Collaborative Inbox</td><td>Shared queue (support@) — take / assign / resolve</td></tr>
-            <tr><td>Dynamic group</td><td>Membership from a query (department = Sales) — auto-updates</td></tr>
-            <tr><td>Security group</td><td>Access/security policies, not just email</td></tr>
+            <tr><td>Distribution list</td><td>Email many people via one address (announce@, all@)</td></tr>
+            <tr><td>Collaborative Inbox</td><td>Shared queue (support@) — members take / assign / resolve conversations. Not a second mailbox license.</td></tr>
+            <tr><td>Dynamic group</td><td>Membership from a query (department = Sales). Auto-updates; you do not add people by hand.</td></tr>
+            <tr><td>Security group</td><td>Target for access / 2SV / CAA / sharing — not “just email.” Can also receive mail if you allow it.</td></tr>
           </tbody>
         </table>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          support@ as a work queue → <strong>Collaborative Inbox</strong>. “Everyone in Sales, automatically” → <strong>dynamic</strong>. “Apply this policy to a cross-OU set” → <strong>security group</strong>. Who can join / post / view members / external senders are access settings on any group.
+        </div>
         <p>Also control: who can join, post, view members, and whether outsiders can post.</p>
 
         <h3 id="m1-domains">1.9 Domains</h3>
@@ -1681,8 +1736,13 @@
         Walk it click-by-click in the <a href="./gws-domain-setup.html">domain &amp; mail demo</a>.</p>
 
         <h3 id="m1-buildings">1.10 Buildings &amp; resources</h3>
-        <p>Rooms/equipment under Directory → Buildings and resources. Become bookable calendars.
-        “Add 200 rooms across 10 sites” → <strong>CSV bulk upload</strong>, not one-by-one.</p>
+        <p>Rooms and equipment live under Directory → Buildings and resources. Each resource <em>is</em> a bookable Calendar. Features (whiteboard, video, wheelchair, capacity) are filters people use when booking — they are not a sharing default.</p>
+        <ul>
+          <li><strong>Booking policy</strong> — auto-accept from the org, or require approval / a delegate.</li>
+          <li><strong>Who may book</strong> — often a group (Finance may book the boardroom).</li>
+          <li>“Add 200 rooms across 10 sites” → <strong>CSV bulk upload</strong>, not one-by-one user accounts named after rooms.</li>
+        </ul>
+        <p><a href="./gws-admin-console.html#labs">LAB-M1F</a> practices feature + auto-accept.</p>
 
         <div id="m1-manuals">
           <h3>Where to click · Manuals 1A–1L</h3>
@@ -1791,17 +1851,25 @@
         </div>
 
         <h4 id="m2-routing">Routing &amp; compliance</h4>
-        <ul>
-          <li>Content / attachment compliance — match words/patterns/types → quarantine, reject, modify, BCC, footer.</li>
-          <li>Dual / split delivery — copy to another system or split Google vs legacy during migration.</li>
-          <li>Inbound/outbound gateways — relay through a third-party filter.</li>
-          <li>Spam / phishing / malware — allowlists, denylists / blocked senders, approved senders.</li>
-          <li>Security Sandbox — detonates attachments before delivery (unknown malware).</li>
-          <li>Attachments: send up to ~25 MB (bigger → Drive link). You can block specific file types.</li>
-          <li>Access — toggle automatic forwarding and POP/IMAP per OU (turn off to reduce leak risk).</li>
-          <li>Compliance footer &amp; admin quarantine — disclaimer on outbound; suspicious mail for review.</li>
-          <li>Delegation — assistant reads/sends on someone’s behalf.</li>
-        </ul>
+        <table>
+          <thead><tr><th>Need</th><th>Control</th></tr></thead>
+          <tbody>
+            <tr><td>Google and Exchange both get a copy (coexistence)</td><td><strong>Dual delivery</strong></td></tr>
+            <tr><td>Some users on Google, some still on legacy</td><td><strong>Split delivery</strong></td></tr>
+            <tr><td>Mail hits Proofpoint / Mimecast first, then Google</td><td><strong>Inbound gateway</strong></td></tr>
+            <tr><td>Match words / attachment type → hold, reject, BCC, footer</td><td><strong>Content compliance</strong></td></tr>
+            <tr><td>Admin reviews mail before the user sees it</td><td><strong>Admin quarantine</strong></td></tr>
+            <tr><td>Legal disclaimer on every outbound</td><td><strong>Compliance footer</strong></td></tr>
+            <tr><td>Unknown malware in attachments</td><td><strong>Security Sandbox</strong></td></tr>
+            <tr><td>Stop Outlook/IMAP or auto-forward leaks</td><td>Disable <strong>POP/IMAP</strong> and <strong>forwarding</strong> per OU</td></tr>
+            <tr><td>~25 MB send; bigger → Drive link. Block .exe separately</td><td>Size vs <strong>blocked file types</strong></td></tr>
+            <tr><td>Assistant sends as Ada</td><td><strong>Gmail delegation</strong> (not a second license)</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Gateway ≠ dual delivery. Quarantine ≠ Email Log Search. Delegation ≠ Calendar assistant (that’s Calendar delegation).
+        </div>
 
         <h4 id="m2-migration">Migration</h4>
         <p><strong>Data Migration Service (DMS)</strong> moves email/calendar/contacts from Exchange/M365, IMAP, or another Workspace.
@@ -1832,40 +1900,69 @@
           <li><strong>Target audiences</strong> — safer “share with All of Company”-style suggestions.</li>
           <li><strong>Trust rules</strong> — precise who-can-share-with-whom (Module 3).</li>
           <li>Pooled storage + per-OU quotas.</li>
-          <li><strong>Drive for desktop</strong> — allow or block the sync client per OU.</li>
-          <li>Offline access — enable/disable per OU; labels classify (Module 3).</li>
+          <li><strong>Drive for desktop</strong> — allow or block the sync client per OU (files on a home laptop).</li>
+          <li><strong>Offline access</strong> — browser cache of Drive files; disable for kiosk / high-risk OUs.</li>
+          <li><strong>Custom Docs templates</strong> — org template gallery, not a Shared Drive role.</li>
         </ul>
+        <h4 id="m2-clients">Drive for desktop, offline, templates</h4>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          “Contractor laptop must not keep company files” → turn off <strong>Drive for desktop</strong> and/or <strong>offline</strong>. That is not Vault and not a wipe.<br />
+          Chrome offline (cached web pages) is a <em>browser</em> policy — Module 5 — different toggle.
+        </div>
 
         <h3 id="m2-calendar">2.3 Calendar</h3>
-        <ul>
-          <li>Internal/external sharing defaults; block invite spam from unknowns.</li>
-          <li>Resource calendars from Buildings &amp; resources + booking rules/delegates.</li>
-          <li>Calendar delegation for assistants; transfer event ownership when organizer leaves.</li>
-        </ul>
+        <table>
+          <thead><tr><th>Need</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>What coworkers see on each other’s calendars</td><td>Internal sharing default (free/busy vs details)</td></tr>
+            <tr><td>What people outside the org see</td><td>External sharing (often none or free/busy)</td></tr>
+            <tr><td>Conference spam / unknown invites</td><td>Block invitations from unknown senders</td></tr>
+            <tr><td>Assistant manages Ada’s week</td><td><strong>Calendar delegation</strong> — not Gmail send-as</td></tr>
+            <tr><td>Organizer left; meetings must survive</td><td>Transfer event ownership</td></tr>
+            <tr><td>Sales team calendar (not a room)</td><td>Shared calendar for a group</td></tr>
+            <tr><td>Boardroom + whiteboard + who may book</td><td>Buildings &amp; resources + booking policy (1.10)</td></tr>
+          </tbody>
+        </table>
+        <div class="exam">
+          <strong>Exam tip</strong><br />
+          Missing free/busy in Outlook/Apple is usually sharing defaults or the client, not a new Google product. Transfer events when the organizer is off-boarded.
+        </div>
 
         <h3 id="m2-meet">2.4 Meet</h3>
         <div class="exam">
           <strong>Exam tip</strong><br />
           Unwanted guests / join problems → <strong>Meet safety</strong> (host controls, knocking, org-only).<br />
-          Bad audio/video → <strong>Meet quality tool</strong> (Module 6), not safety.
+          Bad audio/video → <strong>Meet quality tool</strong> (Module 6), not safety.<br />
+          Recordings / transcripts / notes → Meet <em>video</em> settings (edition-gated) — still not the quality tool.
         </div>
+        <p>Enable or disable Meet per OU. Safety and video settings are different families: one is “who gets in,” the other is “what the meeting can capture.”</p>
 
         <h3 id="m2-chat">2.5 Chat</h3>
-        <p>History on/off matters: if history was off, Vault can’t retain what never existed.
-        Control spaces, external chat, moderation, approved bots.</p>
+        <table>
+          <thead><tr><th>Setting</th><th>Why the exam cares</th></tr></thead>
+          <tbody>
+            <tr><td>History on/off</td><td>If history was off, Vault cannot retain what never existed</td></tr>
+            <tr><td>External Chat / spaces</td><td>Partners in Chat — separate from history</td></tr>
+            <tr><td>Space moderation</td><td>Who can post / @all</td></tr>
+            <tr><td>Approved bots / Chat apps</td><td>Allowlist — same idea as Marketplace</td></tr>
+            <tr><td>Invite settings</td><td>Who may pull people (including outsiders) into a space</td></tr>
+            <tr><td>On/off per OU</td><td>Same inheritance model as every other app</td></tr>
+          </tbody>
+        </table>
 
         <h3 id="m2-gemini">2.6 Gemini</h3>
         <ul>
           <li>Org prompts/content are <strong>not</strong> used to train Google’s foundation models.</li>
           <li>Enable per OU; pilot with a group first.</li>
-          <li>Extensions let Gemini act across Gmail/Drive; use usage reports for adoption.</li>
+          <li>Extensions let Gemini act across Gmail/Drive; use <strong>usage reports</strong> for adoption.</li>
         </ul>
 
         <h3 id="m2-appsheet">2.7 AppSheet vs Apps Script</h3>
         <p>No-code app from Sheets/Drive → <strong>AppSheet</strong>. Custom JavaScript glue → <strong>Apps Script</strong>.</p>
 
         <div id="m2-manuals">
-          <h3>Where to click · Manuals 2A–2C</h3>
+          <h3>Where to click · Manuals 2A–2E</h3>
           <div class="manual">
             <h4>2A · Point a domain’s mail to Google</h4>
             <p class="path">DNS host → MX · then activate Gmail in the Admin console</p>
@@ -1893,11 +1990,30 @@
               <li>Files are team-owned — they survive off-boarding. My Drive files do not.</li>
             </ol>
           </div>
+          <div class="manual">
+            <h4>2D · Calendar sharing and rooms</h4>
+            <p class="path">Apps → Calendar · Directory → Buildings and resources</p>
+            <ol>
+              <li>Set internal/external sharing defaults; optionally block unknown senders.</li>
+              <li>Delegate a calendar to an assistant; transfer events when an organizer leaves.</li>
+              <li>Rooms: add features + booking policy, or CSV bulk. Labs: LAB-M1F + LAB-M2F.</li>
+            </ol>
+          </div>
+          <div class="manual">
+            <h4>2E · Drive for desktop / offline</h4>
+            <p class="path">Apps → Drive and Docs → Features and applications</p>
+            <ol>
+              <li>Select the OU (contractors / kiosk).</li>
+              <li>Turn off Drive for desktop and/or offline access → Save. Lab: LAB-M2H.</li>
+            </ol>
+          </div>
         </div>
 
         <div class="check-row"><label><input type="checkbox" data-check="m2a" /> I can explain SPF / DKIM / DMARC in one sentence each.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m2b" /> I know Shared Drive vs My Drive for off-boarding.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m2c" /> Meet safety ≠ Meet quality tool.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m2d" /> I can pick Collaborative Inbox vs dynamic vs security group.</label></div>
+        <div class="check-row"><label><input type="checkbox" data-check="m2e" /> Calendar sharing ≠ Gmail delegation ≠ room booking policy.</label></div>
       </section>
 
       <!-- MODULE 3 -->
@@ -2035,7 +2151,7 @@
         </div>
 
         <h3 id="m4-session">4.4 Session control</h3>
-        <p>How long web sessions last before re-login. Shorter for sensitive groups. Complements 2SV + CAA.</p>
+        <p>How long web sessions last before users must sign in again. Shorter for Finance / admins (hours, not weeks). Complements 2SV + CAA — it does not replace them. Exam stem “force re-login every 8 hours for Finance” → Session control scoped to that OU/group, not a password reset.</p>
 
         <h3 id="m4-seccenter">4.5 Security center toolkit</h3>
         <table>
@@ -2096,24 +2212,33 @@
         <table>
           <thead><tr><th>Approach</th><th>What you get</th></tr></thead>
           <tbody>
-            <tr><td>Basic</td><td>Agentless: screen lock + wipe corporate account. On by default.</td></tr>
-            <tr><td>Advanced</td><td>Full MDM: approval, stronger policies, apps, full device wipe. Needs compatible edition.</td></tr>
-            <tr><td>Third-party</td><td>Intune, Jamf, etc. if company already standardizes there.</td></tr>
+            <tr><td>Basic</td><td>Agentless (on by default): require screen lock, wipe the <em>corporate account</em>. No full MDM agent.</td></tr>
+            <tr><td>Advanced</td><td>Approve/block devices, stronger passcode/encryption, app management, <em>full device wipe</em>. Needs a compatible edition.</td></tr>
+            <tr><td>Third-party</td><td>Intune, Jamf, etc. if the company already standardizes there — don’t invent a second MDM.</td></tr>
           </tbody>
         </table>
+        <p>Company-owned vs BYOD is a <em>visibility and wipe</em> choice, not the same as Basic vs Advanced. You can run Advanced on BYOD and still choose account wipe. Suspend the user to cut mobile access immediately while you pick the wipe.</p>
         <div class="exam">
           <strong>Off-boarding wipe choice</strong><br />
           BYOD / personal phone → <strong>account wipe</strong> (company data only, leave photos).<br />
           Company-owned → <strong>device wipe</strong> OK (factory reset).<br />
-          Suspending the user also cuts mobile access immediately.
+          Management <em>level</em> (Basic/Advanced) is a different question from wipe <em>type</em>.
         </div>
 
         <h3 id="m5-cbcm">5.2 Chrome Browser Cloud Management (CBCM)</h3>
-        <p>Enroll browsers with a token; enforce updates, Safe Browsing, homepage, extensions by OU/group — same inheritance model.</p>
+        <p>Enroll browsers with an enrollment token, then push policies by OU/group — same inheritance as Drive or Gmail.</p>
+        <ul>
+          <li><strong>Force install</strong> an extension (users cannot remove it) — scope to Finance OU/group.</li>
+          <li>Stop junk → block all + allowlist.</li>
+          <li><strong>Auto-update</strong> Chrome itself (not the same as force-installing an extension).</li>
+          <li>Chrome <strong>offline / cached pages</strong> — a browser policy, not Drive offline.</li>
+          <li>Safe Browsing, homepage, sign-in restrictions — same OU picker.</li>
+        </ul>
         <div class="exam">
           <strong>Exam tip</strong><br />
           Finance must have extension X and can’t remove it → <strong>Force install</strong> on Finance OU/group.<br />
-          Stop random extensions → block all, allow approved list.
+          Stop random extensions → block all, allow approved list.<br />
+          “Browsers must stay patched” → Chrome <strong>auto-update</strong> policy, not Play Store and not Vault.
         </div>
 
         <div id="m5-manuals">
@@ -2175,11 +2300,19 @@
         </table>
 
         <h3 id="m6-issues">Calendar, Drive and Meet troubleshooting</h3>
-        <ul>
-          <li><strong>Calendar</strong> — Apple/Outlook sync, missing free/busy, or sharing problems are usually sharing defaults or account state — not a new product.</li>
-          <li><strong>Drive</strong> — sharing permissions, Drive for desktop sync errors, offline access. Trash auto-purges after 30 days; admins can restore deleted Drive/Gmail for about 25 days after that.</li>
-          <li><strong>Meet</strong> — bad A/V → Meet quality tool. Can’t join / random guests → Meet safety (Module 2), not the quality tool.</li>
-        </ul>
+        <table>
+          <thead><tr><th>Symptom</th><th>First check</th></tr></thead>
+          <tbody>
+            <tr><td>Outlook / Apple Calendar missing events or free/busy</td><td>Calendar sharing defaults, then the client — not a new Google product</td></tr>
+            <tr><td>User cannot share a file / unexpected people have it</td><td>Drive sharing + target audiences / trust rules</td></tr>
+            <tr><td>Drive for desktop “stuck” or files on a home PC</td><td>Drive for desktop allowed? Offline allowed? Then the client logs</td></tr>
+            <tr><td>Drive offline greyed out</td><td>Admin disabled offline for that OU</td></tr>
+            <tr><td>Can’t join Meet / random guests</td><td>Meet <strong>safety</strong></td></tr>
+            <tr><td>Choppy video</td><td>Meet <strong>quality</strong> tool — not safety</td></tr>
+            <tr><td>Password / 2SV lockout</td><td>Help Desk reset + 2SV grace; not Vault</td></tr>
+            <tr><td>Accidentally deleted mail or Drive file</td><td>User Trash (30 days); admin restore ~25 days after; deleted user 20 days</td></tr>
+          </tbody>
+        </table>
 
         <div id="m6-manuals">
           <h3>Where to click · Manuals 6A–6B</h3>
@@ -2203,8 +2336,8 @@
         </div>
 
         <h3 id="m6-reports">6.4 Reports &amp; support</h3>
-        <p>Reporting → usage, storage, account/device activity for trends.
-        Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Workspace Updates / release calendar, then a Google Support case.</p>
+        <p>Reporting → Apps / Accounts / Devices / Storage for trends (who uses Meet, who is over quota).</p>
+        <p>Escalate well: repro steps + ELS/headers/HAR + Status Dashboard checked first + Workspace Updates blog / release calendar, then a Google Support case. HAR files can contain cookies — share only with Support.</p>
 
         <div class="check-row"><label><input type="checkbox" data-check="m6a" /> I match questions to the right log instinctively.</label></div>
         <div class="check-row"><label><input type="checkbox" data-check="m6b" /> Recovery windows 20 / 25 / 30 memorized.</label></div>
@@ -2363,6 +2496,7 @@
 
   <script src="./config.js"></script>
   <script src="./data/mock-bank.js"></script>
+  <script src="./data/gws-exam-coverage.js"></script>
   <script src="./data/gws-auth.js"></script>
   <script>
     window.GWS_AUTH = window.GWS_AUTH || {};
@@ -2480,6 +2614,17 @@
             { q: "Tool picker", a: "Heuristics page — if/then only" }
           ]
         },
+        coverage: {
+          here: "Exam coverage map",
+          title: "Mastery loop",
+          more: { href: "./gws-admin-console.html#labs", label: "Open labs →" },
+          rows: [
+            { q: "Done means", a: "Notes read + lab complete + prove quiz correct" },
+            { q: "Notes", a: "Tick Read on the map after you finish the section" },
+            { q: "Lab", a: "Admin sandbox — status syncs from gwsAdminSim.v1" },
+            { q: "Prove", a: "Module arena or Practice — at least one tagged question correct" }
+          ]
+        },
         m0: {
           here: "Module 0 · Foundations",
           title: "Where to click",
@@ -2509,7 +2654,7 @@
         m2: {
           here: "Module 2 · Core services",
           title: "Where to click",
-          more: { href: "#m2-manuals", label: "Manuals 2A–2C →" },
+          more: { href: "#m2-manuals", label: "Manuals 2A–2E →" },
           rows: [
             { q: "MX / routing / spam", a: "Apps → Gmail → Routing · Spam · Authenticate email" },
             { q: "DKIM", a: "Gmail → Authenticate email → Generate → publish TXT → Start" },
@@ -2630,6 +2775,7 @@
         const key = deskPage === "module" ? deskModuleId
           : deskPage === "reference" ? deskRefId
           : deskPage === "practice" ? "practice"
+          : deskPage === "coverage" ? "coverage"
           : "home";
         const pack = LOOK[key] || LOOK.home;
         const you = document.getElementById("lookYou");
@@ -2669,6 +2815,9 @@
         } else if (deskPage === "practice") {
           titleEl.textContent = "Practice";
           subEl.textContent = "Last-minute review, mock bank, and drills";
+        } else if (deskPage === "coverage") {
+          titleEl.textContent = "Exam coverage";
+          subEl.textContent = "Notes → lab → prove quiz for every official objective";
         } else if (deskPage === "module") {
           const mod = document.getElementById(deskModuleId);
           const h2 = mod?.querySelector("h2");
@@ -2697,6 +2846,8 @@
           if (deskPage === "home" && HOME_IDS.has(id)) {
             show = true;
             if (id === "adultPathHub" && hub?.classList.contains("hidden-path")) show = false;
+          } else if (deskPage === "coverage" && id === "coverage") {
+            show = true;
           } else if (deskPage === "practice" && PRACTICE_IDS.has(id)) {
             show = true;
           } else if (deskPage === "module" && (id === deskModuleId || id === "modulePractice")) {
@@ -2724,6 +2875,7 @@
         paintDeskVisibility();
         let hash = "#overview";
         if (page === "practice") hash = opts.hash || "#practice";
+        else if (page === "coverage") hash = "#coverage";
         else if (page === "module") hash = "#" + deskModuleId;
         else if (page === "reference") hash = "#" + deskRefId;
         setDeskNavActive(hash);
@@ -2762,6 +2914,7 @@
           }
           return;
         }
+        if (id === "coverage") return showDesk("coverage", { skipHash: !!skipHash });
         if (REF_IDS.includes(id)) return showDesk("reference", { refId: id, skipHash: !!skipHash });
         if (id === "studySession" || id === "how-to-study") return showDesk("home", { skipHash: !!skipHash });
         return showDesk("home", { skipHash: !!skipHash });
@@ -2784,12 +2937,129 @@
             requestAnimationFrame(() => document.getElementById("lastMinute")?.scrollIntoView({ behavior: "smooth", block: "start" }));
           }
         }
+        else if (id === "coverage") showDesk("coverage");
         else if (REF_IDS.includes(id)) showDesk("reference", { refId: id });
         else showDesk("home");
       }, true);
 
       window.addEventListener("hashchange", () => deskFromHash(true));
       deskFromHash(true);
+
+      const COV_READ_KEY = "gws-exam-coverage-v1";
+      function paintCoverage() {
+        const host = document.getElementById("covBody");
+        if (!host) return;
+        const pack = window.GWS_EXAM_COVERAGE;
+        if (!pack || !Array.isArray(pack.items)) {
+          host.textContent = "Coverage map failed to load.";
+          return;
+        }
+        const reads = store.getJSON(COV_READ_KEY, () => ({})) || {};
+        let simLabs = {};
+        try {
+          const sim = JSON.parse(localStorage.getItem("gwsAdminSim.v1") || "null");
+          simLabs = (sim && sim.ui && sim.ui.labs && sim.ui.labs.completed) || {};
+        } catch (e) { simLabs = {}; }
+        let answered = {};
+        try {
+          const game = JSON.parse(localStorage.getItem("gws-study-game-v1") || "null");
+          answered = (game && game.answered) || {};
+        } catch (e) { answered = {}; }
+        const hrefs = pack.labHref || {};
+        let doneN = 0;
+        const bySec = [];
+        pack.items.forEach((it) => {
+          if (!bySec.length || bySec[bySec.length - 1].section !== it.section) {
+            bySec.push({ section: it.section, rows: [] });
+          }
+          bySec[bySec.length - 1].rows.push(it);
+        });
+        host.textContent = "";
+        bySec.forEach((sec) => {
+          const h = document.createElement("h3");
+          h.className = "cov-sec";
+          h.textContent = sec.section;
+          host.appendChild(h);
+          const table = document.createElement("table");
+          table.className = "cov-table";
+          table.innerHTML = "<thead><tr><th>Objective</th><th class=\"cov-hide\">Loop</th><th>Do it</th></tr></thead>";
+          const tb = document.createElement("tbody");
+          sec.rows.forEach((it) => {
+            const read = !!reads[it.id];
+            const labOk = !!(it.lab && simLabs[it.lab]);
+            const quizIds = it.quiz || [];
+            const quizOk = quizIds.length
+              ? quizIds.some((qid) => answered[qid] && (answered[qid].correct || 0) > 0)
+              : true;
+            const all = read && labOk && quizOk;
+            if (all) doneN++;
+            const tr = document.createElement("tr");
+            if (all) tr.className = "cov-done";
+            const td0 = document.createElement("td");
+            td0.innerHTML = "<strong></strong><div class=\"muted\" style=\"font-size:.78rem\"></div>";
+            td0.querySelector("strong").textContent = it.obj + " · " + it.title;
+            td0.querySelector("div").textContent = it.lab ? "Lab " + it.lab.replace("lab-", "") : "No dedicated lab";
+            const td1 = document.createElement("td");
+            td1.className = "cov-hide";
+            const dots = document.createElement("div");
+            dots.className = "cov-dots";
+            [["Notes", read], ["Lab", labOk], ["Prove", quizOk]].forEach((p) => {
+              const s = document.createElement("span");
+              s.className = "cov-dot" + (p[1] ? " on" : "");
+              s.textContent = p[0];
+              dots.appendChild(s);
+            });
+            td1.appendChild(dots);
+            const td2 = document.createElement("td");
+            const acts = document.createElement("div");
+            acts.className = "cov-actions";
+            const mark = document.createElement("button");
+            mark.type = "button";
+            mark.className = "cov-mark";
+            mark.setAttribute("aria-pressed", read ? "true" : "false");
+            mark.textContent = read ? "Notes read ✓" : "Mark notes read";
+            mark.addEventListener("click", () => {
+              const next = store.getJSON(COV_READ_KEY, () => ({})) || {};
+              next[it.id] = !next[it.id];
+              store.setJSON(COV_READ_KEY, next);
+              paintCoverage();
+            });
+            const notes = document.createElement("a");
+            notes.className = "game-btn";
+            notes.href = it.notes;
+            notes.textContent = "Notes";
+            const labA = document.createElement("a");
+            labA.className = "game-btn";
+            labA.href = hrefs[it.lab] || "./gws-admin-console.html#labs";
+            labA.textContent = "Lab";
+            const prove = document.createElement("a");
+            prove.className = "game-btn";
+            const mod = (it.notes || "#m0").replace(/^#/, "").split("-")[0];
+            prove.href = "#" + (mod || "practice");
+            prove.textContent = "Prove";
+            acts.appendChild(mark);
+            acts.appendChild(notes);
+            acts.appendChild(labA);
+            acts.appendChild(prove);
+            td2.appendChild(acts);
+            tr.appendChild(td0);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tb.appendChild(tr);
+          });
+          table.appendChild(tb);
+          host.appendChild(table);
+        });
+        const total = pack.items.length;
+        const label = document.getElementById("covDoneLabel");
+        const bar = document.getElementById("covProg");
+        if (label) label.textContent = doneN + " / " + total;
+        if (bar) bar.style.width = (total ? (doneN / total) * 100 : 0) + "%";
+      }
+      document.getElementById("btnCovRefresh")?.addEventListener("click", paintCoverage);
+      window.addEventListener("gws-desk-change", paintCoverage);
+      window.addEventListener("focus", paintCoverage);
+      paintCoverage();
 
       /* ========== Scenario Drill Game ========== */
       const GAME_KEY = "gws-study-game-v1";
@@ -2832,6 +3102,29 @@
         { id: "m2-appsheet-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Business wants a no-code app from Sheets data. Match the tool:", constraints: [], choices: [{ id: "a", text: "Apps Script only" }, { id: "b", text: "AppSheet" }, { id: "c", text: "GCDS" }, { id: "d", text: "Vault" }], answer: ["b"], explain: "No-code → AppSheet. Custom JS glue → Apps Script.", guideHref: "#m2" },
         { id: "m2-dmarc-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "You’re turning on DMARC for the first time. Sensible start policy?", constraints: [], choices: [{ id: "a", text: "p=reject immediately with no monitoring" }, { id: "b", text: "Start at p=none to monitor, then quarantine, then reject" }, { id: "c", text: "Skip SPF and DKIM" }, { id: "d", text: "Use only MX for authentication" }], answer: ["b"], explain: "Monitor first (p=none), then tighten — classic exam guidance.", guideHref: "#dns" },
         { id: "m2-pop-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Security wants to reduce data-exfiltration risk via old mail clients. Common control?", constraints: [], choices: [{ id: "a", text: "Disable POP/IMAP (and watch auto-forwarding) per OU" }, { id: "b", text: "Delete all MX records" }, { id: "c", text: "Turn off Vault" }, { id: "d", text: "Remove all OUs" }], answer: ["a"], explain: "Disabling POP/IMAP/forwarding is a common exfiltration control.", guideHref: "#m2" },
+        { id: "m1-collab-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "support@ must be a shared work queue: take, assign, resolve. Which group type?", constraints: [], choices: [{ id: "a", text: "Collaborative Inbox" }, { id: "b", text: "Security group only" }, { id: "c", text: "A second licensed user named Support" }, { id: "d", text: "Dynamic group with no mail" }], answer: ["a"], explain: "Collaborative Inbox is the shared queue. A security group is a policy target. Don’t burn a license on a fake user.", guideHref: "#m1-groups" },
+        { id: "m1-dyn-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "Everyone with department = Sales must be in a group automatically. Best type?", constraints: [], choices: [{ id: "a", text: "Dynamic group" }, { id: "b", text: "Collaborative Inbox" }, { id: "c", text: "CSV upload every Monday" }, { id: "d", text: "Domain alias" }], answer: ["a"], explain: "Membership from a query → dynamic group. Collaborative Inbox is a ticket queue.", guideHref: "#m1-groups" },
+        { id: "m1-secg-01", module: "m1", difficulty: 2, type: "single", selectCount: 1, stem: "You need a cross-OU target for a 2SV / CAA / sharing policy, not a mailbox. Choose:", constraints: [], choices: [{ id: "a", text: "Security group" }, { id: "b", text: "Collaborative Inbox" }, { id: "c", text: "Buildings CSV" }, { id: "d", text: "Meet quality tool" }], answer: ["a"], explain: "Security groups overlay policy. Collaborative Inbox is for support@ conversations.", guideHref: "#m1-groups" },
+        { id: "m1-feat-01", module: "m1", difficulty: 1, type: "single", selectCount: 1, stem: "People must be able to filter rooms that have a whiteboard. What do you set?", constraints: [], choices: [{ id: "a", text: "A feature on the resource" }, { id: "b", text: "DMARC p=reject" }, { id: "c", text: "Vault hold" }, { id: "d", text: "Gemini extensions" }], answer: ["a"], explain: "Capacity / whiteboard / AV are resource features. Booking policy is who may book / auto-accept.", guideHref: "#m1-buildings" },
+        { id: "m2-dual-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "For 30 days Google and Exchange must both receive a copy of inbound mail. Control?", constraints: [], choices: [{ id: "a", text: "Dual delivery" }, { id: "b", text: "Disable MX" }, { id: "c", text: "Collaborative Inbox" }, { id: "d", text: "Drive for desktop" }], answer: ["a"], explain: "Dual delivery copies to another system. Split delivery splits users. Inbound gateway is a third-party filter in front of Google.", guideHref: "#m2-routing" },
+        { id: "m2-gate-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Mail must hit a third-party filter (Proofpoint) before Gmail. Which setting?", constraints: [], choices: [{ id: "a", text: "Inbound gateway" }, { id: "b", text: "Dual delivery" }, { id: "c", text: "Domain alias" }, { id: "d", text: "Meet safety" }], answer: ["a"], explain: "Gateway = relay through another filter first. Dual delivery = coexistence copy. Don’t change MX to ‘invent’ a gateway.", guideHref: "#m2-routing" },
+        { id: "m2-quar-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Legal wants to review suspect messages before users see them. Tool?", constraints: [], choices: [{ id: "a", text: "Admin quarantine" }, { id: "b", text: "Email Log Search only" }, { id: "c", text: "Buildings CSV" }, { id: "d", text: "AUL" }], answer: ["a"], explain: "Quarantine holds mail for review. ELS tells you whether it delivered — it does not review the message for Legal.", guideHref: "#m2-routing" },
+        { id: "m2-delg-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Cara must send mail as Ada without a second license. Correct control?", constraints: [], choices: [{ id: "a", text: "Gmail delegation" }, { id: "b", text: "Calendar resource feature" }, { id: "c", text: "Cloud Identity for Cara" }, { id: "d", text: "Split delivery" }], answer: ["a"], explain: "Gmail delegation = assistant on the same mailbox. Calendar delegation is for booking Ada’s week — a different exam answer.", guideHref: "#m2-routing" },
+        { id: "m2-desk-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Contractors must not keep company Drive files on home laptops. Best admin control?", constraints: [], choices: [{ id: "a", text: "Disable Drive for desktop (and usually offline) for that OU" }, { id: "b", text: "Vault hold on every contractor" }, { id: "c", text: "Force-install a Chrome extension" }, { id: "d", text: "Delete MX" }], answer: ["a"], explain: "Sync client / cache → Drive for desktop and offline. Vault does not stop a laptop cache.", guideHref: "#m2-clients" },
+        { id: "m2-off-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Kiosk Chrome browsers should not keep Drive files available without network. Toggle?", constraints: [], choices: [{ id: "a", text: "Drive offline access off for that OU" }, { id: "b", text: "Meet knocking" }, { id: "c", text: "DMARC p=none" }, { id: "d", text: "Collaborative Inbox" }], answer: ["a"], explain: "Drive offline is a Drive setting. Chrome cached pages are a separate CBCM policy.", guideHref: "#m2-clients" },
+        { id: "m2-cal-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Outsiders must not see event titles — only that people are busy, if anything. First setting?", constraints: [], choices: [{ id: "a", text: "Calendar external sharing (none or free/busy)" }, { id: "b", text: "Gmail dual delivery" }, { id: "c", text: "Force-install extension X" }, { id: "d", text: "Data regions" }], answer: ["a"], explain: "External calendar sharing defaults. Unknown-sender block is for invite spam, not title visibility.", guideHref: "#m2-calendar" },
+        { id: "m2-unk-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Random conference spam keeps landing on calendars. Best control?", constraints: [], choices: [{ id: "a", text: "Block invitations from unknown senders" }, { id: "b", text: "Turn off Meet quality tool" }, { id: "c", text: "Delete the primary domain" }, { id: "d", text: "AppSheet" }], answer: ["a"], explain: "Unknown senders = calendar invite spam. External sharing is what outsiders can see on your calendar.", guideHref: "#m2-calendar" },
+        { id: "m2-caldel-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Ada’s assistant must book Ada’s week. Gmail send-as is already on. What else?", constraints: [], choices: [{ id: "a", text: "Calendar delegation" }, { id: "b", text: "Inbound gateway" }, { id: "c", text: "Vault export" }, { id: "d", text: "CBCM token" }], answer: ["a"], explain: "Calendar delegation ≠ Gmail delegation. Rooms use Buildings & resources.", guideHref: "#m2-calendar" },
+        { id: "m2-book-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Staff should book the boardroom without waiting for Facilities to click Accept.", constraints: [], choices: [{ id: "a", text: "Auto-accept booking policy on the resource calendar" }, { id: "b", text: "Collaborative Inbox named Boardroom" }, { id: "c", text: "Gemini usage report" }, { id: "d", text: "Investigation tool" }], answer: ["a"], explain: "Booking policy lives on the resource. Features (whiteboard) are how people filter rooms.", guideHref: "#m2-calendar" },
+        { id: "m2-rec-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "Leadership wants Meet recordings and transcripts for trainings. Safety knocking is already on. Where?", constraints: [], choices: [{ id: "a", text: "Meet video settings (recordings / transcripts)" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "Email Log Search" }, { id: "d", text: "Buildings CSV" }], answer: ["a"], explain: "Capture = video settings. Join problems = safety. Choppy A/V = quality tool.", guideHref: "#m2-meet" },
+        { id: "m2-chatx-01", module: "m2", difficulty: 1, type: "single", selectCount: 1, stem: "Sales wants partner domains in Chat. History must stay ON for Vault. Extra toggle?", constraints: [], choices: [{ id: "a", text: "Allow Chat with people outside the organization" }, { id: "b", text: "Turn Chat history off" }, { id: "c", text: "Delete SPF" }, { id: "d", text: "AUL" }], answer: ["a"], explain: "External Chat is independent of history. History off would starve Vault.", guideHref: "#m2-chat" },
+        { id: "m2-gemu-01", module: "m2", difficulty: 2, type: "single", selectCount: 1, stem: "CFO asks who actually uses Gemini after a Sales OU pilot. Where?", constraints: [], choices: [{ id: "a", text: "Gemini usage reports" }, { id: "b", text: "Email Log Search" }, { id: "c", text: "Meet knocking" }, { id: "d", text: "CSV rooms" }], answer: ["a"], explain: "Adoption → Gemini usage reports. Privacy fact (prompts don’t train foundation models) is a different question.", guideHref: "#m2-gemini" },
+        { id: "m4-sess-01", module: "m4", difficulty: 2, type: "single", selectCount: 1, stem: "Finance must re-authenticate every 8 hours on the web. Best control?", constraints: [], choices: [{ id: "a", text: "Google Session Control scoped to Finance" }, { id: "b", text: "Delete their Drive" }, { id: "c", text: "Turn off SPF" }, { id: "d", text: "Collaborative Inbox" }], answer: ["a"], explain: "Session length ≠ 2SV and ≠ CAA. It complements them.", guideHref: "#m4-session" },
+        { id: "m5-adv-01", module: "m5", difficulty: 2, type: "single", selectCount: 1, stem: "Security wants to approve company phones and allow a full device wipe. MDM level?", constraints: [], choices: [{ id: "a", text: "Advanced mobile management (compatible edition)" }, { id: "b", text: "Basic only — it already factory-resets BYOD" }, { id: "c", text: "Vault Super Admin" }, { id: "d", text: "Split delivery" }], answer: ["a"], explain: "Advanced = approval, apps, full wipe. Wipe type (account vs device) is still chosen per phone. Basic is agentless account wipe.", guideHref: "#m5-mdm" },
+        { id: "m5-upd-01", module: "m5", difficulty: 2, type: "single", selectCount: 1, stem: "Browsers must stay patched. Users already have the needed extension. Policy?", constraints: [], choices: [{ id: "a", text: "Chrome auto-update via CBCM" }, { id: "b", text: "Force-install the same extension again" }, { id: "c", text: "Vault retention" }, { id: "d", text: "Inbound gateway" }], answer: ["a"], explain: "Browser updates are a Chrome policy. Force-install is for extensions/apps.", guideHref: "#m5-cbcm" },
+        { id: "m6-calfix-01", module: "m6", difficulty: 2, type: "single", selectCount: 1, stem: "Outlook shows no free/busy for coworkers. First Workspace check?", constraints: [], choices: [{ id: "a", text: "Calendar sharing defaults (then the Outlook client)" }, { id: "b", text: "Meet quality tool" }, { id: "c", text: "DKIM start authentication" }, { id: "d", text: "AppSheet" }], answer: ["a"], explain: "Free/busy is a sharing default / client issue, not a new Google product.", guideHref: "#m6-issues" },
+        { id: "m6-drvoff-01", module: "m6", difficulty: 2, type: "single", selectCount: 1, stem: "A user says Drive offline is greyed out on their laptop Chrome. Likely cause?", constraints: [], choices: [{ id: "a", text: "Admin disabled Drive offline for their OU" }, { id: "b", text: "MX is missing" }, { id: "c", text: "Vault hold on Meet" }, { id: "d", text: "They need a Collaborative Inbox" }], answer: ["a"], explain: "Offline is an admin Drive setting per OU. Chrome cached pages are a different CBCM toggle.", guideHref: "#m6-issues" },
+        { id: "m6-rep-01", module: "m6", difficulty: 1, type: "single", selectCount: 1, stem: "You need a trend: who is using Meet and who is over storage quota. Where?", constraints: [], choices: [{ id: "a", text: "Reports (usage / storage / apps)" }, { id: "b", text: "Buildings CSV" }, { id: "c", text: "DMARC p=reject" }, { id: "d", text: "Session control only" }], answer: ["a"], explain: "Reporting for trends. Audit logs for a specific who-changed-what. ELS for one message.", guideHref: "#m6-reports" },
 
         { id: "m3-hold-01", module: "m3", difficulty: 1, type: "single", selectCount: 1, stem: "Retention would delete mail in 30 days, but Legal needs it preserved for a lawsuit. What wins?", constraints: ["litigation"], choices: [{ id: "a", text: "Retention always deletes anyway" }, { id: "b", text: "A Vault hold inside a Matter — hold overrides retention deletion" }, { id: "c", text: "Takeout for one user only" }, { id: "d", text: "Chrome force-install" }], answer: ["b"], explain: "Hold always beats retention purge while the hold stands.", guideHref: "#m3" },
         { id: "m3-vault-01", module: "m3", difficulty: 1, type: "single", selectCount: 1, stem: "Is Vault a user-facing backup/restore tool for accidental deletes?", constraints: [], choices: [{ id: "a", text: "Yes — tell users to restore from Vault daily" }, { id: "b", text: "No — Vault is retention / legal hold / eDiscovery" }, { id: "c", text: "Only for Meet quality" }, { id: "d", text: "Only for Chrome extensions" }], answer: ["b"], explain: "Don’t treat Vault as Time Machine for end users.", guideHref: "#m3" },

@@ -34,10 +34,28 @@
       buildings: [{ id: "b_hq", name: "HQ", city: "Kuala Lumpur" }],
       resources: [{ id: "rm_board", buildingId: "b_hq", name: "Boardroom", type: "Meeting room", capacity: 12 }],
       csvImported: false,
-      calendar: { internal: "free_busy", external: "free_busy", eventsTransferred: false },
-      meet: { domainOnly: false, knocking: true, hostMustJoin: false, qualityRan: false },
-      chat: { historyDefault: true },
-      gemini: { enabledOu: {}, pilotGroupId: null, extensions: false, noCodeTool: null },
+      calendar: {
+        internal: "free_busy",
+        external: "free_busy",
+        eventsTransferred: false,
+        unknownSenders: false,
+        delegated: false,
+        bookingAuto: false,
+        sharedTeamCal: false
+      },
+      meet: {
+        domainOnly: false, knocking: true, hostMustJoin: false, qualityRan: false,
+        recordings: false, transcripts: false
+      },
+      chat: {
+        historyDefault: true,
+        external: false,
+        moderation: false,
+        botsApproved: false,
+        inviteRestrict: false
+      },
+      gemini: { enabledOu: {}, pilotGroupId: null, extensions: false, noCodeTool: null, usageReport: false },
+      drive: { desktop: true, offline: true, templates: false, quotaOu: false },
       sharedDrives: [],
       targetAudiences: { enabled: false, name: "All of Company" },
       trustRules: [{ id: "tr_legal", name: "Legal ↔ outside-counsel.com", enabled: false }],
@@ -56,17 +74,20 @@
         complianceBcc: false,
         maxMb: 25,
         delegation: {},
-        dmsRan: false
+        dmsRan: false,
+        quarantine: false,
+        footer: false,
+        blockedTypes: false
       },
       directorySync: { source: "ad" },
       chrome: {
         enrolled: false,
         token: "CBCM-NW-7F3A",
         policies: {
-          ou_root: { forceInstall: [], blockAll: false, safeBrowsing: true },
-          ou_sales: { forceInstall: [], blockAll: false, safeBrowsing: true },
-          ou_eng: { forceInstall: [], blockAll: false, safeBrowsing: true },
-          ou_ctr: { forceInstall: [], blockAll: false, safeBrowsing: true }
+          ou_root: { forceInstall: [], blockAll: false, safeBrowsing: true, autoUpdate: true, offline: true },
+          ou_sales: { forceInstall: [], blockAll: false, safeBrowsing: true, autoUpdate: true, offline: true },
+          ou_eng: { forceInstall: [], blockAll: false, safeBrowsing: true, autoUpdate: true, offline: true },
+          ou_ctr: { forceInstall: [], blockAll: false, safeBrowsing: true, autoUpdate: true, offline: true }
         }
       },
       mdm: { level: "basic" },
@@ -91,6 +112,25 @@
       if (state.admin[k] == null) state.admin[k] = d[k];
     });
     if (!state.admin.chrome.policies) state.admin.chrome.policies = d.chrome.policies;
+    function fill(obj, extra) {
+      if (!obj || !extra) return;
+      Object.keys(extra).forEach(function (k) {
+        if (obj[k] == null) obj[k] = extra[k];
+      });
+    }
+    fill(state.admin.calendar, d.calendar);
+    fill(state.admin.meet, d.meet);
+    fill(state.admin.chat, d.chat);
+    fill(state.admin.gemini, d.gemini);
+    fill(state.admin.gmail, d.gmail);
+    fill(state.admin.drive, d.drive);
+    Object.keys(d.chrome.policies).forEach(function (ou) {
+      if (!state.admin.chrome.policies[ou]) state.admin.chrome.policies[ou] = d.chrome.policies[ou];
+      else fill(state.admin.chrome.policies[ou], d.chrome.policies[ou]);
+    });
+    (state.admin.resources || []).forEach(function (r) {
+      if (!r.features) r.features = [];
+    });
     (state.groups || []).forEach(function (g) {
       if (!g.kind) g.kind = g.security ? "security" : "distribution";
     });
@@ -506,16 +546,31 @@
         const rooms = a.resources.filter(function (r) { return r.buildingId === b.id; });
         const table = el("table", { className: "user-table" });
         rooms.forEach(function (r) {
+          if (!r.features) r.features = [];
           const tr = el("tr");
           tr.appendChild(el("td", { text: r.name }));
           tr.appendChild(el("td", { text: r.type }));
           tr.appendChild(el("td", { text: r.capacity + " seats" }));
+          const feat = el("td");
+          const btn = el("button", {
+            type: "button", className: "btn ghost",
+            text: (r.features || []).indexOf("whiteboard") >= 0 ? "Whiteboard ✓" : "Add whiteboard",
+            onclick: function () {
+              if (r.features.indexOf("whiteboard") < 0) r.features.push("whiteboard");
+              persist("Resource feature", r.name + " + whiteboard");
+            }
+          });
+          feat.appendChild(btn);
+          tr.appendChild(feat);
           table.appendChild(tr);
         });
         card.appendChild(table);
         wrap.appendChild(card);
       });
       if (a.csvImported) wrap.appendChild(el("div", { className: "ok-box", text: "Bulk CSV imported. These resources appear on Calendar." }));
+      wrap.appendChild(el("div", { className: "settings-list" }, [
+        toggleRow("Auto-accept room bookings from people in the org", "Booking policy on the resource calendar. Delegates can still manage exceptions.", a.calendar.bookingAuto, function (v) { a.calendar.bookingAuto = v; })
+      ]));
       wrap.appendChild(el("button", { type: "button", className: "btn", text: "Open Calendar sharing", onclick: function () { go("calendar"); } }));
       return wrap;
     }
@@ -532,7 +587,17 @@
       list.appendChild(selectRow("External sharing options", "What people outside the org can see.", a.calendar.external,
         [{ v: "free_busy", t: "Free/busy only" }, { v: "none", t: "No sharing" }],
         function (v) { a.calendar.external = v; }));
+      list.appendChild(toggleRow("Block invitations from unknown senders", "Stops calendar spam from people outside the org.", a.calendar.unknownSenders, function (v) { a.calendar.unknownSenders = v; }));
+      list.appendChild(toggleRow("Shared team calendar for Sales", "Group calendar — not the same as a resource room.", a.calendar.sharedTeamCal, function (v) { a.calendar.sharedTeamCal = v; }));
       wrap.appendChild(list);
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn",
+        text: a.calendar.delegated ? "Cara delegates Ada’s calendar ✓" : "Let Cara manage Ada’s calendar",
+        onclick: function () {
+          a.calendar.delegated = true;
+          persist("Calendar delegated", "Cara → Ada");
+        }
+      }));
       wrap.appendChild(el("button", {
         type: "button", className: "btn primary",
         text: a.calendar.eventsTransferred ? "Event ownership transferred ✓" : "Transfer Dan’s events to his manager",
@@ -555,6 +620,8 @@
       list.appendChild(toggleRow("Only people in the organization can join", "Org-only meetings — stops random guests.", a.meet.domainOnly, function (v) { a.meet.domainOnly = v; }));
       list.appendChild(toggleRow("Knocking / host must admit guests", "Host controls who enters.", a.meet.knocking, function (v) { a.meet.knocking = v; }));
       list.appendChild(toggleRow("Host must join first", "Meeting waits for the host.", a.meet.hostMustJoin, function (v) { a.meet.hostMustJoin = v; }));
+      list.appendChild(toggleRow("Allow meeting recordings", "Video setting — not a safety lock. Needs a compatible edition.", a.meet.recordings, function (v) { a.meet.recordings = v; }));
+      list.appendChild(toggleRow("Allow transcripts / notes", "Meet video settings family — quality still uses the quality tool.", a.meet.transcripts, function (v) { a.meet.transcripts = v; }));
       wrap.appendChild(list);
       const q = el("div", { className: "card" });
       q.appendChild(el("h2", { text: "Meet quality tool" }));
@@ -579,7 +646,11 @@
       wrap.appendChild(pageHead("Google Chat"));
       wrap.appendChild(el("p", { className: "lede", text: "If Chat history is off, Vault cannot retain what never existed." }));
       wrap.appendChild(el("div", { className: "settings-list" }, [
-        toggleRow("Chat history on by default", "History off → nothing for Vault to keep, even with a hold.", a.chat.historyDefault, function (v) { a.chat.historyDefault = v; })
+        toggleRow("Chat history on by default", "History off → nothing for Vault to keep, even with a hold.", a.chat.historyDefault, function (v) { a.chat.historyDefault = v; }),
+        toggleRow("Allow Chat with people outside the organization", "Spaces and DMs with other domains. Tighten with invite settings.", a.chat.external, function (v) { a.chat.external = v; }),
+        toggleRow("Space moderation (restrict who can post / @all)", "Moderation for noisy or customer spaces.", a.chat.moderation, function (v) { a.chat.moderation = v; }),
+        toggleRow("Only approved Chat apps / bots", "Same idea as Marketplace allowlist — not a Vault setting.", a.chat.botsApproved, function (v) { a.chat.botsApproved = v; }),
+        toggleRow("Restrict who can invite people to spaces", "Chat invite settings.", a.chat.inviteRestrict, function (v) { a.chat.inviteRestrict = v; })
       ]));
       if (!a.chat.historyDefault) wrap.appendChild(el("div", { className: "warn", text: "History is off. A Vault hold cannot invent messages that were never stored." }));
       return wrap;
@@ -603,6 +674,14 @@
         function (v) { a.gemini.pilotGroupId = v || null; }));
       list.appendChild(toggleRow("Gemini extensions (Gmail / Drive)", "Let Gemini act across services.", a.gemini.extensions, function (v) { a.gemini.extensions = v; }));
       wrap.appendChild(list);
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn",
+        text: a.gemini.usageReport ? "Gemini usage report generated ✓" : "Generate Gemini usage report",
+        onclick: function () {
+          a.gemini.usageReport = true;
+          persist("Gemini usage report", "adoption");
+        }
+      }));
       const tools = el("div", { className: "card" });
       tools.appendChild(el("h2", { text: "Build on Workspace" }));
       tools.appendChild(el("p", { className: "muted", text: "No-code app from a Sheet → AppSheet. Custom JavaScript glue → Apps Script." }));
@@ -655,7 +734,11 @@
       }
       wrap.appendChild(sd);
       wrap.appendChild(el("div", { className: "settings-list" }, [
-        toggleRow("Target audience: All of Company", "Safer “share with company” suggestion — not a trust rule.", a.targetAudiences.enabled, function (v) { a.targetAudiences.enabled = v; })
+        toggleRow("Target audience: All of Company", "Safer “share with company” suggestion — not a trust rule.", a.targetAudiences.enabled, function (v) { a.targetAudiences.enabled = v; }),
+        toggleRow("Allow Drive for desktop", "Sync client. Block per OU if contractors must not cache files locally.", a.drive.desktop, function (v) { a.drive.desktop = v; }),
+        toggleRow("Allow Drive offline access", "Browser cache of files. Disable for high-risk / kiosk OUs.", a.drive.offline, function (v) { a.drive.offline = v; }),
+        toggleRow("Allow custom Docs templates", "Org template gallery — not a Shared Drive role.", a.drive.templates, function (v) { a.drive.templates = v; }),
+        toggleRow("Set a 50 GB storage quota on Contractors OU", "Pooled storage still exists; quota caps one OU.", a.drive.quotaOu, function (v) { a.drive.quotaOu = v; })
       ]));
       wrap.appendChild(el("div", { className: "row" }, [
         el("button", { type: "button", className: "btn", text: "Trust rules", onclick: function () { go("trust"); } }),
@@ -726,7 +809,7 @@
       }));
       wrap.appendChild(enroll);
       const ou = S().ui.selectedOuId || "ou_root";
-      if (!a.chrome.policies[ou]) a.chrome.policies[ou] = { forceInstall: [], blockAll: false, safeBrowsing: true };
+      if (!a.chrome.policies[ou]) a.chrome.policies[ou] = { forceInstall: [], blockAll: false, safeBrowsing: true, autoUpdate: true, offline: true };
       const pol = a.chrome.policies[ou];
       wrap.appendChild(el("p", { className: "muted", text: "Policy for OU: " + ((ouById(ou) || {}).name || ou) + " — pick an OU on Organizational units or below." }));
       const ouSel = el("select");
@@ -746,6 +829,8 @@
       }));
       list.appendChild(toggleRow("Block all extensions except allowlist", "Stop random installs on this OU.", pol.blockAll, function (v) { pol.blockAll = v; }));
       list.appendChild(toggleRow("Safe Browsing", "Recommended with auto-updates.", pol.safeBrowsing, function (v) { pol.safeBrowsing = v; }));
+      list.appendChild(toggleRow("Force Chrome auto-updates", "Browser update policy — not an extension allowlist.", pol.autoUpdate, function (v) { pol.autoUpdate = v; }));
+      list.appendChild(toggleRow("Allow Chrome offline / cached pages", "Chrome policy, separate from Drive offline.", pol.offline, function (v) { pol.offline = v; }));
       wrap.appendChild(list);
       wrap.appendChild(el("button", {
         type: "button", className: "btn",
@@ -938,7 +1023,10 @@
         toggleRow("Security Sandbox (detonate attachments)", "Explode attachments in a sandbox.", a.gmail.sandbox, function (v) { a.gmail.sandbox = v; }),
         toggleRow("Allow POP / IMAP", "Turn off to reduce exfil. Disable forwarding too for leavers.", a.gmail.popImap, function (v) { a.gmail.popImap = v; }),
         toggleRow("Allow automatic forwarding", "Another common leak path.", a.gmail.forwarding, function (v) { a.gmail.forwarding = v; }),
-        toggleRow("Content compliance: BCC all outbound Finance mail", "Compliance can quarantine, reject, modify, BCC, or add a footer.", a.gmail.complianceBcc, function (v) { a.gmail.complianceBcc = v; })
+        toggleRow("Content compliance: BCC all outbound Finance mail", "Compliance can quarantine, reject, modify, BCC, or add a footer.", a.gmail.complianceBcc, function (v) { a.gmail.complianceBcc = v; }),
+        toggleRow("Admin quarantine (review before deliver)", "Suspicious or compliance-matched mail waits here — not Email Log Search.", a.gmail.quarantine, function (v) { a.gmail.quarantine = v; }),
+        toggleRow("Compliance footer on outbound mail", "Legal disclaimer appended to outgoing messages.", a.gmail.footer, function (v) { a.gmail.footer = v; }),
+        toggleRow("Block executable attachments (.exe)", "Attachment compliance — type, not size.", a.gmail.blockedTypes, function (v) { a.gmail.blockedTypes = v; })
       ]));
       const del = el("div", { className: "card" });
       del.appendChild(el("h2", { text: "Delegation" }));

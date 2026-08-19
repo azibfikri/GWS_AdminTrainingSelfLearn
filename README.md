@@ -23,6 +23,7 @@
 
 | Area | What you get |
 |------|----------------|
+| **Coverage map** | Official Associate objectives → notes + lab + prove quiz (Phase 1 mastery loop) |
 | **Study desk** | Searchable modules, focus mode, 25-minute session timer |
 | **Learning styles** | *Kindergarten* (story-based) or *Adult* (Sandbox + Focus paths) |
 | **Practice** | Mock 10, by domain, timed 50, **full 246-question exam**, answer key |
@@ -63,6 +64,7 @@ gws-admin-study-guide/
 ├── gws-domain-setup.html   # Domain + MX/SPF/DKIM/DMARC walkthrough
 ├── data/
 │   ├── mock-bank.js        # 246-question bank
+│   ├── gws-exam-coverage.js # Official exam-guide → notes/lab/quiz map
 │   └── gws-auth.js         # Login + cloud sync client
 ├── electron/               # Desktop shell
 ├── supabase/

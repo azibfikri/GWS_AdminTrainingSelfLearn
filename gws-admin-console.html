@@ -2020,6 +2020,33 @@
         ]
       },
       {
+        id: "lab-resources", code: "LAB-M1F", minutes: 10, level: "Associate", module: "m1",
+        domain: "1.5 Buildings · 2.3 resource booking",
+        title: "Whiteboard rooms that auto-accept",
+        desk: "./index.html#m1-buildings",
+        sections: ["1.10 Buildings & resources", "2.3 Calendar booking"],
+        reads: [
+          { label: "1.10 Buildings", href: "./index.html#m1-buildings" },
+          { label: "2.3 Calendar", href: "./index.html#m2-calendar" }
+        ],
+        fromDesk: "Rooms are resource calendars, not user accounts. Features (whiteboard, video, wheelchair) go on the resource so people can filter when booking. Booking policy (auto-accept vs approval) lives on the resource calendar. 200 rooms → CSV. Delegation of a person’s calendar is a different control.",
+        scenario: {
+          who: "Facilities: Boardroom must show a whiteboard. Staff should book without waiting for a facilities person to click Accept.",
+          ticket: "Add the whiteboard feature and turn on auto-accept for org bookings. Do not create 200 fake users named after rooms.",
+          constraint: "Feature ≠ booking policy ≠ calendar delegation. CSV for bulk rooms."
+        },
+        objectives: [
+          "Pin a feature on a resource.",
+          "Set auto-accept booking for people in the org."
+        ],
+        why: "Exam stems mix ‘add a whiteboard’ with ‘who may book’ — two different clicks.",
+        startRoute: "buildings",
+        tasks: [
+          { id: "feat", doThis: "Buildings: add Whiteboard on Boardroom (or any room).", check: function (s) { return (s.admin && (s.admin.resources || []).some(function (r) { return (r.features || []).indexOf("whiteboard") >= 0; })); } },
+          { id: "book", doThis: "Turn on Auto-accept room bookings from people in the org.", check: function (s) { return !!(s.admin && s.admin.calendar && s.admin.calendar.bookingAuto); } }
+        ]
+      },
+      {
         id: "lab-mail", code: "LAB-M2A", minutes: 20, level: "Associate", module: "m2",
         domain: "2.1 Gmail · MX vs SPF/DKIM/DMARC",
         title: "Spam at recipients, mail still inbound",
@@ -2159,6 +2186,118 @@
           { id: "ou", doThis: "Apps → Gemini: turn Gemini on for the Sales OU.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.enabledOu && s.admin.gemini.enabledOu.ou_sales); } },
           { id: "pilot", doThis: "Set Pilot group to Gemini Pilot.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.pilotGroupId === "g_pilot"); } },
           { id: "sheet", doThis: "Choose AppSheet (no-code) for the Sheet intake app.", check: function (s) { return !!(s.admin && s.admin.gemini && s.admin.gemini.noCodeTool === "appsheet"); } }
+        ]
+      },
+      {
+        id: "lab-calendar", code: "LAB-M2F", minutes: 10, level: "Associate", module: "m2",
+        domain: "2.3 Calendar sharing · unknown senders · delegate",
+        title: "No outside details, no invite spam",
+        desk: "./index.html#m2-calendar",
+        sections: ["2.3 Calendar"],
+        reads: [
+          { label: "2.3 Calendar", href: "./index.html#m2-calendar" }
+        ],
+        fromDesk: "Internal sharing default = what coworkers see (free/busy vs details). External sharing = what the internet sees — often none or free/busy. Unknown senders → block invite spam. Assistant managing a calendar → Calendar delegation (not Gmail delegation). Organizer left → transfer event ownership. Team calendar ≠ resource room.",
+        scenario: {
+          who: "Legal: outsiders must not see event titles. Ada’s assistant Cara books Ada’s week. Random conference spam fills calendars.",
+          ticket: "Tighten external sharing, block unknown senders, delegate Ada’s calendar. Do not use Gmail delegation for this.",
+          constraint: "Calendar delegation ≠ Gmail send-as. Resource rooms are Buildings, not a sharing default."
+        },
+        objectives: [
+          "Set external sharing to none.",
+          "Block unknown senders.",
+          "Delegate a person’s calendar."
+        ],
+        why: "Sharing default vs spam vs assistant are three different answers on the exam.",
+        startRoute: "calendar",
+        tasks: [
+          { id: "ext", doThis: "Calendar → External sharing: No sharing.", check: function (s) { return !!(s.admin && s.admin.calendar && s.admin.calendar.external === "none"); } },
+          { id: "unk", doThis: "Block invitations from unknown senders.", check: function (s) { return !!(s.admin && s.admin.calendar && s.admin.calendar.unknownSenders); } },
+          { id: "del", doThis: "Let Cara manage Ada’s calendar (Calendar delegation).", check: function (s) { return !!(s.admin && s.admin.calendar && s.admin.calendar.delegated); } }
+        ]
+      },
+      {
+        id: "lab-chat", code: "LAB-M2G", minutes: 8, level: "Associate", module: "m2",
+        domain: "2.5 Chat spaces · external · bots",
+        title: "Partners in Chat — without random bots",
+        desk: "./index.html#m2-chat",
+        sections: ["2.5 Chat"],
+        reads: [
+          { label: "2.5 Chat", href: "./index.html#m2-chat" }
+        ],
+        fromDesk: "History on/off is a Vault question. External Chat is a different toggle. Spaces can be moderated. Bots follow an allowlist like Marketplace. Invite settings stop anyone from pulling outsiders into a space.",
+        scenario: {
+          who: "Sales wants partner domains in Chat. Security wants only approved bots. Support spaces are a mess of @all.",
+          ticket: "Allow external Chat, turn on space moderation, allow only approved bots. Do not turn history off (Legal still needs Vault).",
+          constraint: "External ≠ history. Bots ≠ Marketplace Gmail apps, but the allowlist idea is the same."
+        },
+        objectives: [
+          "External Chat on.",
+          "Moderation on.",
+          "Approved bots only."
+        ],
+        why: "History-off is the Vault trap; this lab is the other Chat knobs.",
+        startRoute: "chat",
+        tasks: [
+          { id: "ext", doThis: "Chat → allow people outside the organization.", check: function (s) { return !!(s.admin && s.admin.chat && s.admin.chat.external); } },
+          { id: "mod", doThis: "Turn on space moderation.", check: function (s) { return !!(s.admin && s.admin.chat && s.admin.chat.moderation); } },
+          { id: "bot", doThis: "Only approved Chat apps / bots.", check: function (s) { return !!(s.admin && s.admin.chat && s.admin.chat.botsApproved); } }
+        ]
+      },
+      {
+        id: "lab-drive-clients", code: "LAB-M2H", minutes: 8, level: "Associate", module: "m2",
+        domain: "2.2 Drive for desktop · offline · templates",
+        title: "Contractors must not cache the company drive",
+        desk: "./index.html#m2-clients",
+        sections: ["Drive for desktop / offline"],
+        reads: [
+          { label: "2.2 Drive clients", href: "./index.html#m2-clients" }
+        ],
+        fromDesk: "Drive for desktop is the sync client. Offline is the browser cache. Custom Docs templates are a gallery setting. None of these is a Shared Drive role. High-risk / contractor OUs often disable desktop + offline. Storage quota is a cap on the pool, not a mailbox upgrade.",
+        scenario: {
+          who: "Contractors take laptops home. CISO: no local Drive cache. Design wants a company Docs template gallery.",
+          ticket: "Turn off Drive for desktop and offline. Turn on custom templates. Do not ‘upgrade one mailbox’ for storage.",
+          constraint: "Desktop client ≠ offline. Templates ≠ Shared Drive Manager."
+        },
+        objectives: [
+          "Disable Drive for desktop and offline.",
+          "Enable custom Docs templates."
+        ],
+        why: "Exam likes ‘files on a home laptop’ → Drive for desktop / offline, not Vault.",
+        startRoute: "drive",
+        tasks: [
+          { id: "desk", doThis: "Drive → turn OFF Drive for desktop.", check: function (s) { return !!(s.admin && s.admin.drive && s.admin.drive.desktop === false); } },
+          { id: "off", doThis: "Turn OFF Drive offline access.", check: function (s) { return !!(s.admin && s.admin.drive && s.admin.drive.offline === false); } },
+          { id: "tpl", doThis: "Allow custom Docs templates.", check: function (s) { return !!(s.admin && s.admin.drive && s.admin.drive.templates); } }
+        ]
+      },
+      {
+        id: "lab-gmail-gate", code: "LAB-M2I", minutes: 10, level: "Associate", module: "m2",
+        domain: "2.1 Gateway · quarantine · POP/IMAP",
+        title: "Third-party filter, then Google, then no old clients",
+        desk: "./index.html#m2-routing",
+        sections: ["Routing & compliance"],
+        reads: [
+          { label: "2.1 Routing", href: "./index.html#m2-routing" }
+        ],
+        fromDesk: "Inbound gateway = mail hits a third-party filter first, then Google. Admin quarantine holds mail for review (compliance or spam). POP/IMAP and auto-forward are leak paths — disable per OU. Dual delivery is coexistence, not a gateway. Attachment .exe block is type compliance, not the 25 MB size rule.",
+        scenario: {
+          who: "Security already owns Proofpoint in front of Gmail. Legal reviews suspect mail before users see it. CISO wants no Outlook-via-IMAP on contractor laptops.",
+          ticket: "Inbound gateway ON, admin quarantine ON, POP/IMAP OFF. Do not change MX to ‘fix’ a gateway.",
+          constraint: "Gateway ≠ dual delivery. Quarantine ≠ Email Log Search. POP/IMAP ≠ forwarding (turn both off in real life; this lab checks POP/IMAP)."
+        },
+        objectives: [
+          "Inbound gateway on.",
+          "Admin quarantine on.",
+          "POP/IMAP off."
+        ],
+        why: "Coexistence vs third-party filter vs leak-path are three Gmail answers.",
+        startRoute: "gmail",
+        prep: function (s) { s.ui.gmailTab = "routing"; },
+        tasks: [
+          { id: "gw", doThis: "Gmail → Routing: Inbound gateway (third-party filter) ON.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.gateway); } },
+          { id: "q", doThis: "Turn on Admin quarantine.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.quarantine); } },
+          { id: "pop", doThis: "Turn OFF Allow POP / IMAP.", check: function (s) { return !!(s.admin && s.admin.gmail && s.admin.gmail.popImap === false); } }
         ]
       },
       {
@@ -2381,6 +2520,34 @@
           { id: "enroll", doThis: "Chrome browsers: enroll with the CBCM token.", check: function (s) { return !!(s.admin && s.admin.chrome && s.admin.chrome.enrolled); } },
           { id: "force", doThis: "Select Sales OU → Force-install Finance extension X.", check: function (s) { var p = s.admin && s.admin.chrome && s.admin.chrome.policies && s.admin.chrome.policies.ou_sales; return !!(p && (p.forceInstall || []).indexOf("ext_x") >= 0); } },
           { id: "block", doThis: "Block-all extensions on Root (everyone else).", check: function (s) { var p = s.admin && s.admin.chrome && s.admin.chrome.policies && s.admin.chrome.policies.ou_root; return !!(p && p.blockAll); } }
+        ]
+      },
+      {
+        id: "lab-mdm-level", code: "LAB-M5C", minutes: 8, level: "Associate", module: "m5",
+        domain: "5.1 Advanced MDM · 5.2 Chrome updates",
+        title: "Advanced MDM plus browsers that actually update",
+        desk: "./index.html#m5-mdm",
+        sections: ["5.1 MDM", "5.2 CBCM policies"],
+        reads: [
+          { label: "5.1 MDM", href: "./index.html#m5-mdm" },
+          { label: "5.2 CBCM", href: "./index.html#m5-cbcm" }
+        ],
+        fromDesk: "Basic MDM is on by default (lock + account wipe). Company wants approval, apps, full device wipe → Advanced (edition-gated). Already on Intune/Jamf → third-party. Chrome auto-update is a browser policy, not an extension force-install. Chrome offline ≠ Drive offline.",
+        scenario: {
+          who: "Security: company phones must be approvable with a full wipe option. IT: browsers must auto-update. Kiosk PCs should not keep cached pages.",
+          ticket: "Set mobile management to Advanced. Enroll Chrome if needed, force auto-updates, turn Chrome offline OFF on Root.",
+          constraint: "Advanced ≠ wipe type (that is still account vs device). Auto-update ≠ force-install extension X."
+        },
+        objectives: [
+          "MDM level = Advanced.",
+          "Chrome auto-update on; Chrome offline off."
+        ],
+        why: "Management level and wipe type are different questions. Browser update is CBCM, not Play Store.",
+        startRoute: "mobile",
+        tasks: [
+          { id: "adv", doThis: "Mobile: set management to Advanced MDM.", check: function (s) { return !!(s.admin && s.admin.mdm && s.admin.mdm.level === "advanced"); } },
+          { id: "enr", doThis: "Chrome browsers: enroll with the CBCM token (if not already).", check: function (s) { return !!(s.admin && s.admin.chrome && s.admin.chrome.enrolled); } },
+          { id: "upd", doThis: "Root OU: Force Chrome auto-updates ON and Chrome offline OFF.", check: function (s) { var p = s.admin && s.admin.chrome && s.admin.chrome.policies && s.admin.chrome.policies.ou_root; return !!(p && p.autoUpdate && p.offline === false); } }
         ]
       },
       {
