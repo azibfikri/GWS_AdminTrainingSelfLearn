@@ -135,6 +135,10 @@
       if (!g.kind) g.kind = g.security ? "security" : "distribution";
     });
     (state.users || []).forEach(function (u) {
+      if (u.enrolled2sv == null) {
+        u.enrolled2sv = (u.id === "u_ben" || u.id === "u_eve" || u.id === "u_fin");
+      }
+      if (u.enrolledKey == null) u.enrolledKey = false;
       (u.devices || []).forEach(function (dev) {
         if (dev.wiped == null) dev.wiped = null;
       });
@@ -460,6 +464,10 @@
         function (v) { a.session.financeHours = v === "inherit" ? null : parseInt(v, 10); }));
       wrap.appendChild(sess);
       wrap.appendChild(tipBox("2SV = who. CAA = whether this device/network is allowed.", "./index.html#m4-caa"));
+      wrap.appendChild(el("button", {
+        type: "button", className: "btn primary", text: "Try as a user — see a fail",
+        onclick: function () { go("tryuser"); }
+      }));
       return wrap;
     }
 

@@ -23,7 +23,7 @@
 
 | Area | What you get |
 |------|----------------|
-| **Coverage map** | Official Associate objectives → notes + lab + prove quiz (Phase 1 mastery loop) |
+| **Ticket clinic** | Five job tickets that jump into the fail-state sandbox |
 | **Study desk** | Searchable modules; optional 25-minute timer |
 | **Learning styles** | *Kindergarten* (story-based) or *Adult* exam desk |
 | **Practice** | Start with 10 questions; timed mock and full **246-question** bank in other modes |

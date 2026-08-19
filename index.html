@@ -275,6 +275,16 @@
     .start-card strong { font-size: 1.08rem; letter-spacing: -.02em; }
     .start-card span { font-size: .88rem; color: var(--muted); line-height: 1.4; }
     a.start-card.primary span { color: rgba(255,255,255,.9); }
+    .clinic-list { display: grid; gap: .85rem; margin-top: 1rem; }
+    .clinic-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1rem 1.1rem; box-shadow: var(--shadow);
+    }
+    .clinic-card.done { opacity: .72; }
+    .clinic-card h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+    .clinic-card .where { font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+    .clinic-card p { margin: .25rem 0 .7rem; color: var(--ink); }
+    .clinic-card .clinic-acts { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
     .start-quiet {
       display: flex; flex-wrap: wrap; gap: .65rem 1rem; margin: 1rem 0 0; position: relative; z-index: 1;
       font-size: .88rem;
@@ -1223,6 +1233,7 @@
         <div class="nav-sec">Study</div>
         <a href="#overview">Home</a>
         <a href="#coverage">Exam coverage map</a>
+        <a href="#clinic">Ticket clinic</a>
         <a href="#lastMinute">Last-minute cram</a>
         <a href="#practice">Practice &amp; mock</a>
         <a href="./gws-admin-console.html#labs">Admin labs</a>
@@ -1283,6 +1294,8 @@
         <p class="start-quiet">
           <a href="#coverage">Coverage map</a>
           <a href="./gws-domain-setup.html">Mail demo</a>
+          <a href="./gws-admin-console.html#tryuser">Try a fail</a>
+          <a href="#clinic">Ticket clinic</a>
           <a href="#lastMinute">Night-before cram</a>
         </p>
       </header>
@@ -1377,6 +1390,13 @@
           </div>
         </div>
         <div id="covBody">Loading map…</div>
+      </section>
+
+      <section class="module" id="clinic" data-desk-page="clinic" data-search="ticket clinic helpdesk job ready fail state share 2SV procurement">
+        <h2>Ticket clinic</h2>
+        <p class="goal">A user reports a problem. Open the sandbox, change the live setting, then Try as that user. Tick done when the fail (or the fix) matches the ticket.</p>
+        <p class="game-rules" id="clinicHint">Phase 3 start — five tickets. Coverage map is still notes + lab + quiz.</p>
+        <div id="clinicBody"></div>
       </section>
 
       <!-- LAST-MINUTE REVIEW -->
@@ -2599,6 +2619,7 @@
       const HOME_IDS = new Set(["adultPathHub", "overview", "studySession", "how-to-study", "deskFooter"]);
       const PRACTICE_IDS = new Set(["practice"]);
       const CRAM_IDS = new Set(["lastMinute"]);
+      const CLINIC_IDS = new Set(["clinic"]);
 
       const contentEl = document.getElementById("content");
       let deskPage = "home";
@@ -2618,7 +2639,8 @@
           rows: [
             { q: "New here", a: "Module 0 notes → one lab → a few practice questions" },
             { q: "Exam soon", a: "Last-minute cram → Heuristics → Mock 50 timed" },
-            { q: "Track progress", a: "Coverage map — notes + lab + prove" }
+            { q: "Track progress", a: "Coverage map — notes + lab + prove" },
+            { q: "Job tickets", a: "Ticket clinic — try the fail, then the fix" }
           ]
         },
         practice: {
@@ -2639,6 +2661,16 @@
             { q: "Tonight", a: "Read this page once" },
             { q: "Then", a: "Practice → Other modes → Mock 50 timed" },
             { q: "Sleep", a: "Do not start a new module after midnight" }
+          ]
+        },
+        clinic: {
+          here: "Ticket clinic",
+          title: "How to close a ticket",
+          more: { href: "./gws-admin-console.html#tryuser", label: "Try as user →" },
+          rows: [
+            { q: "Read", a: "Who is stuck, and what they wanted to do" },
+            { q: "Do", a: "Change the live setting in the sandbox" },
+            { q: "Prove", a: "Try as that user — fail first, then the fix" }
           ]
         },
         coverage: {
@@ -2803,6 +2835,7 @@
           : deskPage === "reference" ? deskRefId
           : deskPage === "practice" ? "practice"
           : deskPage === "cram" ? "cram"
+          : deskPage === "clinic" ? "clinic"
           : deskPage === "coverage" ? "coverage"
           : "home";
         const pack = LOOK[key] || LOOK.home;
@@ -2846,6 +2879,9 @@
         } else if (deskPage === "cram") {
           titleEl.textContent = "Last-minute cram";
           subEl.textContent = "Read once the night before";
+        } else if (deskPage === "clinic") {
+          titleEl.textContent = "Ticket clinic";
+          subEl.textContent = "A user is stuck. Fix it in the sandbox.";
         } else if (deskPage === "coverage") {
           titleEl.textContent = "Exam coverage";
           subEl.textContent = "Notes → lab → prove quiz for every official objective";
@@ -2883,6 +2919,8 @@
             show = true;
           } else if (deskPage === "cram" && CRAM_IDS.has(id)) {
             show = true;
+          } else if (deskPage === "clinic" && CLINIC_IDS.has(id)) {
+            show = true;
           } else if (deskPage === "module" && (id === deskModuleId || id === "modulePractice")) {
             show = true;
           } else if (deskPage === "reference" && REF_IDS.includes(id)) {
@@ -2909,6 +2947,7 @@
         let hash = "#overview";
         if (page === "practice") hash = opts.hash || "#practice";
         else if (page === "cram") hash = "#lastMinute";
+        else if (page === "clinic") hash = "#clinic";
         else if (page === "coverage") hash = "#coverage";
         else if (page === "module") hash = "#" + deskModuleId;
         else if (page === "reference") hash = "#" + deskRefId;
@@ -2941,6 +2980,9 @@
           });
           return;
         }
+        if (id === "clinic" || CLINIC_IDS.has(id)) {
+          return showDesk("clinic", { skipHash: !!skipHash });
+        }
         if (id === "lastMinute" || CRAM_IDS.has(id)) {
           return showDesk("cram", { skipHash: !!skipHash });
         }
@@ -2965,6 +3007,7 @@
         e.preventDefault();
         const id = href.slice(1);
         if (MODULE_IDS.includes(id)) showDesk("module", { moduleId: id });
+        else if (id === "clinic") showDesk("clinic");
         else if (id === "lastMinute") showDesk("cram");
         else if (PRACTICE_IDS.has(id)) showDesk("practice", { hash: "#" + id });
         else if (id === "coverage") showDesk("coverage");
@@ -2976,6 +3019,58 @@
       deskFromHash(true);
 
       const COV_READ_KEY = "gws-exam-coverage-v1";
+      const CLINIC_KEY = "gws-ticket-clinic-v1";
+      const CLINIC_TICKETS = [
+        { id: "t-share-ada", where: "Drive", title: "Ada cannot share a file with a vendor", body: "Sales inherit external sharing OFF. Try as Ada — share should fail. Then put someone in Engineering (or turn IT ON) and try again.", href: "./gws-admin-console.html#tryuser", cta: "Try as Ada" },
+        { id: "t-2sv", where: "Sign-in", title: "Helpdesk locked everyone out of 2SV", body: "Enforce 2SV with a 0-day grace. Sign in as Ada (2SV off) — lockout. Set 7-day grace, try again.", href: "./gws-admin-console.html#access", cta: "Open 2SV settings" },
+        { id: "t-mail", where: "Mail", title: "Inbound mail never arrives", body: "On Gmail → Inbound, unpublish MX (or leave old MX). Try as user → Mail. Then publish MX again.", href: "./gws-admin-console.html#gmail", cta: "Open Gmail" },
+        { id: "t-ou", where: "Directory", title: "Procurement needs to share outside", body: "Add an OU named Procurement under Root. Override sharing ON. Add a user in that OU. Try share — should pass.", href: "./gws-admin-console.html#ous", cta: "Open OUs" },
+        { id: "t-newuser", where: "Users", title: "IT hire you just created", body: "Add an IT OU if needed, add a user there, Try fails as this user. Sharing follows that OU, not Ada’s story.", href: "./gws-admin-console.html#users", cta: "Open Users" }
+      ];
+      function paintClinic() {
+        const host = document.getElementById("clinicBody");
+        if (!host) return;
+        const done = store.getJSON(CLINIC_KEY, () => ({})) || {};
+        host.innerHTML = "";
+        const list = document.createElement("div");
+        list.className = "clinic-list";
+        CLINIC_TICKETS.forEach((t) => {
+          const card = document.createElement("article");
+          card.className = "clinic-card" + (done[t.id] ? " done" : "");
+          const where = document.createElement("div");
+          where.className = "where";
+          where.textContent = t.where;
+          const h = document.createElement("h3");
+          h.textContent = t.title;
+          const p = document.createElement("p");
+          p.textContent = t.body;
+          const acts = document.createElement("div");
+          acts.className = "clinic-acts";
+          const a = document.createElement("a");
+          a.className = "game-btn primary";
+          a.href = t.href;
+          a.textContent = t.cta;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "game-btn";
+          btn.textContent = done[t.id] ? "Done ✓" : "Mark done";
+          btn.addEventListener("click", () => {
+            const next = store.getJSON(CLINIC_KEY, () => ({})) || {};
+            if (next[t.id]) delete next[t.id];
+            else next[t.id] = Date.now();
+            store.setJSON(CLINIC_KEY, next);
+            paintClinic();
+          });
+          acts.appendChild(a);
+          acts.appendChild(btn);
+          card.appendChild(where);
+          card.appendChild(h);
+          card.appendChild(p);
+          card.appendChild(acts);
+          list.appendChild(card);
+        });
+        host.appendChild(list);
+      }
       function paintCoverage() {
         const host = document.getElementById("covBody");
         if (!host) return;
@@ -3100,6 +3195,7 @@
       window.addEventListener("gws-desk-change", paintCoverage);
       window.addEventListener("focus", paintCoverage);
       paintCoverage();
+      paintClinic();
 
       /* ========== Scenario Drill Game ========== */
       const GAME_KEY = "gws-study-game-v1";

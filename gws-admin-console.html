@@ -125,6 +125,18 @@
       background: var(--green-bg); border: 1px solid #a8dab5; border-radius: var(--radius);
       padding: .75rem .9rem; font-size: .88rem; margin: .75rem 0;
     }
+    .try-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0; }
+    @media (max-width: 900px) { .try-grid { grid-template-columns: 1fr; } }
+    .try-card {
+      display: flex; flex-direction: column; gap: .4rem; text-align: left;
+      border: 1px solid var(--line); border-radius: 8px; padding: 1rem; background: #fff; cursor: pointer;
+    }
+    .try-card:hover { border-color: var(--blue); }
+    .try-card .n { font-size: .72rem; font-weight: 600; color: var(--blue); letter-spacing: .04em; text-transform: uppercase; }
+    .try-card strong { font-size: 1rem; font-weight: 500; }
+    .try-card span { font-size: .85rem; color: var(--muted); }
+    .try-result { animation: tryFlash .45s ease; }
+    @keyframes tryFlash { from { outline: 3px solid #ea4335; } to { outline: 3px solid transparent; } }
     .field { margin: .55rem 0; }
     .field label { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-bottom: .25rem; }
     .field input, .field select, .field textarea {
@@ -522,6 +534,7 @@
     <span style="margin-left:auto"></span>
     <button type="button" class="btn ghost" id="btnLabs" style="font-size:.78rem;padding:.2rem .5rem">Labs</button>
     <button type="button" class="btn ghost" id="btnWalkthrough" style="font-size:.78rem;padding:.2rem .5rem">Tour</button>
+    <a href="#tryuser" id="bannerTryUser" style="font-size:.78rem;font-weight:600">Try as user</a>
     <a href="./gws-domain-setup.html" style="font-size:.78rem">Mail setup demo</a>
     <a href="./index.html" style="font-size:.78rem">Study Desk</a>
   </div>
@@ -619,6 +632,7 @@
       { sec: "Account", id: "storage", label: "Storage", crumb: ["Account", "Account settings", "Storage"] },
       { sec: "Reporting", id: "alerts", label: "Alert center", crumb: ["Reporting", "Alert center"] },
       { sec: "Labs", id: "strategy", label: "Constraint picker", crumb: ["Labs", "Constraint picker"] },
+      { sec: "Labs", id: "tryuser", label: "Try as user", crumb: ["Labs", "Try as user"] },
       { sec: "Labs", id: "labs", label: "Lab catalog", crumb: ["Labs"] },
       { sec: "Labs", id: "scenarios", label: "Scenario hub", crumb: ["Labs", "Scenario hub"] },
       { sec: "Labs", id: "gcds", label: "Directory Sync / GCDS", crumb: ["Labs", "GCDS dry-run"] },
@@ -635,7 +649,7 @@
       { id: "rep", label: "Reporting", icon: "rep", kids: ["reporting", "alerts", "investigation"] },
       { id: "bill", label: "Billing", icon: "bill", kids: ["billing"] },
       { id: "acct", label: "Account", icon: "acct", kids: ["account", "roles", "domains", "storage"] },
-      { id: "labsgrp", label: "Labs", icon: "labs", kids: ["labs", "scenarios", "gcds", "vault", "offboard", "strategy"] }
+      { id: "labsgrp", label: "Labs", icon: "labs", kids: ["tryuser", "labs", "scenarios", "gcds", "vault", "offboard", "strategy"] }
     ];
 
     const SEARCH_ALIASES = [
@@ -643,6 +657,8 @@
       { q: "spf", id: "gmail", kind: "Settings", label: "SPF record" },
       { q: "dmarc", id: "gmail", kind: "Settings", label: "DMARC policy" },
       { q: "mx", id: "gmail", kind: "Settings", label: "MX records / inbound mail" },
+      { q: "fail", id: "tryuser", kind: "Labs", label: "Try as user (fail states)" },
+      { q: "try as", id: "tryuser", kind: "Labs", label: "Try as user" },
       { q: "2sv", id: "access", kind: "Settings", label: "2-step verification" },
       { q: "2-step", id: "access", kind: "Settings", label: "2-step verification" },
       { q: "caa", id: "access", kind: "Settings", label: "Context-Aware Access" },
@@ -697,12 +713,12 @@
           { id: ctr, name: "Contractors", parentId: root }
         ],
         users: [
-          { id: "u_ada", name: "Ada Sales", email: "ada@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d1", type: "mobile", ownership: "byod" }], groups: ["g_pilot"] },
-          { id: "u_ben", name: "Ben Eng", email: "ben@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d2", type: "mobile", ownership: "company" }], groups: [] },
-          { id: "u_cara", name: "Cara Contract", email: "cara@exam-demo.example", ouId: ctr, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: [] },
-          { id: "u_dan", name: "Dan Sales", email: "dan@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, devices: [{ id: "d3", type: "mobile", ownership: "byod" }], groups: [] },
-          { id: "u_eve", name: "Eve Eng", email: "eve@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: ["g_pilot"] },
-          { id: "u_fin", name: "Fin Root", email: "fin@exam-demo.example", ouId: root, status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: [] }
+          { id: "u_ada", name: "Ada Sales", email: "ada@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: false, enrolledKey: false, devices: [{ id: "d1", type: "mobile", ownership: "byod" }], groups: ["g_pilot"] },
+          { id: "u_ben", name: "Ben Eng", email: "ben@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: true, enrolledKey: false, devices: [{ id: "d2", type: "mobile", ownership: "company" }], groups: [] },
+          { id: "u_cara", name: "Cara Contract", email: "cara@exam-demo.example", ouId: ctr, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: false, enrolledKey: false, devices: [], groups: [] },
+          { id: "u_dan", name: "Dan Sales", email: "dan@exam-demo.example", ouId: sales, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: false, enrolledKey: false, devices: [{ id: "d3", type: "mobile", ownership: "byod" }], groups: [] },
+          { id: "u_eve", name: "Eve Eng", email: "eve@exam-demo.example", ouId: eng, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: true, enrolledKey: false, devices: [], groups: ["g_pilot"] },
+          { id: "u_fin", name: "Fin Root", email: "fin@exam-demo.example", ouId: root, status: "active", vaultHold: false, driveTransferred: false, enrolled2sv: true, enrolledKey: false, devices: [], groups: [] }
         ],
         groups: [
           { id: "g_pilot", name: "Gemini Pilot", security: true, note: "Cross-OU overlay" },
@@ -814,7 +830,7 @@
     if (!state.ui.pinned) state.ui.pinned = ["users", "gmail"];
     if (window.GwsAdminFeatures) window.GwsAdminFeatures.ensure(state);
     if (state.ui.navCollapsed == null) state.ui.navCollapsed = false;
-    if (!state.ui.userQuery) state.ui.userQuery = "";
+    if (!state.ui.tryUserId) state.ui.tryUserId = "u_ada";
     if (!state.ui.searchChip) state.ui.searchChip = "all";
     state.tenant.domain = (state.domains.find(function (d) { return d.type === "primary"; }) || state.domains[0]).name;
     const toastEl = document.getElementById("toast");
@@ -1120,6 +1136,208 @@
       return wrap;
     }
 
+    function isSuperAdminUser(u) {
+      var roles = (state.admin && state.admin.roles) || [];
+      return roles.some(function (r) { return r.id === "role_super" && (r.users || []).indexOf(u.id) >= 0; });
+    }
+
+    function runTryAsUser(kind) {
+      var u = userById(state.ui.tryUserId || "u_ada");
+      var last = { kind: kind, ok: false, title: "Failed", why: "", fix: "", fixRoute: "" };
+      if (!u || u.status === "deleted") {
+        last.why = "No user selected.";
+        state.ui.tryLast = last;
+        saveState(); render();
+        return;
+      }
+      if (u.status === "suspended") {
+        last.title = "Account suspended";
+        last.why = u.email + " cannot sign in, share, or send until you Reactivate.";
+        last.fix = "Open the user → Reactivate";
+        last.fixRoute = "users";
+        state.ui.selectedUserId = u.id;
+        state.ui.tryLast = last;
+        saveState(); render();
+        return;
+      }
+      var two = (state.admin && state.admin.twoSv) || {};
+      var caa = (state.admin && state.admin.caa) || {};
+      var managed = (u.devices || []).some(function (d) { return d.ownership === "company"; });
+
+      if (kind === "signin") {
+        if (two.enforce && !u.enrolled2sv) {
+          if (!(two.graceDays > 0)) {
+            last.title = "Sign-in blocked — 2SV lockout";
+            last.why = "2SV is enforced with a 0-day grace. " + u.name + " is not enrolled.";
+            last.fix = "Access → set grace 7+ days, or enroll this user";
+            last.fixRoute = "access";
+            state.ui.tryLast = last;
+            saveState(); render();
+            toast("Lockout — that is the exam trap.");
+            return;
+          }
+          last.ok = true;
+          last.title = "Signed in (grace period)";
+          last.why = u.name + " is not enrolled yet, but grace is " + two.graceDays + " days. They can still work — nag them to enroll.";
+          last.fix = "Security → Access and data control";
+          last.fixRoute = "access";
+          state.ui.tryLast = last;
+          saveState(); render();
+          toast("In grace — not locked out.");
+          return;
+        }
+        if (two.requireKeyAdmins && isSuperAdminUser(u) && !u.enrolledKey) {
+          last.title = "Super Admin needs a security key";
+          last.why = "Org requires a key/passkey for Super Admins. Fin has 2SV but no key.";
+          last.fix = "Enroll a key on the user, or turn off the Super Admin key rule";
+          last.fixRoute = "access";
+          state.ui.tryLast = last;
+          saveState(); render();
+          return;
+        }
+        last.ok = true;
+        last.title = "Signed in";
+        last.why = two.enforce ? (u.name + " presented 2SV.") : (u.name + " signed in with password. 2SV is not enforced.");
+        state.ui.tryLast = last;
+        saveState(); render();
+        toast("Sign-in OK");
+        return;
+      }
+
+      if (kind === "share") {
+        if (caa.enabled && caa.requireManaged && !managed && (caa.app === "drive" || caa.app === "all")) {
+          last.title = "Drive blocked by Context-Aware Access";
+          last.why = "2SV would prove who they are. CAA still blocks unmanaged devices. " + u.name + " has no company-owned device.";
+          last.fix = "CAA settings, or use Ben (company phone)";
+          last.fixRoute = "access";
+          state.ui.tryLast = last;
+          saveState(); render();
+          toast("CAA blocked Drive");
+          return;
+        }
+        var eff = resolveUserSetting("drive.externalSharing", u.id);
+        if (eff && eff.value === "ON") {
+          last.ok = true;
+          last.title = "Shared with vendor@outside.test";
+          last.why = "Effective external sharing is ON (" + (eff.mode === "GROUP" ? "group overlay" : eff.mode) + ").";
+          last.fix = "Directory → Organizational units to change the policy";
+          last.fixRoute = "ous";
+          state.ui.tryLast = last;
+          saveState(); render();
+          toast("Share went through");
+          return;
+        }
+        last.title = "Sharing blocked";
+        last.why = u.name + " cannot share outside the org. Effective = " + ((eff && eff.value) || "OFF") +
+          (eff && eff.mode === "GROUP" ? " because group overlay wins (Gemini Pilot = OFF)." : " from OU inheritance.");
+        last.fix = "OU override, or change the group overlay — one person stays in one OU";
+        last.fixRoute = "ous";
+        state.ui.tryLast = last;
+        saveState(); render();
+        toast("Share failed — policy, not a broken button");
+        return;
+      }
+
+      if (kind === "mail") {
+        var d = primaryDomain();
+        var h = mailHealth(d);
+        last.fix = "Apps → Gmail → Test mail";
+        last.fixRoute = "gmail";
+        state.ui.gmailTab = "test";
+        if (h.inbound !== "ok") {
+          last.title = "Inbound mail failed";
+          last.why = h.inbound === "unverified" ? "Domain not verified." : h.inbound === "gmail-off" ? "Gmail not activated." : "MX not published (or still pointing elsewhere).";
+          state.mailLab.lastInbound = { at: Date.now(), ok: false, detail: last.why, domain: d.name };
+          state.ui.tryLast = last;
+          saveState(); render();
+          toast("Inbound failed");
+          return;
+        }
+        if (h.outbound !== "ok") {
+          last.title = "Outbound landed in spam";
+          last.why = "Incomplete SPF + DKIM + DMARC trio. MX only covers inbound.";
+          state.mailLab.lastOutbound = { at: Date.now(), ok: false, detail: last.why, domain: d.name };
+          state.ui.tryLast = last;
+          saveState(); render();
+          toast("Outbound untrusted");
+          return;
+        }
+        last.ok = true;
+        last.title = "Mail path OK";
+        last.why = "Inbound MX ready. Outbound SPF + DKIM + DMARC aligned. Seed tenant starts healthy — unpublish MX or SPF on Gmail to see a fail.";
+        last.fix = "Gmail → Inbound / Outbound tabs";
+        state.mailLab.lastInbound = { at: Date.now(), ok: true, detail: "DELIVERED", domain: d.name };
+        state.mailLab.lastOutbound = { at: Date.now(), ok: true, detail: "ACCEPTED", domain: d.name };
+        state.ui.tryLast = last;
+        saveState(); render();
+        toast("Mail OK on this tenant");
+      }
+    }
+
+    function panelTryAsUser() {
+      const wrap = el("div", { className: "panel active" });
+      wrap.appendChild(crumbBar(ROUTES.find(function (r) { return r.id === "tryuser"; })));
+      wrap.appendChild(pageHead("Try as user"));
+      wrap.appendChild(el("p", { className: "lede", text: "Act as one person. The live OU, group, 2SV, and MX settings decide if it works — not a scripted checklist. Your own OUs (IT, Procurement, …) work the same as Sales." }));
+
+      const picker = el("div", { className: "field" });
+      picker.appendChild(el("label", { text: "You are" }));
+      const sel = el("select");
+      state.users.filter(function (u) { return u.status !== "deleted"; }).forEach(function (u) {
+        const o = el("option", { value: u.id, text: u.name + " · " + ((ouById(u.ouId) || {}).name || "") + (u.enrolled2sv ? " · 2SV on" : " · 2SV off") });
+        if (u.id === (state.ui.tryUserId || "u_ada")) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () {
+        state.ui.tryUserId = sel.value;
+        saveState(); render();
+      });
+      picker.appendChild(sel);
+      wrap.appendChild(picker);
+
+      const who = userById(state.ui.tryUserId || "u_ada");
+      if (who) {
+        const share = resolveUserSetting("drive.externalSharing", who.id);
+        wrap.appendChild(el("p", { className: "muted", text: "Drive external sharing: " + ((share && share.value) || "—") + " · " + ((share && share.mode) || "") + ". 2SV enrolled: " + (who.enrolled2sv ? "yes" : "no") + "." }));
+      }
+
+      const grid = el("div", { className: "try-grid" });
+      [
+        { k: "share", n: "1 · Drive", t: "Share a file outside the org", d: "Ada/Sales should fail. Ben/Engineering should pass. Eve has a group overlay." },
+        { k: "signin", n: "2 · Sign-in", t: "Sign in to Workspace", d: "Enforce 2SV with 0-day grace to lock out Ada." },
+        { k: "mail", n: "3 · Mail", t: "Send and receive a test", d: "Uses this tenant’s MX / SPF / DKIM / DMARC — same as Gmail → Test mail." }
+      ].forEach(function (c) {
+        const b = el("button", { type: "button", className: "try-card", onclick: function () { runTryAsUser(c.k); } });
+        b.appendChild(el("span", { className: "n", text: c.n }));
+        b.appendChild(el("strong", { text: c.t }));
+        b.appendChild(el("span", { text: c.d }));
+        grid.appendChild(b);
+      });
+      wrap.appendChild(grid);
+
+      const last = state.ui.tryLast;
+      if (last) {
+        const box = el("div", { className: (last.ok ? "ok-box" : "danger-box") + " try-result" });
+        box.appendChild(el("strong", { text: last.title + " — " }));
+        box.appendChild(document.createTextNode(last.why));
+        wrap.appendChild(box);
+        if (last.fix && last.fixRoute) {
+          wrap.appendChild(el("button", {
+            type: "button", className: "btn primary", text: last.fix,
+            onclick: function () {
+              if (last.fixRoute === "users") {
+                state.ui.selectedUserId = state.ui.tryUserId || "u_ada";
+                state.ui.userDetail = true;
+              }
+              go(last.fixRoute);
+            }
+          }));
+        }
+      }
+      wrap.appendChild(tipBox("Change a setting, come back, try again. Seed mail is healthy; seed Drive sharing is OFF at Root except Engineering.", "./index.html#m0-effective"));
+      return wrap;
+    }
+
     function panelHome() {
       const wrap = el("div", { className: "panel active" });
       wrap.appendChild(crumbBar(ROUTES.find(function (r) { return r.id === "home"; })));
@@ -1127,6 +1345,9 @@
       wrap.appendChild(el("p", { className: "lede", text: "Manage users, apps, devices, and security for exam-demo.example — the same places you click in a real Google Admin console." }));
       const grid = el("div", { className: "home-grid" });
       const cards = [
+        { title: "Try as user (new)", body: "Share, sign in, or send mail as Ada. Wrong policy → it actually fails.", links: [
+          { t: "Open Try as user", fn: function () { go("tryuser"); } }
+        ]},
         { title: "Users", body: state.users.filter(function (u) { return u.status !== "deleted"; }).length + " users in this tenant.", links: [
           { t: "Add a user", fn: function () { go("users", { showAddUser: true }); } },
           { t: "Manage users", fn: function () { go("users"); } },
@@ -1147,6 +1368,7 @@
           { t: "Meet safety", fn: function () { go("meet"); } }
         ]},
         { title: "Labs", body: "Associate tickets that use this console.", links: [
+          { t: "Try as user (fail states)", fn: function () { go("tryuser"); } },
           { t: "Open lab catalog", fn: function () { go("labs"); } },
           { t: "Guided tour", fn: function () { document.getElementById("btnWalkthrough").click(); } }
         ]}
@@ -1192,7 +1414,7 @@
     function panelOUs() {
       const wrap = el("div", { className: "panel active" });
       wrap.appendChild(pageHead("Organizational units"));
-      wrap.appendChild(el("p", { className: "lede", text: "One user, one OU. Settings inherit down the tree unless a child overrides. Groups are an overlay — when both apply, the group usually wins." }));
+      wrap.appendChild(el("p", { className: "lede", text: "One user, one OU. Add IT, Procurement, or any name — they inherit from the parent until you override. Groups are an overlay; when both apply, the group usually wins." }));
       wrap.appendChild(tipBox("Design OUs for how policies differ, not the org chart.", "./index.html#m0"));
 
       const grid = el("div", { className: "grid-2" });
@@ -1216,7 +1438,7 @@
       left.appendChild(rootUl);
 
       const actions = el("div", { className: "row" });
-      const nameIn = el("input", { type: "text", placeholder: "New child OU name", id: "newOuName" });
+      const nameIn = el("input", { type: "text", placeholder: "e.g. IT or Procurement", id: "newOuName" });
       nameIn.style.flex = "1";
       actions.appendChild(nameIn);
       actions.appendChild(el("button", {
@@ -1231,8 +1453,9 @@
           if (!state.settings["drive.externalSharing"]) state.settings["drive.externalSharing"] = {};
           state.settings["drive.externalSharing"][id] = null;
           audit("Created OU", name);
+          state.ui.selectedOuId = id;
           saveState(); render();
-          toast("OU created.");
+          toast(name + " added. Override sharing here, then put a user in this OU.");
         }
       }));
       left.appendChild(actions);
@@ -1361,14 +1584,16 @@
         const id = uid("u");
         state.users.push({
           id: id, name: first + " " + last, email: email, ouId: ouSel.value,
-          status: "active", vaultHold: false, driveTransferred: false, devices: [], groups: []
+          status: "active", vaultHold: false, driveTransferred: false,
+          enrolled2sv: false, enrolledKey: false, devices: [], groups: []
         });
         audit("Created user", email);
         state.ui.showAddUser = false;
         state.ui.selectedUserId = id;
+        state.ui.tryUserId = id;
         state.ui.userDetail = true;
         saveState(); render();
-        toast("User added — " + email);
+        toast("User added — " + email + ". Use Try fails as this user, or pick them on Try as user.");
       } }));
       box.appendChild(actions);
       scrim.appendChild(box);
@@ -1406,6 +1631,10 @@
       actions.appendChild(el("button", { type: "button", className: "btn", text: "Add alternate email", onclick: function () {
         toast("Alias would be added on a domain you own — same mailbox, no extra license.");
       } }));
+      actions.appendChild(el("button", { type: "button", className: "btn primary", text: "Try fails as this user", onclick: function () {
+        state.ui.tryUserId = u.id;
+        go("tryuser");
+      } }));
       wrap.appendChild(actions);
       const card = el("div", { className: "card" });
       card.appendChild(el("h2", { text: "User information" }));
@@ -1423,6 +1652,29 @@
       card.appendChild(el("div", { className: "field" }, [el("label", { text: "Organizational unit" }), ouSel]));
       const eff = resolveUserSetting("drive.externalSharing", u.id);
       card.appendChild(el("p", { className: "muted", text: "Effective Drive external sharing: " + eff.value + " (" + (eff.mode === "GROUP" ? "group wins" : eff.mode) + ")" }));
+      const sv = el("label", { className: "muted" });
+      const svCb = el("input", { type: "checkbox" });
+      svCb.checked = !!u.enrolled2sv;
+      svCb.addEventListener("change", function () {
+        u.enrolled2sv = svCb.checked;
+        audit("2SV enrollment", u.email + " = " + u.enrolled2sv);
+        saveState(); render();
+      });
+      sv.appendChild(svCb);
+      sv.appendChild(document.createTextNode(" Enrolled in 2-step verification"));
+      card.appendChild(sv);
+      if (isSuperAdminUser(u)) {
+        const ky = el("label", { className: "muted" });
+        const kyCb = el("input", { type: "checkbox" });
+        kyCb.checked = !!u.enrolledKey;
+        kyCb.addEventListener("change", function () {
+          u.enrolledKey = kyCb.checked;
+          saveState(); render();
+        });
+        ky.appendChild(kyCb);
+        ky.appendChild(document.createTextNode(" Security key / passkey enrolled"));
+        card.appendChild(ky);
+      }
       wrap.appendChild(card);
       const more = el("div", { className: "card" });
       more.appendChild(el("h2", { text: "More options" }));
@@ -2741,6 +2993,12 @@
         text: firstOpen ? ("Start " + firstOpen.code + " · " + firstOpen.title) : "All labs done",
         onclick: function () { if (firstOpen) startLab(firstOpen.id); }
       }));
+      startRow.appendChild(el("button", {
+        type: "button",
+        className: "btn",
+        text: "Try as user — see a fail",
+        onclick: function () { go("tryuser"); }
+      }));
       hero.appendChild(startRow);
       wrap.appendChild(hero);
 
@@ -3823,6 +4081,16 @@
         const a = document.createElement("a");
         a.href = "./index.html";
         a.textContent = "Study Desk";
+        banner.appendChild(document.createTextNode(" "));
+        const tryA = document.createElement("a");
+        tryA.href = "#tryuser";
+        tryA.textContent = "Try as user";
+        tryA.addEventListener("click", function (e) {
+          e.preventDefault();
+          go("tryuser");
+        });
+        banner.appendChild(tryA);
+        banner.appendChild(document.createTextNode(" · "));
         banner.appendChild(a);
       }
       if (idEl) idEl.textContent = lab ? lab.code : "LAB";
@@ -4081,6 +4349,7 @@
       let panel;
       switch (route.id) {
         case "home": panel = panelHome(); break;
+        case "tryuser": panel = panelTryAsUser(); break;
         case "ous": panel = panelOUs(); break;
         case "users": panel = panelUsers(); break;
         case "groups": panel = panelGroups(); break;
